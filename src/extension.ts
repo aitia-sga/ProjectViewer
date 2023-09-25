@@ -6,46 +6,30 @@ import * as vscode from 'vscode';
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "projectviewer" is now active!');
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('extension.projectviewer.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from ProjectViewer!');
-	});
-	
-	context.subscriptions.push(disposable);
-
-	let disposable2 = vscode.commands.registerCommand('extension.projectviewer.newProject', async () => {
-	    vscode.window.showInformationMessage('A gombot megnyomták!');
-
-		const userInput = await vscode.window.showInputBox({
-			prompt: 'Add your input here',
-			placeHolder: 'Placeholder text'
-		});
-
-		if (userInput) {
-			vscode.window.showInformationMessage(`You entered: ${userInput}`);
-		} else {
-			vscode.window.showInformationMessage('No input provided');
-		}
-
-	});
-
-	context.subscriptions.push(disposable2);
-
 	context.subscriptions.push(
 		vscode.commands.registerCommand('extension.projectviewer.addToProject', (fileUri: vscode.Uri) => {
 			if (fileUri) {
 				vscode.window.showInformationMessage(`Adding ${fileUri.fsPath} to project.`);
 				// Itt add hozzá a fájlt a projekthez vagy végezz el bármilyen egyéb műveletet
 			}
+		}),
+
+		vscode.commands.registerCommand('extension.projectviewer.newProject', async () => {
+			vscode.window.showInformationMessage('A gombot megnyomták!');
+	
+			const userInput = await vscode.window.showInputBox({
+				prompt: 'Add your input hereddd',
+				placeHolder: 'Placeholder text'
+			});
+	
+			if (userInput) {
+				vscode.window.showInformationMessage(`You entered: ${userInput}`);
+			} else {
+				vscode.window.showInformationMessage('No input provided');
+			}
+	
 		})
+	
 	);
 }
 
