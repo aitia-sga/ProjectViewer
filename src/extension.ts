@@ -13,22 +13,22 @@ export function activate(context: vscode.ExtensionContext) {
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
-	// let disposable = vscode.commands.registerCommand('projectviewer.helloWorld', () => {
-	// 	// The code you place here will be executed every time your command is executed
-	// 	// Display a message box to the user
-	// 	vscode.window.showInformationMessage('Hello World from ProjectViewer!');
-	// });
+	let disposable = vscode.commands.registerCommand('extension.projectviewer.helloWorld', () => {
+		// The code you place here will be executed every time your command is executed
+		// Display a message box to the user
+		vscode.window.showInformationMessage('Hello World from ProjectViewer!');
+	});
 	
-	// context.subscriptions.push(disposable);
+	context.subscriptions.push(disposable);
 
-	// let disposable2 = vscode.commands.registerCommand('projectviewer.newProject', () => {
-	//     vscode.window.showInformationMessage('A gombot megnyomták!');
-	// });
+	let disposable2 = vscode.commands.registerCommand('extension.projectviewer.newProject', () => {
+	    vscode.window.showInformationMessage('A gombot megnyomták!');
+	});
 
-	// context.subscriptions.push(disposable2);
+	context.subscriptions.push(disposable2);
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand('extension.addToProject', (fileUri: vscode.Uri) => {
+		vscode.commands.registerCommand('extension.projectviewer.addToProject', (fileUri: vscode.Uri) => {
 			if (fileUri) {
 				vscode.window.showInformationMessage(`Adding ${fileUri.fsPath} to project.`);
 				// Itt add hozzá a fájlt a projekthez vagy végezz el bármilyen egyéb műveletet

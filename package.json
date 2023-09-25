@@ -14,11 +14,11 @@
   "contributes": {
     "commands": [
       {
-        "command": "projectviewer.helloWorld",
+        "command": "extension.projectviewer.helloWorld",
         "title": "Hello World"
       },
       {
-        "command": "projectviewer.newProject",
+        "command": "extension.projectviewer.newProject",
         "title": "New project",
         "icon": {
             "light": "resources/plus2.png",
@@ -26,7 +26,7 @@
       }
       },
       {
-        "command": "extension.addToProject",
+        "command": "extension.projectviewer.addToProject",
         "title": "Add to project"
       }
     ],
@@ -50,14 +50,14 @@
     "menus": {
       "view/title": [
           {
-              "command": "projectviewer.newProject",
+              "command": "extension.projectviewer.newProject",
               "group": "navigation",
               "when": "view == projectViewerId"
           }
       ],
       "explorer/context": [
         {
-            "command": "extension.addToProject",
+            "command": "extension.projectviewer.addToProject",
             "group": "1_modification"
         }
       ]
