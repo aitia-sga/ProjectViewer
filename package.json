@@ -24,7 +24,11 @@
             "light": "resources/plus2.png",
             "dark": "resources/plus2.png"
       }
-    }
+      },
+      {
+        "command": "extension.addToProject",
+        "title": "Add to project"
+      }
     ],
     "viewsContainers": {
       "activitybar": [
@@ -50,6 +54,12 @@
               "group": "navigation",
               "when": "view == projectViewerId"
           }
+      ],
+      "explorer/context": [
+        {
+            "command": "extension.addToProject",
+            "group": "1_modification"
+        }
       ]
     }
   },

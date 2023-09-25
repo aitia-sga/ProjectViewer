@@ -21,11 +21,20 @@ export function activate(context: vscode.ExtensionContext) {
 	
 	// context.subscriptions.push(disposable);
 
-	let disposable2 = vscode.commands.registerCommand('projectviewer.newProject', () => {
-        vscode.window.showInformationMessage('A gombot megnyomták!');
-    });
+	// let disposable2 = vscode.commands.registerCommand('projectviewer.newProject', () => {
+	//     vscode.window.showInformationMessage('A gombot megnyomták!');
+	// });
 
-	context.subscriptions.push(disposable2);
+	// context.subscriptions.push(disposable2);
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand('extension.addToProject', (fileUri: vscode.Uri) => {
+			if (fileUri) {
+				vscode.window.showInformationMessage(`Adding ${fileUri.fsPath} to project.`);
+				// Itt add hozzá a fájlt a projekthez vagy végezz el bármilyen egyéb műveletet
+			}
+		})
+	);
 }
 
 // This method is called when your extension is deactivated
