@@ -16,7 +16,15 @@
       {
         "command": "projectviewer.helloWorld",
         "title": "Hello World"
+      },
+      {
+        "command": "projectviewer.newProject",
+        "title": "New project",
+        "icon": {
+            "light": "resources/plus2.png",
+            "dark": "resources/plus2.png"
       }
+    }
     ],
     "viewsContainers": {
       "activitybar": [
@@ -30,10 +38,19 @@
     "views": {
         "myUniqueIdentifier": [
             {
-                "id": "myViewId",
+                "id": "projectViewerId",
                 "name": "Projects"
             }
         ]
+    },
+    "menus": {
+      "view/title": [
+          {
+              "command": "projectviewer.newProject",
+              "group": "navigation",
+              "when": "view == projectViewerId"
+          }
+      ]
     }
   },
   "scripts": {

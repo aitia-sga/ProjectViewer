@@ -13,13 +13,19 @@ export function activate(context: vscode.ExtensionContext) {
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('projectviewer.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from ProjectViewer!');
-	});
+	// let disposable = vscode.commands.registerCommand('projectviewer.helloWorld', () => {
+	// 	// The code you place here will be executed every time your command is executed
+	// 	// Display a message box to the user
+	// 	vscode.window.showInformationMessage('Hello World from ProjectViewer!');
+	// });
+	
+	// context.subscriptions.push(disposable);
 
-	context.subscriptions.push(disposable);
+	let disposable2 = vscode.commands.registerCommand('projectviewer.newProject', () => {
+        vscode.window.showInformationMessage('A gombot megnyomták!');
+    });
+
+	context.subscriptions.push(disposable2);
 }
 
 // This method is called when your extension is deactivated
