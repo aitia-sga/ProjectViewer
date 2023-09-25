@@ -17,7 +17,24 @@
         "command": "projectviewer.helloWorld",
         "title": "Hello World"
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+          {
+              "id": "myUniqueIdentifier",
+              "title": "Project Viewer",
+              "icon": "resources/folder.png"
+          }
+      ]
+    },
+    "views": {
+        "myUniqueIdentifier": [
+            {
+                "id": "myViewId",
+                "name": "Projects"
+            }
+        ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
