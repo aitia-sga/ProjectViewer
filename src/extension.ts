@@ -21,8 +21,20 @@ export function activate(context: vscode.ExtensionContext) {
 	
 	context.subscriptions.push(disposable);
 
-	let disposable2 = vscode.commands.registerCommand('extension.projectviewer.newProject', () => {
+	let disposable2 = vscode.commands.registerCommand('extension.projectviewer.newProject', async () => {
 	    vscode.window.showInformationMessage('A gombot megnyomták!');
+
+		const userInput = await vscode.window.showInputBox({
+			prompt: 'Add your input here',
+			placeHolder: 'Placeholder text'
+		});
+
+		if (userInput) {
+			vscode.window.showInformationMessage(`You entered: ${userInput}`);
+		} else {
+			vscode.window.showInformationMessage('No input provided');
+		}
+
 	});
 
 	context.subscriptions.push(disposable2);
