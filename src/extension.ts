@@ -1,6 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import * as path from 'path';
 import * as projects from './projects';
 
 // This method is called when your extension is activated
@@ -11,9 +12,8 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 		vscode.commands.registerCommand('extension.projectviewer.addToProject', (fileUri: vscode.Uri) => {
 			if (fileUri) {
-				vscode.window.showInformationMessage(`Adding ${fileUri.fsPath} to project.`);
-
-				// Itt add hozzá a fájlt a projekthez vagy végezz el bármilyen egyéb műveletet
+				vscode.window.showInformationMessage(`Adding ${path.basename(fileUri.fsPath)} to project.`);
+				myProjects.addFileToProject("Proj3", "P3D1", fileUri.fsPath, path.basename(fileUri.fsPath));
 			}
 		}),
 		
