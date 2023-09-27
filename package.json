@@ -36,15 +36,15 @@
 		"menus": {
 			"view/item/context": [
 				{
-					"command": "projectViewer.addToActiveProjects",
-					"when": "view == projectsView",
-					"group": "0_edit"
+					"command": "projectViewer.addProjectToActive",
+                	"when": "viewItem == project",
+                	"group": "0_project@1"
 				}
 			]
 		},
 		"commands": [
 			{
-				"command": "projectViewer.addToActiveProjects",
+				"command": "projectViewer.addProjectToActive",
 				"title": "Add to active projects"
 			}
 		]

@@ -64,7 +64,7 @@ export function activate(context: vscode.ExtensionContext) {
     const activeProjectsProvider = new ActiveProjectsTreeProvider(projectsData.projects, activeProjectsData.activeProjects);
     vscode.window.registerTreeDataProvider('activeProjectsView', activeProjectsProvider);
 
-    context.subscriptions.push(vscode.commands.registerCommand('addProjectToActive', (project) => {
+    context.subscriptions.push(vscode.commands.registerCommand('projectViewer.addProjectToActive', (project) => {
         if (!activeProjectsData.activeProjects.includes(project.name)) {
             activeProjectsData.activeProjects.push(project.name);
             fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4));
@@ -81,11 +81,6 @@ class ProjectsTreeProvider implements vscode.TreeDataProvider<any> {
             label: element.name,
             contextValue: 'project',
             collapsibleState: vscode.TreeItemCollapsibleState.None,
-            command: {
-                command: 'addProjectToActive',
-                arguments: [element],
-                title: 'Add to Active Projects'
-            }
         };
     }
 
