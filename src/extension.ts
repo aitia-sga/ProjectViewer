@@ -101,7 +101,6 @@ export function activate(context: vscode.ExtensionContext) {
 
 		vscode.commands.registerCommand('projectviewer.addToProject', (fileUri: vscode.Uri) => {
 			if (fileUri) {
-				vscode.window.showInformationMessage(`Adding ${path.basename(fileUri.fsPath)} to project.`);
 				myProjects.addFileToProject("Proj3", "P3D1", fileUri.fsPath, path.basename(fileUri.fsPath));
 				activeProjectsProvider.refresh();
 			}

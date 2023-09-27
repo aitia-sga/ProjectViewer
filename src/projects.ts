@@ -93,6 +93,7 @@ export class MyProjects {
 			?.directorys.find(item => item.name === directory)?.files.push(newFile);
 
 			fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
+			vscode.window.showInformationMessage(`Adding ${fileName} to project.`);
 		}
 	}
 }
