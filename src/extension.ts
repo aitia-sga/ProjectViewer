@@ -45,45 +45,64 @@ export function deactivate() {}
 
 
 import * as vscode from 'vscode';
+import * as fs from 'fs';
+import * as path from 'path';
+
+type Project = {
+    name: string;
+    directorys: Directory[];
+};
+
+type Directory = {
+    name: string;
+    files: File[];
+};
+
+type File = {
+    fileName: string;
+    absolutPath: string;
+};
 
 export function activate(context: vscode.ExtensionContext) {
-    const filesProvider = new FilesTreeProvider();
-    vscode.window.registerTreeDataProvider('filesView', filesProvider);
-
-    const extrasProvider = new ExtrasTreeProvider();
+    const projectsData = JSON.parse(fs.readFileSync(path.join(context.extensionPath, 'projects.json'), 'utf8'));
+    const extrasProvider = new ExtrasTreeProvider(projectsData.projects);
     vscode.window.registerTreeDataProvider('extrasView', extrasProvider);
 }
 
-class FilesTreeProvider implements vscode.TreeDataProvider<string> {
-    getTreeItem(element: string): vscode.TreeItem {
-        return {
-            label: element,
-            collapsibleState: element.startsWith('Folder') ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None
-        };
-    }
+class ExtrasTreeProvider implements vscode.TreeDataProvider<Project | Directory | File> {
+    constructor(private projects: Project[]) {}
 
-    getChildren(element?: string): Thenable<string[]> {
-        if (!element) {
-            return Promise.resolve(['Folder 1', 'Folder 2', 'File 1']);
-        } else if (element.startsWith('Folder')) {
-            return Promise.resolve(['File A', 'File B']);
+    getTreeItem(element: Project | Directory | File): vscode.TreeItem {
+        if ('directorys' in element) {
+            return {
+                label: element.name,
+                collapsibleState: vscode.TreeItemCollapsibleState.Collapsed
+            };
+        } else if ('files' in element) {
+            return {
+                label: element.name,
+                collapsibleState: vscode.TreeItemCollapsibleState.Collapsed
+            };
         } else {
-            return Promise.resolve([]);
+            return {
+                label: element.fileName,
+                collapsibleState: vscode.TreeItemCollapsibleState.None,
+                command: {
+                    command: 'vscode.open',
+                    arguments: [vscode.Uri.file(element.absolutPath)],
+                    title: 'Open File'
+                }
+            };
         }
     }
-}
 
-class ExtrasTreeProvider implements vscode.TreeDataProvider<string> {
-    getTreeItem(element: string): vscode.TreeItem {
-        return {
-            label: element,
-            collapsibleState: vscode.TreeItemCollapsibleState.None
-        };
-    }
-
-    getChildren(element?: string): Thenable<string[]> {
+    getChildren(element?: Project | Directory | File): Thenable<(Project | Directory | File)[]> {
         if (!element) {
-            return Promise.resolve(['Extra 1', 'Extra 2', 'Extra 3']);
+            return Promise.resolve(this.projects);
+        } else if ('directorys' in element) {
+            return Promise.resolve(element.directorys);
+        } else if ('files' in element) {
+            return Promise.resolve(element.files);
         } else {
             return Promise.resolve([]);
         }
