@@ -64,17 +64,58 @@ export function activate(context: vscode.ExtensionContext) {
     const activeProjectsProvider = new ActiveProjectsTreeProvider(projectsData.projects, activeProjectsData.activeProjects);
     vscode.window.registerTreeDataProvider('activeProjectsView', activeProjectsProvider);
 
-    context.subscriptions.push(vscode.commands.registerCommand('projectViewer.addProjectToActive', (project) => {
-        if (!activeProjectsData.activeProjects.includes(project.name)) {
-            activeProjectsData.activeProjects.push(project.name);
-            fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4));
-            activeProjectsProvider.refresh();
-        }
-    }));
+    context.subscriptions.push(
+		vscode.commands.registerCommand('projectViewer.addProjectToActive', (project) => {
+			if (!activeProjectsData.activeProjects.includes(project.name)) {
+				activeProjectsData.activeProjects.push(project.name);
+				fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4));
+				activeProjectsProvider.refresh();
+			}
+		}),
+
+		vscode.commands.registerCommand('projectviewer.newProject', async () => {
+			vscode.window.showInformationMessage('A gombot megnyomták!');
+			
+			const userInput = await vscode.window.showInputBox({
+				prompt: 'Add your input here',
+				placeHolder: 'Placeholder text'
+			});
+			
+			if (userInput) {
+				vscode.window.showInformationMessage(`You entered: ${userInput}`);
+
+				// Új projekt hozzáadása a projects listához
+				const newProject = {
+					name: userInput,
+					directorys: [],
+					// files: []
+				};
+				projectsData.projects.push(newProject);
+
+				// Új projekt elmentése a projects.json fájlba
+				fs.writeFileSync(path.join(context.extensionPath, 'projects.json'), JSON.stringify(projectsData, null, 4));
+
+				// Frissíti a treeview-t az új projekttel
+				projectsProvider.refresh();
+
+			} else {
+				vscode.window.showInformationMessage('No input provided');
+			}
+	
+		})
+	
+	);
 }
 
 class ProjectsTreeProvider implements vscode.TreeDataProvider<any> {
+	private _onDidChangeTreeData: vscode.EventEmitter<any> = new vscode.EventEmitter<any>();
+    readonly onDidChangeTreeData: vscode.Event<any> = this._onDidChangeTreeData.event;
+
     constructor(private projects: any[]) {}
+
+	refresh(): void {
+        this._onDidChangeTreeData.fire(undefined);
+    }
 
     getTreeItem(element: any): vscode.TreeItem {
         return {

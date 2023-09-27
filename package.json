@@ -40,12 +40,27 @@
                 	"when": "viewItem == project",
                 	"group": "0_project@1"
 				}
+			],
+			"view/title": [
+				{
+					"command": "projectviewer.newProject",
+					"group": "navigation",
+					"when": "view == projectsView"
+				}
 			]
 		},
 		"commands": [
 			{
 				"command": "projectViewer.addProjectToActive",
 				"title": "Add to active projects"
+			},
+			{
+				"command": "projectviewer.newProject",
+				"title": "New project",
+				"icon": {
+					"light": "resources/plus2.png",
+					"dark": "resources/plus2.png"
+				}
 			}
 		]
     },
