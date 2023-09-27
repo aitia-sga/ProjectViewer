@@ -1,23 +1,28 @@
 {
-    "name": "simple-explorer",
-    "displayName": "Simple Explorer",
+    "name": "projectviewer",
+    "displayName": "Project Viewer",
     "description": "A basic example of a file explorer-like tree view.",
     "version": "0.0.1",
     "engines": {
-        "vscode": "^1.60.0"
+        "vscode": "^1.82.0"
     },
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [],
+    "main": "./out/extension.js",
     "contributes": {
         "viewsContainers": {
             "activitybar": [
                 {
-                    "id": "simpleExplorer",
-                    "title": "Simple Explorer",
+                    "id": "projectViewer",
+                    "title": "Project Viewer",
                     "icon": "resources/folder.png"
                 }
             ]
         },
         "views": {
-            "simpleExplorer": [
+            "projectViewer": [
                 {
 					"id": "filesView",
 					"name": "Files"
@@ -29,17 +34,25 @@
             ]
         }
     },
-    "activationEvents": [
-        "onView:simpleExplorerView"
-    ],
-    "main": "./out/extension.js",
     "scripts": {
-        "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./"
+        "vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"pretest": "npm run compile && npm run lint",
+		"lint": "eslint src --ext ts",
+		"test": "node ./out/test/runTest.js"
     },
     "devDependencies": {
-        "typescript": "^4.4.2",
-        "vscode": "^1.1.37",
-        "tslint": "^5.12.1"
+        "@types/glob": "^8.1.0",
+		"@types/mocha": "^10.0.1",
+		"@types/node": "16.x",
+		"@types/vscode": "^1.82.0",
+		"@typescript-eslint/eslint-plugin": "^6.4.1",
+		"@typescript-eslint/parser": "^6.4.1",
+		"@vscode/test-electron": "^2.3.4",
+		"eslint": "^8.47.0",
+		"glob": "^10.3.7",
+		"mocha": "^10.2.0",
+		"typescript": "^5.1.6"
     }
 }
