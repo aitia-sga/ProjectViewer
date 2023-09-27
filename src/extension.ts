@@ -49,10 +49,9 @@ import * as path from 'path';
 import * as projects from './projects';
 
 export function activate(context: vscode.ExtensionContext) {
-    // const projectsData = JSON.parse(fs.readFileSync(path.join(context.extensionPath, 'projects.json'), 'utf8'));
 	const myProjects = new projects.MyProjects(path.join(context.extensionPath, 'projects.json'));
-
     const activeProjectsPath = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, '.vscode', 'activeProjects.json');
+
     let activeProjectsData: { activeProjects: string[] };
     try {
         activeProjectsData = JSON.parse(fs.readFileSync(activeProjectsPath, 'utf8'));
@@ -88,41 +87,23 @@ export function activate(context: vscode.ExtensionContext) {
 		}),
 
 		vscode.commands.registerCommand('projectviewer.newProject', async () => {
-			vscode.window.showInformationMessage('A gombot megnyomták!');
-			
 			const userInput = await vscode.window.showInputBox({
 				prompt: 'Add your input here',
 				placeHolder: 'Placeholder text'
 			});
 			
 			if (userInput) {
-				vscode.window.showInformationMessage(`You entered: ${userInput}`);
-
-				// // Új projekt hozzáadása a projects listához
-				// const newProject = {
-				// 	name: userInput,
-				// 	directorys: [],
-				// 	// files: []
-				// };
-				// myProjects.getProjects().push(newProject);
-
-				// // Új projekt elmentése a projects.json fájlba
-				// fs.writeFileSync(path.join(context.extensionPath, 'projects.json'), JSON.stringify(projectsData, null, 4));
 				myProjects.createNewProject(userInput);
-
-				// Frissíti a treeview-t az új projekttel
 				projectsProvider.refresh();
-
-			} else {
-				vscode.window.showInformationMessage('No input provided');
-			}
-	
+			} else
+				vscode.window.showInformationMessage('No input provided');	
 		}),
 
 		vscode.commands.registerCommand('projectviewer.addToProject', (fileUri: vscode.Uri) => {
 			if (fileUri) {
 				vscode.window.showInformationMessage(`Adding ${path.basename(fileUri.fsPath)} to project.`);
 				myProjects.addFileToProject("Proj3", "P3D1", fileUri.fsPath, path.basename(fileUri.fsPath));
+				activeProjectsProvider.refresh();
 			}
 		})
 	);

@@ -75,8 +75,7 @@ export class MyProjects {
 			
 			this.jsonData.projects.push(newProject);
 		
-			const updatedJsonString: string = JSON.stringify(this.jsonData, null, 2);
-			fs.writeFileSync(this.jsonPath, updatedJsonString, 'utf-8');
+			fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
 		}
 	}
 
@@ -93,8 +92,7 @@ export class MyProjects {
 			this.jsonData.projects.find(project => project.name === projectName)
 			?.directorys.find(item => item.name === directory)?.files.push(newFile);
 
-			const updatedJsonString: string = JSON.stringify(this.jsonData, null, 2);
-			fs.writeFileSync(this.jsonPath, updatedJsonString, 'utf-8');
+			fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
 		}
 	}
 }
