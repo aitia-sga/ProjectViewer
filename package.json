@@ -32,7 +32,22 @@
 					"name": "Projects"
 				}
             ]
-        }
+        },
+		"menus": {
+			"view/item/context": [
+				{
+					"command": "projectViewer.addToActiveProjects",
+					"when": "view == projectsView",
+					"group": "0_edit"
+				}
+			]
+		},
+		"commands": [
+			{
+				"command": "projectViewer.addToActiveProjects",
+				"title": "Add to active projects"
+			}
+		]
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",

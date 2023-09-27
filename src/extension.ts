@@ -43,68 +43,90 @@ export function activate(context: vscode.ExtensionContext) {
 export function deactivate() {}
 */
 
-
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-type Project = {
-    name: string;
-    directorys: Directory[];
-};
+interface ActiveProjectsData {
+    activeProjects: string[];
+}
 
-type Directory = {
-    name: string;
-    files: File[];
-};
-
-type File = {
-    fileName: string;
-    absolutPath: string;
-};
-
-export function activate(context: vscode.ExtensionContext) {
+function activate(context: vscode.ExtensionContext) {
     const projectsData = JSON.parse(fs.readFileSync(path.join(context.extensionPath, 'projects.json'), 'utf8'));
     const extrasProvider = new ExtrasTreeProvider(projectsData.projects);
     vscode.window.registerTreeDataProvider('projectsView', extrasProvider);
+
+    const activeProjectsProvider = new ActiveProjectsProvider();
+    vscode.window.registerTreeDataProvider('activeProjectsView', activeProjectsProvider);
+
+    const activeProjectsPath = path.join(vscode.workspace.rootPath || '', '.vscode', 'activeProjects.json');
+
+    context.subscriptions.push(vscode.commands.registerCommand('projectViewer.addToActiveProjects', async (project: any) => {
+        let activeProjectsData: ActiveProjectsData = { activeProjects: [] };
+
+	if (fs.existsSync(activeProjectsPath)) {
+		activeProjectsData = JSON.parse(fs.readFileSync(activeProjectsPath, 'utf8')) as ActiveProjectsData;
+	}
+
+	if (!activeProjectsData.activeProjects.includes(project.name)) {
+		activeProjectsData.activeProjects.push(project.name);
+		fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4));
+	}
+
+        // Refresh the active projects view
+        activeProjectsProvider.refresh();
+    }));
 }
 
-class ExtrasTreeProvider implements vscode.TreeDataProvider<Project | Directory | File> {
-    constructor(private projects: Project[]) {}
+export { activate };
 
-    getTreeItem(element: Project | Directory | File): vscode.TreeItem {
-        if ('directorys' in element) {
-            return {
-                label: element.name,
-                collapsibleState: vscode.TreeItemCollapsibleState.Collapsed
-            };
-        } else if ('files' in element) {
-            return {
-                label: element.name,
-                collapsibleState: vscode.TreeItemCollapsibleState.Collapsed
-            };
-        } else {
-            return {
-                label: element.fileName,
-                collapsibleState: vscode.TreeItemCollapsibleState.None,
-                command: {
-                    command: 'vscode.open',
-                    arguments: [vscode.Uri.file(element.absolutPath)],
-                    title: 'Open File'
-                }
-            };
-        }
+class ExtrasTreeProvider implements vscode.TreeDataProvider<any> {
+    constructor(private projects: any[]) {}
+
+    getTreeItem(element: any): vscode.TreeItem {
+        return {
+            label: element.name,
+            collapsibleState: vscode.TreeItemCollapsibleState.None,
+            contextValue: 'projectItem'
+        };
     }
 
-    getChildren(element?: Project | Directory | File): Thenable<(Project | Directory | File)[]> {
+    getChildren(element?: any): Thenable<any[]> {
         if (!element) {
             return Promise.resolve(this.projects);
-        } else if ('directorys' in element) {
-            return Promise.resolve(element.directorys);
-        } else if ('files' in element) {
-            return Promise.resolve(element.files);
         } else {
             return Promise.resolve([]);
         }
+    }
+}
+
+class ActiveProjectsProvider implements vscode.TreeDataProvider<string> {
+    private _onDidChangeTreeData: vscode.EventEmitter<string | null> = new vscode.EventEmitter<string | null>();
+    readonly onDidChangeTreeData: vscode.Event<string | null> = this._onDidChangeTreeData.event;
+
+    refresh(): void {
+        this._onDidChangeTreeData.fire(null);
+    }
+
+    get activeProjects(): string[] {
+        const activeProjectsPath = path.join(vscode.workspace.rootPath || '', '.vscode', 'activeProjects.json');
+        if (fs.existsSync(activeProjectsPath)) {
+            return JSON.parse(fs.readFileSync(activeProjectsPath, 'utf8')).activeProjects;
+        }
+        return [];
+    }
+
+    getTreeItem(element: string): vscode.TreeItem {
+        return {
+            label: element,
+            collapsibleState: vscode.TreeItemCollapsibleState.None
+        };
+    }
+
+    getChildren(element?: string): Thenable<string[]> {
+        if (!element) {
+            return Promise.resolve(this.activeProjects);
+        }
+        return Promise.resolve([]);
     }
 }
