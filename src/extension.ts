@@ -58,7 +58,7 @@ export function activate(context: vscode.ExtensionContext) {
         activeProjectsData = { activeProjects: [] };
     }
 
-    const projectsProvider = new ProjectsTreeProvider(projectsData.projects, activeProjectsData, activeProjectsPath);
+    const projectsProvider = new ProjectsTreeProvider(projectsData.projects);
     vscode.window.registerTreeDataProvider('projectsView', projectsProvider);
 
     const activeProjectsProvider = new ActiveProjectsTreeProvider(projectsData.projects, activeProjectsData.activeProjects);
@@ -74,7 +74,7 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 class ProjectsTreeProvider implements vscode.TreeDataProvider<any> {
-    constructor(private projects: any[], private activeProjectsData: { activeProjects: string[] }, private activeProjectsPath: string) {}
+    constructor(private projects: any[]) {}
 
     getTreeItem(element: any): vscode.TreeItem {
         return {
