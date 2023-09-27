@@ -24,12 +24,12 @@
         "views": {
             "projectViewer": [
                 {
-					"id": "filesView",
-					"name": "Files"
+					"id": "activeProjectsView",
+					"name": "Active projects"
 				},
 				{
-					"id": "extrasView",
-					"name": "Extras"
+					"id": "projectsView",
+					"name": "Projects"
 				}
             ]
         }

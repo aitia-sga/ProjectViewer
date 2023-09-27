@@ -66,7 +66,7 @@ type File = {
 export function activate(context: vscode.ExtensionContext) {
     const projectsData = JSON.parse(fs.readFileSync(path.join(context.extensionPath, 'projects.json'), 'utf8'));
     const extrasProvider = new ExtrasTreeProvider(projectsData.projects);
-    vscode.window.registerTreeDataProvider('extrasView', extrasProvider);
+    vscode.window.registerTreeDataProvider('projectsView', extrasProvider);
 }
 
 class ExtrasTreeProvider implements vscode.TreeDataProvider<Project | Directory | File> {
