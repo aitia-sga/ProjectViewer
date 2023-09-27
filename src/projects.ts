@@ -34,6 +34,10 @@ export class MyProjects {
 		this.jsonData = JSON.parse(this.jsonString);
 	}
 
+	getProjects(): Project[] {
+		return this.jsonData.projects;
+	}
+
 	projectExists(projectName: string): boolean {
 		return this.jsonData.projects.some(project => project.name === projectName);
 	}

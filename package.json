@@ -52,6 +52,12 @@
 					"group": "navigation",
 					"when": "view == projectsView"
 				}
+			],
+			"explorer/context": [
+				{
+					"command": "projectviewer.addToProject",
+					"group": "1_modification"
+				}
 			]
 		},
 		"commands": [
@@ -70,6 +76,10 @@
 					"light": "resources/plus2.png",
 					"dark": "resources/plus2.png"
 				}
+			},
+			{
+				"command": "projectviewer.addToProject",
+				"title": "Add to project"
 			}
 		]
     },

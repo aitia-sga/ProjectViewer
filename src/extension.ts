@@ -46,9 +46,11 @@ export function deactivate() {}
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as projects from './projects';
 
 export function activate(context: vscode.ExtensionContext) {
-    const projectsData = JSON.parse(fs.readFileSync(path.join(context.extensionPath, 'projects.json'), 'utf8'));
+    // const projectsData = JSON.parse(fs.readFileSync(path.join(context.extensionPath, 'projects.json'), 'utf8'));
+	const myProjects = new projects.MyProjects(path.join(context.extensionPath, 'projects.json'));
 
     const activeProjectsPath = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, '.vscode', 'activeProjects.json');
     let activeProjectsData: { activeProjects: string[] };
@@ -58,10 +60,10 @@ export function activate(context: vscode.ExtensionContext) {
         activeProjectsData = { activeProjects: [] };
     }
 
-    const projectsProvider = new ProjectsTreeProvider(projectsData.projects);
+    const projectsProvider = new ProjectsTreeProvider(myProjects.getProjects());
     vscode.window.registerTreeDataProvider('projectsView', projectsProvider);
 
-    const activeProjectsProvider = new ActiveProjectsTreeProvider(projectsData.projects, activeProjectsData.activeProjects);
+    const activeProjectsProvider = new ActiveProjectsTreeProvider(myProjects.getProjects(), activeProjectsData.activeProjects);
     vscode.window.registerTreeDataProvider('activeProjectsView', activeProjectsProvider);
 
     context.subscriptions.push(
@@ -96,16 +98,17 @@ export function activate(context: vscode.ExtensionContext) {
 			if (userInput) {
 				vscode.window.showInformationMessage(`You entered: ${userInput}`);
 
-				// Új projekt hozzáadása a projects listához
-				const newProject = {
-					name: userInput,
-					directorys: [],
-					// files: []
-				};
-				projectsData.projects.push(newProject);
+				// // Új projekt hozzáadása a projects listához
+				// const newProject = {
+				// 	name: userInput,
+				// 	directorys: [],
+				// 	// files: []
+				// };
+				// myProjects.getProjects().push(newProject);
 
-				// Új projekt elmentése a projects.json fájlba
-				fs.writeFileSync(path.join(context.extensionPath, 'projects.json'), JSON.stringify(projectsData, null, 4));
+				// // Új projekt elmentése a projects.json fájlba
+				// fs.writeFileSync(path.join(context.extensionPath, 'projects.json'), JSON.stringify(projectsData, null, 4));
+				myProjects.createNewProject(userInput);
 
 				// Frissíti a treeview-t az új projekttel
 				projectsProvider.refresh();
@@ -114,8 +117,14 @@ export function activate(context: vscode.ExtensionContext) {
 				vscode.window.showInformationMessage('No input provided');
 			}
 	
+		}),
+
+		vscode.commands.registerCommand('projectviewer.addToProject', (fileUri: vscode.Uri) => {
+			if (fileUri) {
+				vscode.window.showInformationMessage(`Adding ${path.basename(fileUri.fsPath)} to project.`);
+				myProjects.addFileToProject("Proj3", "P3D1", fileUri.fsPath, path.basename(fileUri.fsPath));
+			}
 		})
-	
 	);
 }
 
