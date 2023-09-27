@@ -39,6 +39,11 @@
 					"command": "projectViewer.addProjectToActive",
                 	"when": "viewItem == project",
                 	"group": "0_project@1"
+				},
+				{
+					"command": "projectViewer.removeProjectFromActive",
+					"when": "view == activeProjectsView && viewItem == activeProject",                	
+					"group": "0_project@1"
 				}
 			],
 			"view/title": [
@@ -53,6 +58,10 @@
 			{
 				"command": "projectViewer.addProjectToActive",
 				"title": "Add to active projects"
+			},
+			{
+				"command": "projectViewer.removeProjectFromActive",
+				"title": "Remove from active projects"
 			},
 			{
 				"command": "projectviewer.newProject",

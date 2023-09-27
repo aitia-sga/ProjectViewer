@@ -73,6 +73,18 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		}),
 
+		vscode.commands.registerCommand('projectViewer.removeProjectFromActive', (project) => {
+			if (activeProjectsData.activeProjects.includes(project.name)) {
+				const projectIndex = activeProjectsData.activeProjects.indexOf(project.name);
+				if(projectIndex !== -1)
+				{
+					activeProjectsData.activeProjects.splice(projectIndex, 1);
+					fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4));
+					activeProjectsProvider.refresh();
+				}
+			}
+		}),
+
 		vscode.commands.registerCommand('projectviewer.newProject', async () => {
 			vscode.window.showInformationMessage('A gombot megnyomták!');
 			
@@ -147,6 +159,7 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
         if ('directorys' in element) {
             return {
                 label: element.name,
+				contextValue: 'activeProject',
                 collapsibleState: vscode.TreeItemCollapsibleState.Collapsed
             };
         } else if ('files' in element) {
