@@ -1,3 +1,5 @@
+
+/*
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
@@ -39,3 +41,51 @@ export function activate(context: vscode.ExtensionContext) {
 
 // This method is called when your extension is deactivated
 export function deactivate() {}
+*/
+
+
+import * as vscode from 'vscode';
+
+export function activate(context: vscode.ExtensionContext) {
+    const filesProvider = new FilesTreeProvider();
+    vscode.window.registerTreeDataProvider('filesView', filesProvider);
+
+    const extrasProvider = new ExtrasTreeProvider();
+    vscode.window.registerTreeDataProvider('extrasView', extrasProvider);
+}
+
+class FilesTreeProvider implements vscode.TreeDataProvider<string> {
+    getTreeItem(element: string): vscode.TreeItem {
+        return {
+            label: element,
+            collapsibleState: element.startsWith('Folder') ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None
+        };
+    }
+
+    getChildren(element?: string): Thenable<string[]> {
+        if (!element) {
+            return Promise.resolve(['Folder 1', 'Folder 2', 'File 1']);
+        } else if (element.startsWith('Folder')) {
+            return Promise.resolve(['File A', 'File B']);
+        } else {
+            return Promise.resolve([]);
+        }
+    }
+}
+
+class ExtrasTreeProvider implements vscode.TreeDataProvider<string> {
+    getTreeItem(element: string): vscode.TreeItem {
+        return {
+            label: element,
+            collapsibleState: vscode.TreeItemCollapsibleState.None
+        };
+    }
+
+    getChildren(element?: string): Thenable<string[]> {
+        if (!element) {
+            return Promise.resolve(['Extra 1', 'Extra 2', 'Extra 3']);
+        } else {
+            return Promise.resolve([]);
+        }
+    }
+}

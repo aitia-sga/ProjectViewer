@@ -1,87 +1,45 @@
 {
-  "name": "projectviewer",
-  "displayName": "ProjectViewer",
-  "description": "Cannot find module 'glob' or its corresponding type declarations.",
-  "version": "0.0.1",
-  "engines": {
-    "vscode": "^1.82.0"
-  },
-  "categories": [
-    "Other"
-  ],
-  "activationEvents": [],
-  "main": "./out/extension.js",
-  "contributes": {
-    "commands": [
-      {
-        "command": "extension.projectviewer.helloWorld",
-        "title": "Hello World"
-      },
-      {
-        "command": "extension.projectviewer.newProject",
-        "title": "New project",
-        "icon": {
-            "light": "resources/plus2.png",
-            "dark": "resources/plus2.png"
-      }
-      },
-      {
-        "command": "extension.projectviewer.addToProject",
-        "title": "Add to project"
-      }
-    ],
-    "viewsContainers": {
-      "activitybar": [
-          {
-              "id": "myUniqueIdentifier",
-              "title": "Project Viewer",
-              "icon": "resources/folder.png"
-          }
-      ]
+    "name": "simple-explorer",
+    "displayName": "Simple Explorer",
+    "description": "A basic example of a file explorer-like tree view.",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.60.0"
     },
-    "views": {
-        "myUniqueIdentifier": [
-            {
-                "id": "projectViewerId",
-                "name": "Projects"
-            }
-        ]
-    },
-    "menus": {
-      "view/title": [
-          {
-              "command": "extension.projectviewer.newProject",
-              "group": "navigation",
-              "when": "view == projectViewerId"
-          }
-      ],
-      "explorer/context": [
-        {
-            "command": "extension.projectviewer.addToProject",
-            "group": "1_modification"
+    "contributes": {
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "simpleExplorer",
+                    "title": "Simple Explorer",
+                    "icon": "resources/folder.png"
+                }
+            ]
+        },
+        "views": {
+            "simpleExplorer": [
+                {
+					"id": "filesView",
+					"name": "Files"
+				},
+				{
+					"id": "extrasView",
+					"name": "Extras"
+				}
+            ]
         }
-      ]
+    },
+    "activationEvents": [
+        "onView:simpleExplorerView"
+    ],
+    "main": "./out/extension.js",
+    "scripts": {
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./"
+    },
+    "devDependencies": {
+        "typescript": "^4.4.2",
+        "vscode": "^1.1.37",
+        "tslint": "^5.12.1"
     }
-  },
-  "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "pretest": "npm run compile && npm run lint",
-    "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
-  },
-  "devDependencies": {
-    "@types/glob": "^8.1.0",
-    "@types/mocha": "^10.0.1",
-    "@types/node": "16.x",
-    "@types/vscode": "^1.82.0",
-    "@typescript-eslint/eslint-plugin": "^6.4.1",
-    "@typescript-eslint/parser": "^6.4.1",
-    "@vscode/test-electron": "^2.3.4",
-    "eslint": "^8.47.0",
-    "glob": "^10.3.7",
-    "mocha": "^10.2.0",
-    "typescript": "^5.1.6"
-  }
 }
