@@ -42,6 +42,7 @@ export function activate(context: vscode.ExtensionContext) {
 // This method is called when your extension is deactivated
 export function deactivate() {}
 */
+
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -56,22 +57,35 @@ export function activate(context: vscode.ExtensionContext) {
     } catch {
         activeProjectsData = { activeProjects: [] };
     }
-    
-    const projectsProvider = new ProjectsTreeProvider(projectsData.projects);
+
+    const projectsProvider = new ProjectsTreeProvider(projectsData.projects, activeProjectsData, activeProjectsPath);
     vscode.window.registerTreeDataProvider('projectsView', projectsProvider);
 
     const activeProjectsProvider = new ActiveProjectsTreeProvider(projectsData.projects, activeProjectsData.activeProjects);
     vscode.window.registerTreeDataProvider('activeProjectsView', activeProjectsProvider);
+
+    context.subscriptions.push(vscode.commands.registerCommand('addProjectToActive', (project) => {
+        if (!activeProjectsData.activeProjects.includes(project.name)) {
+            activeProjectsData.activeProjects.push(project.name);
+            fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4));
+            activeProjectsProvider.refresh();
+        }
+    }));
 }
 
 class ProjectsTreeProvider implements vscode.TreeDataProvider<any> {
-    constructor(private projects: any[]) {}
+    constructor(private projects: any[], private activeProjectsData: { activeProjects: string[] }, private activeProjectsPath: string) {}
 
     getTreeItem(element: any): vscode.TreeItem {
         return {
             label: element.name,
             contextValue: 'project',
-            collapsibleState: vscode.TreeItemCollapsibleState.None
+            collapsibleState: vscode.TreeItemCollapsibleState.None,
+            command: {
+                command: 'addProjectToActive',
+                arguments: [element],
+                title: 'Add to Active Projects'
+            }
         };
     }
 
@@ -84,7 +98,14 @@ class ProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 }
 
 class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
+    private _onDidChangeTreeData: vscode.EventEmitter<any> = new vscode.EventEmitter<any>();
+    readonly onDidChangeTreeData: vscode.Event<any> = this._onDidChangeTreeData.event;
+
     constructor(private projectsData: any, private activeProjectsNames: string[]) {}
+
+    refresh(): void {
+        this._onDidChangeTreeData.fire(undefined);
+    }
 
     getTreeItem(element: any): vscode.TreeItem {
         if ('directorys' in element) {
@@ -127,6 +148,3 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
         }
     }
 }
-
-// Ezen a ponton hozzá kellene adni a kontextus menü logikáját is, hogy hozzá tudja adni a projekteket az aktív projektek listájához.
-// Ezen felül persze sok egyéb kiegészítést és optimalizálást is el lehetne végezni a kódon.
