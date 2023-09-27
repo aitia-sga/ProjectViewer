@@ -38,12 +38,12 @@
 				{
 					"command": "projectViewer.addProjectToActive",
                 	"when": "viewItem == project",
-                	"group": "0_project@1"
+                	"group": "0_project@name"
 				},
 				{
 					"command": "projectViewer.removeProjectFromActive",
 					"when": "view == activeProjectsView && viewItem == activeProject",                	
-					"group": "0_project@1"
+					"group": "0_project@name"
 				}
 			],
 			"view/title": [
