@@ -1,5 +1,5 @@
 {
-    "name": "projectviewer",
+    "name": "projectViewer",
     "displayName": "Project Viewer",
     "description": "A basic example of a file explorer-like tree view.",
     "version": "0.0.1",
@@ -53,14 +53,14 @@
 			],
 			"view/title": [
 				{
-					"command": "projectviewer.newProject",
+					"command": "projectViewer.newProject",
 					"group": "navigation",
 					"when": "view == projectsView"
 				}
 			],
 			"explorer/context": [
 				{
-					"command": "projectviewer.addToProject",
+					"command": "projectViewer.addToProject",
 					"group": "1_modification"
 				}
 			]
@@ -75,7 +75,7 @@
 				"title": "Remove from active projects"
 			},
 			{
-				"command": "projectviewer.newProject",
+				"command": "projectViewer.newProject",
 				"title": "New project",
 				"icon": {
 					"light": "resources/plus2.png",
@@ -83,7 +83,7 @@
 				}
 			},
 			{
-				"command": "projectviewer.addToProject",
+				"command": "projectViewer.addToProject",
 				"title": "Add to project"
 			},
 			{

@@ -42,7 +42,7 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		}),
 
-		vscode.commands.registerCommand('projectviewer.newProject', async () => {
+		vscode.commands.registerCommand('projectViewer.newProject', async () => {
 			const userInput = await vscode.window.showInputBox({
 				prompt: 'Add your input here',
 				placeHolder: 'Placeholder text'
@@ -55,7 +55,7 @@ export function activate(context: vscode.ExtensionContext) {
 				vscode.window.showInformationMessage('No input provided');	
 		}),
 
-		vscode.commands.registerCommand('projectviewer.addToProject', async (fileUri: vscode.Uri) => {
+		vscode.commands.registerCommand('projectViewer.addToProject', async (fileUri: vscode.Uri) => {
 
             let selectedProject;
 
