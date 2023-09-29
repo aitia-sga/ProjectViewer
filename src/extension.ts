@@ -81,27 +81,8 @@ export function activate(context: vscode.ExtensionContext) {
 		}),
 
         vscode.commands.registerCommand('projectViewer.removeFromProject', async (removedFile: projects.File) => {
-            console.log("Remove from project" + removedFile.logicalPath);
-
-            const removedFilePath = removedFile.logicalPath.split("/");
-            if(removedFilePath.length < 2) { vscode.window.showErrorMessage("Wrong logical path!"); return; }
-
-            const projectName = myProjects.getProjects().find(project => project.name === removedFilePath[0]);
-            if (!projectName) { vscode.window.showErrorMessage(`${projectName} canot be found!`); return; }
-
-            const directoryName = projectName.directorys.find(directory => directory.name === removedFilePath[1])
-            if (!directoryName) { vscode.window.showErrorMessage(`${directoryName} canot be found!`); return; }
-
-            const removedFileName = directoryName.files.find(file => file.fileName === removedFile.fileName)
-            if (!removedFileName) { vscode.window.showErrorMessage(`${removedFileName} canot be found!`); return; }
-
-            const projectIndex = directoryName.files.indexOf(removedFileName);
-
-            if(projectIndex !== -1) {
-                myProjects.getProjects().splice(projectIndex, 1);
-                activeProjectsProvider.refresh();
-            }
-
+            myProjects.removeFileFromProject(removedFile);
+            activeProjectsProvider.refresh();
         })
 	);
 }
