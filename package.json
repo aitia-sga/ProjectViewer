@@ -44,6 +44,11 @@
 					"command": "projectViewer.removeProjectFromActive",
 					"when": "view == activeProjectsView && viewItem == activeProject",                	
 					"group": "0_project@name"
+				},
+				{
+					"command": "projectViewer.removeFromProject",
+					"when": "view == activeProjectsView && viewItem == file",                	
+					"group": "0_project@name"
 				}
 			],
 			"view/title": [
@@ -80,6 +85,10 @@
 			{
 				"command": "projectviewer.addToProject",
 				"title": "Add to project"
+			},
+			{
+				"command": "projectViewer.removeFromProject",
+				"title": "Remove from project"
 			}
 		]
     },

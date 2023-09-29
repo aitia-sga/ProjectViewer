@@ -78,7 +78,11 @@ export function activate(context: vscode.ExtensionContext) {
 
             myProjects.addFileToProject(selectedProjectName, selectedDirectoryName, fileUri.fsPath, path.basename(fileUri.fsPath));
             activeProjectsProvider.refresh();
-		})
+		}),
+
+        vscode.commands.registerCommand('projectViewer.removeFromProject', async (fileUri: vscode.Uri) => {
+            console.log("Remove from project");
+        })
 	);
 }
 
@@ -139,6 +143,7 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
             return {
                 label: element.fileName,
                 collapsibleState: vscode.TreeItemCollapsibleState.None,
+                contextValue: 'file',
                 command: {
                     command: 'vscode.open',
                     arguments: [vscode.Uri.file(element.absolutPath)],
