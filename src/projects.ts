@@ -2,9 +2,10 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 
-type File = {
+export type File = {
 	fileName: string;
 	absolutPath: string;
+	logicalPath: string;
 };
 
 type Directory = {
@@ -86,7 +87,8 @@ export class MyProjects {
 		{
 			const newFile: File = {
 				fileName: fileName,
-				absolutPath: absPath
+				absolutPath: absPath,
+				logicalPath: projectName + "/" + directory
 			};
 
 			this.jsonData.projects.find(project => project.name === projectName)
