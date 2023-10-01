@@ -59,8 +59,8 @@ export function activate(context: vscode.ExtensionContext) {
 
 		vscode.commands.registerCommand('projectViewer.newProject', async () => {
 			const userInput = await vscode.window.showInputBox({
-				prompt: 'Add your input here',
-				placeHolder: 'Placeholder text'
+				prompt: 'Enter the name of the project',
+				placeHolder: 'Project name'
 			});
 			
 			if (userInput) {
