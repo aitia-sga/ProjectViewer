@@ -52,7 +52,7 @@ export function activate(context: vscode.ExtensionContext) {
 
             if (userInput) {
 				myProjects.createNewFolder(project, userInput);
-				projectsProvider.refresh(); activeProjectsProvider.refresh()
+				activeProjectsProvider.refresh()
 			} else
 				vscode.window.showInformationMessage('No input provided');	
         }),

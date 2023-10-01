@@ -94,7 +94,6 @@ export class MyProjects {
 			vscode.window.showInformationMessage(`A directory called ${newDirectory} already exists!`);
 		
 		else {
-
 			const newDir: Directory = {
 				name: newDirectory,
 				files: []
@@ -102,21 +101,8 @@ export class MyProjects {
 
 			proj.directorys.push(newDir);
 			fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
-			// this.jsonData.projects.
-
 		}
-
-		// const projectIndex = this.jsonData.projects.find
-		// const projectIndex = proj.directorys.find(directory => directory.name === newDirectory)
-
-
-		
-		// const projectIndexIndex = proj.directorys.indexOf(newDirectory) 
 	}
-
-	// const createNewLogicalFolder2 = async(): void => {
-
-	// }
 
 	addFileToProject(projectName: string, directory: string, absPath: string, fileName: string): void {
 		if(this.projectContainsTheFile(projectName, directory, absPath, fileName))
