@@ -46,6 +46,11 @@
 					"group": "0_project@name"
 				},
 				{
+					"command": "projectViewer.createNewFolder",
+					"when": "view == activeProjectsView && viewItem == activeProject",                	
+					"group": "0_project@name"
+				},
+				{
 					"command": "projectViewer.removeFromProject",
 					"when": "view == activeProjectsView && viewItem == file",                	
 					"group": "0_project@name"
@@ -73,6 +78,10 @@
 			{
 				"command": "projectViewer.removeProjectFromActive",
 				"title": "Remove from active projects"
+			},
+			{
+				"command": "projectViewer.createNewFolder",
+				"title": "Create new project folder"
 			},
 			{
 				"command": "projectViewer.newProject",

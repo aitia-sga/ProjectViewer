@@ -42,6 +42,21 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		}),
 
+        vscode.commands.registerCommand('projectViewer.createNewFolder', async (project) => {
+            if(!myProjects.containsProject) {vscode.window.showErrorMessage('The selected project cannot be found!'); return; }
+            
+            const userInput = await vscode.window.showInputBox({
+				prompt: 'Enter the name of the folder!',
+				placeHolder: 'Folder name'
+			});
+
+            if (userInput) {
+				myProjects.createNewFolder(project, userInput);
+				projectsProvider.refresh(); activeProjectsProvider.refresh()
+			} else
+				vscode.window.showInformationMessage('No input provided');	
+        }),
+
 		vscode.commands.registerCommand('projectViewer.newProject', async () => {
 			const userInput = await vscode.window.showInputBox({
 				prompt: 'Add your input here',

@@ -43,6 +43,10 @@ export class MyProjects {
 		return this.jsonData.projects.some(project => project.name === projectName);
 	}
 
+	directoryExists(proj: Project, newDirectory: string): boolean {
+		return proj.directorys.some(directory => directory.name === newDirectory);
+	}
+
 	projectContainsTheFile(projectName: string, directory: string, absPath: string, fileName: string): boolean {
 		const proj: Project | undefined = this.jsonData.projects.find(project => project.name === projectName);
 
@@ -79,6 +83,40 @@ export class MyProjects {
 			fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
 		}
 	}
+
+	containsProject(proj: Project): boolean {
+		return this.jsonData.projects.includes(proj);
+	}
+
+	createNewFolder (proj: Project, newDirectory: string):void  {
+
+		if(this.directoryExists(proj, newDirectory)) 
+			vscode.window.showInformationMessage(`A directory called ${newDirectory} already exists!`);
+		
+		else {
+
+			const newDir: Directory = {
+				name: newDirectory,
+				files: []
+			};
+
+			proj.directorys.push(newDir);
+			fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
+			// this.jsonData.projects.
+
+		}
+
+		// const projectIndex = this.jsonData.projects.find
+		// const projectIndex = proj.directorys.find(directory => directory.name === newDirectory)
+
+
+		
+		// const projectIndexIndex = proj.directorys.indexOf(newDirectory) 
+	}
+
+	// const createNewLogicalFolder2 = async(): void => {
+
+	// }
 
 	addFileToProject(projectName: string, directory: string, absPath: string, fileName: string): void {
 		if(this.projectContainsTheFile(projectName, directory, absPath, fileName))
