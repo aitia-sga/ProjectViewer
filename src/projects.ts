@@ -70,7 +70,7 @@ export class MyProjects {
 
 	createNewProject(projectName: string): void {
 		if(this.projectExists(projectName)) 
-			vscode.window.showInformationMessage(`A project called ${projectName} already exists!`);
+			vscode.window.showInformationMessage(`Project ${projectName} already exists!`);
 
 		else {
 			const newProject: Project = {
@@ -91,7 +91,7 @@ export class MyProjects {
 	createNewFolder (proj: Project, newDirectory: string):void  {
 
 		if(this.directoryExists(proj, newDirectory)) 
-			vscode.window.showInformationMessage(`A directory called ${newDirectory} already exists!`);
+			vscode.window.showInformationMessage(`Directory ${newDirectory} already exists!`);
 		
 		else {
 			const newDir: Directory = {
@@ -119,7 +119,7 @@ export class MyProjects {
 			?.directorys.find(item => item.name === directory)?.files.push(newFile);
 
 			fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
-			vscode.window.showInformationMessage(`Adding ${fileName} to project`);
+			// vscode.window.showInformationMessage(`Adding ${fileName} to project`);
 		}
 	}
 
@@ -138,7 +138,7 @@ export class MyProjects {
 		if(projectIndex !== -1) {
 			directoryPath.files.splice(projectIndex, 1);
 			fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
-			vscode.window.showInformationMessage(`Removing ${removedFile.fileName} from project`);
+			// vscode.window.showInformationMessage(`Removing ${removedFile.fileName} from project`);
 		}
 
 	}
