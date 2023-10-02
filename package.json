@@ -1,29 +1,29 @@
 {
-    "name": "projectViewer",
-    "displayName": "Project Viewer",
-    "description": "A basic example of a file explorer-like tree view.",
-    "version": "0.0.1",
-    "engines": {
-        "vscode": "^1.82.0"
-    },
+	"name": "projectViewer",
+	"displayName": "Project Viewer",
+	"description": "A basic example of a file explorer-like tree view.",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.82.0"
+	},
 	"categories": [
 		"Other"
 	],
 	"activationEvents": [],
-    "main": "./out/extension.js",
-    "contributes": {
-        "viewsContainers": {
-            "activitybar": [
-                {
-                    "id": "projectViewer",
-                    "title": "Project Viewer",
-                    "icon": "resources/folder.png"
-                }
-            ]
-        },
-        "views": {
-            "projectViewer": [
-                {
+	"main": "./out/extension.js",
+	"contributes": {
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "projectViewer",
+					"title": "Project Viewer",
+					"icon": "resources/folder.png"
+				}
+			]
+		},
+		"views": {
+			"projectViewer": [
+				{
 					"id": "activeProjectsView",
 					"name": "Active projects"
 				},
@@ -31,14 +31,14 @@
 					"id": "projectsView",
 					"name": "Projects"
 				}
-            ]
-        },
+			]
+		},
 		"menus": {
 			"view/item/context": [
 				{
 					"command": "projectViewer.addProjectToActive",
-                	"when": "viewItem == project",
-                	"group": "0_project@name"
+					"when": "viewItem == project",
+					"group": "0_project@name"
 				},
 				{
 					"command": "projectViewer.removeProjectFromActive",
@@ -109,17 +109,17 @@
 				"title": "Remove from project"
 			}
 		]
-    },
-    "scripts": {
-        "vscode:prepublish": "npm run compile",
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile && npm run lint",
 		"lint": "eslint src --ext ts",
 		"test": "node ./out/test/runTest.js"
-    },
-    "devDependencies": {
-        "@types/glob": "^8.1.0",
+	},
+	"devDependencies": {
+		"@types/glob": "^8.1.0",
 		"@types/mocha": "^10.0.1",
 		"@types/node": "16.x",
 		"@types/vscode": "^1.82.0",
@@ -130,5 +130,5 @@
 		"glob": "^10.3.7",
 		"mocha": "^10.2.0",
 		"typescript": "^5.1.6"
-    }
+	}
 }
