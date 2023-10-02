@@ -3,11 +3,11 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import { type } from 'os';
 
-export type File = {
-	fileName: string;
-	absolutPath: string;
-	logicalPath: string;
-};
+// export type File = {
+// 	fileName: string;
+// 	absolutPath: string;
+// 	logicalPath: string;
+// };
 
 export type Directory = {
 	name: string;
@@ -33,6 +33,7 @@ type Item = {
 // type Project = Item;
 interface Project extends Item {}
 export interface LogicalDirectory extends Item {}
+export interface File extends Item { absolutPath: string; }
 
 export class MyProjects {
 
@@ -121,25 +122,25 @@ export class MyProjects {
 
 	deleteFolderWithFiles(removedDirectory: LogicalDirectory): void {
 		this.jsonData.projects.forEach(element => {
-			if(this.removeLogicalDirectoryByName(element, removedDirectory)) {
+			if(this.removeObject(element, removedDirectory)) {
 				fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
 				return;
 			}
 		});
 	}
 
-	removeLogicalDirectoryByName(obj: any, removedDirectory: LogicalDirectory): boolean {
+	removeObject(obj: any, removedObj: any): boolean {
 		if (!obj || typeof obj !== 'object')
 			return false;
 	
 		if (Array.isArray(obj.items)) {
 			for (let i = 0; i < obj.items.length; i++) {
-				if (obj.items[i] === removedDirectory) {
+				if (obj.items[i] === removedObj) {
 					obj.items.splice(i, 1);
 					return true;
 				}
 	
-				if (this.removeLogicalDirectoryByName(obj.items[i], removedDirectory))
+				if (this.removeObject(obj.items[i], removedObj))
 					return true;
 			}
 		}
@@ -167,6 +168,13 @@ export class MyProjects {
 	}
 
 	removeFileFromProject(removedFile: File): void {
+
+		this.jsonData.projects.forEach(element => {
+			if(this.removeObject(element, removedFile)) {
+				fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
+				return;
+			}
+		});
 
 	// const actProj = this.jsonData.projects.find(project => project.directorys.
 	// 	find(directory => directory.files.find(file => file === removedFile)));
