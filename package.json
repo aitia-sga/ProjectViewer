@@ -51,7 +51,7 @@
 					"group": "0_project@name"
 				},
 				{
-					"command": "projectViewer.deleteFolderAndFiles",
+					"command": "projectViewer.deleteFolderWithFiles",
 					"when": "view == activeProjectsView && viewItem == directory",                	
 					"group": "0_project@name"
 				},
@@ -89,7 +89,7 @@
 				"title": "Create new project folder"
 			},
 			{
-				"command": "projectViewer.deleteFolderAndFiles",
+				"command": "projectViewer.deleteFolderWithFiles",
 				"title": "Delete folder and files "
 			},
 			{

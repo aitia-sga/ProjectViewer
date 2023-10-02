@@ -70,7 +70,7 @@ export function activate(context: vscode.ExtensionContext) {
 				vscode.window.showInformationMessage('No input provided');	
 		}),
 
-		vscode.commands.registerCommand('projectViewer.createNewFolder', async (project) => {
+		vscode.commands.registerCommand('projectViewer.deleteFolderWithFiles', async (project) => {
 		}),
 
 		vscode.commands.registerCommand('projectViewer.addToProject', async (fileUri: vscode.Uri) => {
