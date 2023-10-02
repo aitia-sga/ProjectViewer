@@ -106,7 +106,6 @@ export class MyProjects {
 
 	deleteFolderWithFiles(removedDirectory: Directory): void {
 		const actProj = this.jsonData.projects.find(project => project.directorys.find(directory => directory === removedDirectory));
-		const actDir = actProj?.directorys.find(directory => directory === removedDirectory);
 
 		delete actProj?.directorys[actProj.directorys.findIndex(directory => directory === removedDirectory)]
 		fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
@@ -132,22 +131,31 @@ export class MyProjects {
 	}
 
 	removeFileFromProject(removedFile: File): void {
-		const removedFilePath = removedFile.logicalPath.split("/");
-        if(removedFilePath.length < 2) { vscode.window.showErrorMessage("Wrong logical path!"); return; }
+	// 	const removedFilePath = removedFile.logicalPath.split("/");
+    //     if(removedFilePath.length < 2) { vscode.window.showErrorMessage("Wrong logical path!"); return; }
 
-		const directoryPath = this.jsonData.projects.find(project => project.name === removedFilePath[0])?.directorys.find(directory => directory.name === removedFilePath[1]);
-		if(!directoryPath) {vscode.window.showErrorMessage("Wrong logical path!"); return; }
+	// 	const directoryPath = this.jsonData.projects.find(project => project.name === removedFilePath[0])?.directorys.find(directory => directory.name === removedFilePath[1]);
+	// 	if(!directoryPath) {vscode.window.showErrorMessage("Wrong logical path!"); return; }
 
-		const foundedRemovedFile = directoryPath.files.find(file => file.fileName === removedFile.fileName);
-		if(!foundedRemovedFile) {vscode.window.showErrorMessage("Wrong filename!"); return; }
+	// 	const foundedRemovedFile = directoryPath.files.find(file => file.fileName === removedFile.fileName);
+	// 	if(!foundedRemovedFile) {vscode.window.showErrorMessage("Wrong filename!"); return; }
 
-		const projectIndex = directoryPath.files.indexOf(foundedRemovedFile);
+	// 	const projectIndex = directoryPath.files.indexOf(foundedRemovedFile);
 
-		if(projectIndex !== -1) {
-			directoryPath.files.splice(projectIndex, 1);
-			fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
-			// vscode.window.showInformationMessage(`Removing ${removedFile.fileName} from project`);
-		}
+	// 	if(projectIndex !== -1) {
+	// 		directoryPath.files.splice(projectIndex, 1);
+	// 		fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
+	// 		// vscode.window.showInformationMessage(`Removing ${removedFile.fileName} from project`);
+	// 	}
+
+	const actProj = this.jsonData.projects.find(project => project.directorys.
+		find(directory => directory.files.find(file => file === removedFile)));
+
+	// delete actProj?.directorys[actProj.directorys.findIndex(directory => directory.files.findIndex(file => file === removedFile))];
+
+	delete actProj?.directorys[actProj.directorys.findIndex(directory => directory.files.findIndex(file => file === removedFile))];
+
+
 	}
 }
 
