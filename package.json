@@ -47,12 +47,12 @@
 				},
 				{
 					"command": "projectViewer.createNewFolder",
-					"when": "view == activeProjectsView && viewItem == activeProject",                	
+					"when": "view == activeProjectsView && (viewItem == activeProject || viewItem == logicalDirectory)",                	
 					"group": "0_project@name"
 				},
 				{
 					"command": "projectViewer.deleteFolderWithFiles",
-					"when": "view == activeProjectsView && viewItem == directory",                	
+					"when": "view == activeProjectsView && viewItem == logicalDirectory",                	
 					"group": "0_project@name"
 				},
 				{

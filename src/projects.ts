@@ -32,6 +32,7 @@ type Item = {
 
 // type Project = Item;
 interface Project extends Item {}
+interface LogicalDirectory extends Item {}
 
 export class MyProjects {
 
@@ -54,11 +55,8 @@ export class MyProjects {
 		return this.jsonData.projects.some(project => project.name === projectName);
 	}
 
-	directoryExists(proj: Project, newDirectory: string): boolean {
-		//TODO: mock 
-		return false;
-
-		// return proj.directorys.some(directory => directory.name === newDirectory);
+	directoryExists(actItem: Item, newDirectory: string): boolean {
+		return actItem.items.some(directory => directory.name === newDirectory);
 	}
 
 	projectContainsTheFile(projectName: string, directory: string, absPath: string, fileName: string): boolean {
@@ -105,19 +103,20 @@ export class MyProjects {
 		return this.jsonData.projects.includes(proj);
 	}
 
-	createNewFolder(proj: Project, newDirectory: string):void  {
-		// if(this.directoryExists(proj, newDirectory)) 
-		// 	vscode.window.showInformationMessage(`Directory ${newDirectory} already exists!`);
+	createNewFolder(parent: Item, newDirectory: string):void  {
+		if(this.directoryExists(parent, newDirectory)) 
+			vscode.window.showInformationMessage(`Directory ${newDirectory} already exists!`);
 		
-		// else {
-		// 	const newDir: Directory = {
-		// 		name: newDirectory,
-		// 		files: []
-		// 	};
+		else {
+			const newDir: LogicalDirectory = {
+				name: newDirectory,
+				type: "logicalDirectory",
+				items: []
+			};
 
-		// 	proj.directorys.push(newDir);
-		// 	fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
-		// }
+			parent.items.push(newDir)
+			fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
+		}
 	}
 
 	deleteFolderWithFiles(removedDirectory: Directory): void {

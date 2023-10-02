@@ -150,10 +150,10 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 				contextValue: 'activeProject',
 				collapsibleState: vscode.TreeItemCollapsibleState.Collapsed
 			};
-		} else if (element.type == 'logicDir') {
+		} else if (element.type == 'logicalDirectory') {
 			return {
 				label: element.name,
-				contextValue: 'directory',
+				contextValue: 'logicalDirectory',
 				collapsibleState: vscode.TreeItemCollapsibleState.Collapsed
 			};
 		/* } else if ('name' in element && !('directorys' in element)) {
@@ -178,7 +178,7 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 	getChildren(element?: any): Thenable<any[]> {
 		if (!element) {
 			return Promise.resolve(this.projectsData.filter((project: any) => this.activeProjectsNames.includes(project.name)));
-		} else if (element.type === 'project' || element.type === 'logicDir') {
+		} else if (element.type === 'project' || element.type === 'logicalDirectory') {
             return Promise.resolve(element.items);
 		} else {
 			return Promise.resolve([]);
