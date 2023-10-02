@@ -70,7 +70,7 @@ export function activate(context: vscode.ExtensionContext) {
 				vscode.window.showInformationMessage('No input provided');	
 		}),
 
-		vscode.commands.registerCommand('projectViewer.deleteFolderWithFiles', (directory: projects.Directory) => {
+		vscode.commands.registerCommand('projectViewer.deleteFolderWithFiles', (directory: projects.LogicalDirectory) => {
 			myProjects.deleteFolderWithFiles(directory);
 			activeProjectsProvider.refresh();
 		}),

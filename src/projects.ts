@@ -32,7 +32,7 @@ type Item = {
 
 // type Project = Item;
 interface Project extends Item {}
-interface LogicalDirectory extends Item {}
+export interface LogicalDirectory extends Item {}
 
 export class MyProjects {
 
@@ -119,12 +119,33 @@ export class MyProjects {
 		}
 	}
 
-	deleteFolderWithFiles(removedDirectory: Directory): void {
-		// const actProj = this.jsonData.projects.find(project => project.directorys.find(directory => directory === removedDirectory));
-
-		// delete actProj?.directorys[actProj.directorys.findIndex(directory => directory === removedDirectory)]
-		// fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
+	deleteFolderWithFiles(removedDirectory: LogicalDirectory): void {
+		this.jsonData.projects.forEach(element => {
+			if(this.removeLogicalDirectoryByName(element, removedDirectory)) {
+				fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
+				return;
+			}
+		});
 	}
+
+	removeLogicalDirectoryByName(obj: any, removedDirectory: LogicalDirectory): boolean {
+		if (!obj || typeof obj !== 'object')
+			return false;
+	
+		if (Array.isArray(obj.items)) {
+			for (let i = 0; i < obj.items.length; i++) {
+				if (obj.items[i] === removedDirectory) {
+					obj.items.splice(i, 1);
+					return true;
+				}
+	
+				if (this.removeLogicalDirectoryByName(obj.items[i], removedDirectory))
+					return true;
+			}
+		}
+	
+		return false;
+	}	
 
 	addFileToProject(projectName: string, directory: string, absPath: string, fileName: string): void {
 		// if(this.projectContainsTheFile(projectName, directory, absPath, fileName))
