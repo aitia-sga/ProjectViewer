@@ -104,8 +104,12 @@ export class MyProjects {
 		}
 	}
 
-	deleteFolderWithFiles(directory: Directory): void {
-		// directory.name
+	deleteFolderWithFiles(removedDirectory: Directory): void {
+		const actProj = this.jsonData.projects.find(project => project.directorys.find(directory => directory === removedDirectory));
+		const actDir = actProj?.directorys.find(directory => directory === removedDirectory);
+
+		delete actProj?.directorys[actProj.directorys.findIndex(directory => directory === removedDirectory)]
+		fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
 	}
 
 	addFileToProject(projectName: string, directory: string, absPath: string, fileName: string): void {
@@ -144,7 +148,6 @@ export class MyProjects {
 			fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
 			// vscode.window.showInformationMessage(`Removing ${removedFile.fileName} from project`);
 		}
-
 	}
 }
 

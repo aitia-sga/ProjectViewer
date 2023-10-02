@@ -70,11 +70,9 @@ export function activate(context: vscode.ExtensionContext) {
 				vscode.window.showInformationMessage('No input provided');	
 		}),
 
-		vscode.commands.registerCommand('projectViewer.deleteFolderWithFiles', (dir: projects.Directory, proj: projects.Project) => {
-			const actProj = myProjects.getProjects().find(project => project.directorys.find(directory => directory === dir));
-			const actDir = actProj?.directorys.find(directory => directory === dir);
-
-			console.log(`Act dir: ${actDir?.name}`);
+		vscode.commands.registerCommand('projectViewer.deleteFolderWithFiles', (directory: projects.Directory) => {
+			myProjects.deleteFolderWithFiles(directory);
+			activeProjectsProvider.refresh();
 		}),
 
 		vscode.commands.registerCommand('projectViewer.addToProject', async (fileUri: vscode.Uri) => {
