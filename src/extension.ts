@@ -144,26 +144,26 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 	}
 
 	getTreeItem(element: any): vscode.TreeItem {
-		if ('directorys' in element) {
+		if (element.type == 'project') {
 			return {
 				label: element.name,
 				contextValue: 'activeProject',
 				collapsibleState: vscode.TreeItemCollapsibleState.Collapsed
 			};
-		} else if ('files' in element) {
+		} else if (element.type == 'logicDir') {
 			return {
 				label: element.name,
 				contextValue: 'directory',
 				collapsibleState: vscode.TreeItemCollapsibleState.Collapsed
 			};
-		} else if ('name' in element && !('directorys' in element)) {
+		/* } else if ('name' in element && !('directorys' in element)) {
 			return {
 				label: element.name,
 				collapsibleState: vscode.TreeItemCollapsibleState.None
-			};
-		} else {
+			}; */
+		} else /*if(element == 'file')*/ {
 			return {
-				label: element.fileName,
+				label: element.name,
 				collapsibleState: vscode.TreeItemCollapsibleState.None,
 				contextValue: 'file',
 				command: {
@@ -178,10 +178,8 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 	getChildren(element?: any): Thenable<any[]> {
 		if (!element) {
 			return Promise.resolve(this.projectsData.filter((project: any) => this.activeProjectsNames.includes(project.name)));
-		} else if ('directorys' in element) {
-			return Promise.resolve(element.directorys);
-		} else if ('files' in element) {
-			return Promise.resolve(element.files);
+		} else if (element.type === 'project' || element.type === 'logicDir') {
+            return Promise.resolve(element.items);
 		} else {
 			return Promise.resolve([]);
 		}
