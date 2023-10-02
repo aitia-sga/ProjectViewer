@@ -71,7 +71,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}),
 
 		vscode.commands.registerCommand('projectViewer.deleteFolderWithFiles', (directory: projects.LogicalDirectory) => {
-			myProjects.deleteFolderWithFiles(directory);
+			myProjects.removeObjectFromProject(directory);
 			activeProjectsProvider.refresh();
 		}),
 
@@ -101,7 +101,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}),
 
 		vscode.commands.registerCommand('projectViewer.removeFromProject', async (removedFile: projects.File) => {
-			myProjects.removeFileFromProject(removedFile);
+			myProjects.removeObjectFromProject(removedFile);
 			activeProjectsProvider.refresh();
 		})
 	);
