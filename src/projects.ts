@@ -8,12 +8,12 @@ export type File = {
 	logicalPath: string;
 };
 
-type Directory = {
+export type Directory = {
 	name: string;
 	files: File[];
 };
 
-type Project = {
+export type Project = {
 	name: string;
 	directorys: Directory[];
 };
@@ -88,7 +88,7 @@ export class MyProjects {
 		return this.jsonData.projects.includes(proj);
 	}
 
-	createNewFolder (proj: Project, newDirectory: string):void  {
+	createNewFolder(proj: Project, newDirectory: string):void  {
 
 		if(this.directoryExists(proj, newDirectory)) 
 			vscode.window.showInformationMessage(`Directory ${newDirectory} already exists!`);
@@ -102,6 +102,10 @@ export class MyProjects {
 			proj.directorys.push(newDir);
 			fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
 		}
+	}
+
+	deleteFolderWithFiles(directory: Directory): void {
+		// directory.name
 	}
 
 	addFileToProject(projectName: string, directory: string, absPath: string, fileName: string): void {
