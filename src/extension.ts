@@ -77,27 +77,27 @@ export function activate(context: vscode.ExtensionContext) {
 
 		vscode.commands.registerCommand('projectViewer.addToProject', async (fileUri: vscode.Uri) => {
 
-			let selectedProject;
+			// let selectedProject;
 
-			if (!fileUri)  { vscode.window.showErrorMessage('fileUri is empty!'); return; }
+			// if (!fileUri)  { vscode.window.showErrorMessage('fileUri is empty!'); return; }
 			
-			const projectNames = myProjects.getProjects().map(project => project.name);
-			const selectedProjectName = await vscode.window.showQuickPick(projectNames, {placeHolder: 'Please select the project!'});
+			// const projectNames = myProjects.getProjects().map(project => project.name);
+			// const selectedProjectName = await vscode.window.showQuickPick(projectNames, {placeHolder: 'Please select the project!'});
 			
-			if (selectedProjectName) {
-				selectedProject = myProjects.getProjects().find(project => project.name === selectedProjectName);
-				if (!selectedProject) { vscode.window.showErrorMessage('The selected project cannot be found!'); return; }
+			// if (selectedProjectName) {
+			// 	selectedProject = myProjects.getProjects().find(project => project.name === selectedProjectName);
+			// 	if (!selectedProject) { vscode.window.showErrorMessage('The selected project cannot be found!'); return; }
 				
 				
-			} else return;
+			// } else return;
 			
-			const directoryNames = selectedProject.directorys.map(directory => directory.name);
-			const selectedDirectoryName = await vscode.window.showQuickPick(directoryNames, {placeHolder: 'Please select the directory!'});
+			// const directoryNames = selectedProject.directorys.map(directory => directory.name);
+			// const selectedDirectoryName = await vscode.window.showQuickPick(directoryNames, {placeHolder: 'Please select the directory!'});
 			
-			if (!selectedDirectoryName) return;
+			// if (!selectedDirectoryName) return;
 
-			myProjects.addFileToProject(selectedProjectName, selectedDirectoryName, fileUri.fsPath, path.basename(fileUri.fsPath));
-			activeProjectsProvider.refresh();
+			// myProjects.addFileToProject(selectedProjectName, selectedDirectoryName, fileUri.fsPath, path.basename(fileUri.fsPath));
+			// activeProjectsProvider.refresh();
 		}),
 
 		vscode.commands.registerCommand('projectViewer.removeFromProject', async (removedFile: projects.File) => {
