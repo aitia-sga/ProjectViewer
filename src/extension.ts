@@ -144,16 +144,10 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 	}
 
 	getTreeItem(element: any): vscode.TreeItem {
-		if (element.type == 'project') {
+		if (element.type == 'project' || element.type == 'logicalDirectory') {
 			return {
 				label: element.name,
-				contextValue: 'activeProject',
-				collapsibleState: vscode.TreeItemCollapsibleState.Collapsed
-			};
-		} else if (element.type == 'logicalDirectory') {
-			return {
-				label: element.name,
-				contextValue: 'logicalDirectory',
+				contextValue: element.type,
 				collapsibleState: vscode.TreeItemCollapsibleState.Collapsed
 			};
 		/* } else if ('name' in element && !('directorys' in element)) {

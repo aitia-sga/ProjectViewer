@@ -37,17 +37,17 @@
 			"view/item/context": [
 				{
 					"command": "projectViewer.addProjectToActive",
-					"when": "viewItem == project",
+					"when": "view == projectsView && viewItem == project",
 					"group": "0_project@name"
 				},
 				{
 					"command": "projectViewer.removeProjectFromActive",
-					"when": "view == activeProjectsView && viewItem == activeProject",                	
+					"when": "view == activeProjectsView && viewItem == project",                	
 					"group": "0_project@name"
 				},
 				{
 					"command": "projectViewer.createNewFolder",
-					"when": "view == activeProjectsView && (viewItem == activeProject || viewItem == logicalDirectory)",                	
+					"when": "view == activeProjectsView && (viewItem == project || viewItem == logicalDirectory)",                	
 					"group": "0_project@name"
 				},
 				{
