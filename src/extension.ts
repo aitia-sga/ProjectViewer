@@ -102,10 +102,10 @@ function showItemPicker(items: projects.Item[], isRoot = true): Promise<projects
 		const quickPick = vscode.window.createQuickPick<MyQuickPickItem>();
 		
 		quickPick.items = isRoot 
-			? items.map(item => ({ label: item.name, item })).filter(item => item.item.type === 'logicalDirectory' || 'project')
+			? items.map(item => ({ label: item.name, item })).filter(item => item.item.type === 'logicalDirectory' || item.item.type === 'project')
 			: [
 				{ label: `Select current directory`, item: { name: 'Current', type: 'current', items: [] } },
-				...items.map(item => ({ label: item.name, item }))
+				...items.map(item => ({ label: item.name, item })).filter(item => item.item.type === 'logicalDirectory' || item.item.type === 'project')
 			  ];
 
 		quickPick.onDidAccept(() => {
