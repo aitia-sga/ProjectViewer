@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as projects from './projects';
+import { ExecException } from 'child_process';
 
 export function activate(context: vscode.ExtensionContext) {
 	const myProjects = new projects.MyProjects(path.join(context.extensionPath, 'projects.json'));
@@ -161,24 +162,75 @@ interface MyQuickPickItem extends vscode.QuickPickItem {
 //     quickPick.show();
 // }
 
-async function showFolderPicker(currentPath: string) {
+// function showFolderPicker(currentPath: string) {
+//     const quickPick = vscode.window.createQuickPick<MyQuickPickItem>();
+//     quickPick.placeholder = 'Select a folder...';
+
+//     try {
+//         const files = fs.readdirSync(currentPath);
+//         quickPick.items = files.map(file => ({
+//             label: file,
+//             fullPath: path.join(currentPath, file)
+//         }));
+//     } catch (error: any) {
+//         vscode.window.showErrorMessage(`Error reading directory: ${error.message}`);
+//         quickPick.hide();
+//         return;
+//     }
+
+//     quickPick.onDidAccept(() => {
+//         const selectedPath = quickPick.selectedItems[0].fullPath;
+//         try {
+//             if (fs.statSync(selectedPath).isDirectory()) {
+//                 quickPick.hide();  // bezárjuk az előző QuickPick-et
+//                 showFolderPicker(selectedPath);  // és megnyitjuk az újat
+//             } else {
+//                 quickPick.hide();
+//             }
+//         } catch (error: any) {
+//             vscode.window.showErrorMessage(`Error selecting item: ${error.message}`);
+//             quickPick.hide();
+//         }
+//     });
+
+//     quickPick.onDidHide(() => quickPick.dispose());
+//     quickPick.show();
+// }
+
+
+function showFolderPicker(currentPath: string) {
     const quickPick = vscode.window.createQuickPick<MyQuickPickItem>();
     quickPick.placeholder = 'Select a folder...';
-    
-    // Fájlok és mappák beolvasása a jelenlegi útvonalról
-    const files = fs.readdirSync(currentPath);
-    quickPick.items = files.map(file => ({ 
-        label: file, 
-        fullPath: path.join(currentPath, file) 
-    }));
+
+    try {
+        const files = fs.readdirSync(currentPath);
+        quickPick.items = [
+            { label: `Select: ${currentPath}`, fullPath: currentPath },  // The special item
+            ...files.map(file => ({
+                label: file,
+                fullPath: path.join(currentPath, file)
+            })).filter(item => fs.statSync(item.fullPath).isDirectory())
+        ];
+    } catch (error: any) {
+        vscode.window.showErrorMessage(`Error reading directory: ${error.message}`);
+        quickPick.hide();
+        return;
+    }
 
     quickPick.onDidAccept(() => {
         const selectedPath = quickPick.selectedItems[0].fullPath;
-        if (fs.statSync(selectedPath).isDirectory()) {
-            // Ha mappa lett kiválasztva, megnyitjuk a mappa tartalmát
-            showFolderPicker(selectedPath);
-        } else {
-            // Ha fájl lett kiválasztva, bezárjuk a QuickPick-ot
+        try {
+            if (fs.statSync(selectedPath).isDirectory()) {
+                if (selectedPath === currentPath) {  // The special item is selected
+                    vscode.window.showInformationMessage(`Selected Path: ${currentPath}`);
+                    quickPick.hide();
+                } else {
+                    quickPick.hide();  
+                    showFolderPicker(selectedPath);  // Show the next level
+                }
+            }
+        } catch (error: any) {
+            vscode.window.showErrorMessage(`Error selecting item: ${error.message}`);
             quickPick.hide();
         }
     });
@@ -186,6 +238,45 @@ async function showFolderPicker(currentPath: string) {
     quickPick.onDidHide(() => quickPick.dispose());
     quickPick.show();
 }
+
+
+// async function showFolderPicker(currentPath: string) {
+//     const quickPick = vscode.window.createQuickPick<MyQuickPickItem>();
+//     quickPick.placeholder = 'Select a folder...';
+    
+//     // Aszinkron beolvasás és elemek létrehozása
+//     try {
+//         const files = await fs.readdir(currentPath);
+//         quickPick.items = files.map(file => ({ 
+//             label: file, 
+//             fullPath: path.join(currentPath, file) 
+//         }));
+//     } catch (error) {
+//         vscode.window.showErrorMessage(`Error reading directory: ${error.message}`);
+//         quickPick.hide();
+//         return;
+//     }
+
+//     quickPick.onDidAccept(async () => {
+//         const selectedPath = quickPick.selectedItems[0].fullPath;
+//         try {
+//             // Ellenőrizzük, hogy a kiválasztott elem mappa-e
+//             if ((await fs.stat(selectedPath)).isDirectory()) {
+//                 // Mappa tartalmának betöltése
+//                 showFolderPicker(selectedPath);
+//             } else {
+//                 // Ha fájl lett kiválasztva, bezárjuk a QuickPick-et
+//                 quickPick.hide();
+//             }
+//         } catch (error) {
+//             vscode.window.showErrorMessage(`Error selecting item: ${error.message}`);
+//             quickPick.hide();
+//         }
+//     });
+
+//     quickPick.onDidHide(() => quickPick.dispose());
+//     quickPick.show();
+// }
 
 class ProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 	private _onDidChangeTreeData: vscode.EventEmitter<any> = new vscode.EventEmitter<any>();
