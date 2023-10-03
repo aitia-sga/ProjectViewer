@@ -113,13 +113,22 @@ export function activate(context: vscode.ExtensionContext) {
 			// 		vscode.window.showInformationMessage(`Selected: ${selectedItem.name}`);
 			// 	}
 			// });
+			
+			if (!fileUri)  { vscode.window.showErrorMessage('fileUri is empty!'); return; }
 
 			showItemPicker(myProjects.getProjects()).then(selectedItem => {
 				if (selectedItem) {
 					vscode.window.showInformationMessage(`Selected: ${selectedItem.name}`);
+					const newFile: projects.File = {
+						name: path.basename(fileUri.fsPath),
+						type: "file",
+						items: [],
+						absolutPath: fileUri.fsPath
+					};
+
+					selectedItem.items.push(newFile); activeProjectsProvider.refresh();
 				}
 			});
-
 		}),
 
 		vscode.commands.registerCommand('projectViewer.removeFromProject', async (removedFile: projects.File) => {
