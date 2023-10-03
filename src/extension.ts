@@ -98,6 +98,8 @@ export function activate(context: vscode.ExtensionContext) {
 
 			// myProjects.addFileToProject(selectedProjectName, selectedDirectoryName, fileUri.fsPath, path.basename(fileUri.fsPath));
 			// activeProjectsProvider.refresh();
+			// showQuickPick();
+			showFolderPicker("/");
 		}),
 
 		vscode.commands.registerCommand('projectViewer.removeFromProject', async (removedFile: projects.File) => {
@@ -105,6 +107,84 @@ export function activate(context: vscode.ExtensionContext) {
 			activeProjectsProvider.refresh();
 		})
 	);
+}
+
+// async function showQuickPick() {
+//     const workspaceFolders = vscode.workspace.workspaceFolders;
+//     if (!workspaceFolders) {
+//         vscode.window.showInformationMessage('Nincsenek munkaterület mappák betöltve.');
+//         return;
+//     }
+
+//     const quickPick = vscode.window.createQuickPick();
+//     quickPick.items = workspaceFolders.map(folder => ({ label: folder.name, folder: folder }));
+
+//     quickPick.onDidChangeSelection(selection => {
+//         if (selection.length > 0) {
+//             vscode.window.showInformationMessage(`Kiválasztva: ${selection[0].label}`);
+//             // Itt megnyithatod a kiválasztott mappát vagy futtathatsz egyéb műveleteket
+//         }
+//     });
+
+//     quickPick.onDidHide(() => quickPick.dispose());
+//     quickPick.show();
+// }
+
+interface MyQuickPickItem extends vscode.QuickPickItem {
+    fullPath: string;
+}
+// async function showQuickPick(folderPath: string = "/"): Promise<void> {
+//     const quickPick = vscode.window.createQuickPick();
+//     quickPick.placeholder = "Válassz egy mappát...";
+
+//     // Mappák és fájlok listázása az adott mappában
+//     fs.readdir(folderPath, { withFileTypes: true }, (err, items) => {
+//         if (err) {
+//             vscode.window.showErrorMessage("Hiba az almappák betöltése közben");
+//             return;
+//         }
+
+//         quickPick.items = items.filter(item => item.isDirectory())
+//             .map(dir => ({ label: dir.name, fullPath: path.join(folderPath, dir.name) }));
+//     });
+
+//     // Eseménykezelő a mappa választáshoz
+//     quickPick.onDidChangeSelection(selection: MyQuickPickItem => {
+//         if (selection.length > 0) {
+//             const selectedFolderPath = selection[0].fullPath;
+//             quickPick.dispose();  // Bezárjuk az aktuális QuickPick ablakot
+//             showQuickPick(selectedFolderPath);  // Megjelenítjük az új mappában
+//         }
+//     });
+
+//     quickPick.onDidHide(() => quickPick.dispose());
+//     quickPick.show();
+// }
+
+async function showFolderPicker(currentPath: string) {
+    const quickPick = vscode.window.createQuickPick<MyQuickPickItem>();
+    quickPick.placeholder = 'Select a folder...';
+    
+    // Fájlok és mappák beolvasása a jelenlegi útvonalról
+    const files = fs.readdirSync(currentPath);
+    quickPick.items = files.map(file => ({ 
+        label: file, 
+        fullPath: path.join(currentPath, file) 
+    }));
+
+    quickPick.onDidAccept(() => {
+        const selectedPath = quickPick.selectedItems[0].fullPath;
+        if (fs.statSync(selectedPath).isDirectory()) {
+            // Ha mappa lett kiválasztva, megnyitjuk a mappa tartalmát
+            showFolderPicker(selectedPath);
+        } else {
+            // Ha fájl lett kiválasztva, bezárjuk a QuickPick-ot
+            quickPick.hide();
+        }
+    });
+
+    quickPick.onDidHide(() => quickPick.dispose());
+    quickPick.show();
 }
 
 class ProjectsTreeProvider implements vscode.TreeDataProvider<any> {
