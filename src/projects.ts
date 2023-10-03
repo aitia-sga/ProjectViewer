@@ -24,7 +24,7 @@ type ProjectsJSON = {
 };
 
 
-type Item = {
+export type Item = {
 	name: string;
 	type: string;
 	items: Item[];
