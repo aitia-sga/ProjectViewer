@@ -84,15 +84,8 @@ export function activate(context: vscode.ExtensionContext) {
 
 			showItemPicker(myProjects.getProjects()).then(selectedItem => {
 				if (selectedItem) {
-					vscode.window.showInformationMessage(`Selected: ${selectedItem.name}`);
-					const newFile: projects.File = {
-						name: path.basename(fileUri.fsPath),
-						type: "file",
-						items: [],
-						absolutPath: fileUri.fsPath
-					};
-
-					selectedItem.items.push(newFile); activeProjectsProvider.refresh();
+					myProjects.addFileToProject(selectedItem, fileUri)
+					activeProjectsProvider.refresh();
 				}
 			});
 		}),

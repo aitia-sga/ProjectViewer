@@ -1,7 +1,7 @@
 
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import { type } from 'os';
+import * as path from 'path';
 
 // export type File = {
 // 	fileName: string;
@@ -60,27 +60,8 @@ export class MyProjects {
 		return actItem.items.some(directory => directory.name === newDirectory);
 	}
 
-	projectContainsTheFile(projectName: string, directory: string, absPath: string, fileName: string): boolean {
-
-		//TODO: mock 
-		return false;
-
-		// const proj: Project | undefined = this.jsonData.projects.find(project => project.name === projectName);
-
-		// if(!proj) { console.error(`Cannot find ${projectName} project!`); return true; }
-
-		// const dir: Directory | undefined = proj.directorys.find(item => item.name === directory);
-
-		// if(!dir) { console.error(`Cannot find ${directory} directory!`); return true; }
-
-		// return dir.files.some(file => file.fileName === fileName && file.absolutPath === absPath);
-
-
-		//TODO: Other file with each relativ path. Swap?
-		// if(dir.files.some(file => file.absolutPath === absPath))
-		// 	return true;
-
-		// return true;
+	projectContainsTheFile(locicalDirectory: Item, newFile: File): boolean {
+		return locicalDirectory.items.some(file => (file as File).absolutPath === newFile.absolutPath);
 	}
 
 	createNewProject(projectName: string): void {
@@ -148,23 +129,19 @@ export class MyProjects {
 		return false;
 	}	
 
-	addFileToProject(projectName: string, directory: string, absPath: string, fileName: string): void {
-		// if(this.projectContainsTheFile(projectName, directory, absPath, fileName))
-		// 	vscode.window.showInformationMessage(`The given directory already contains this file!`);
-		// else
-		// {
-		// 	const newFile: File = {
-		// 		fileName: fileName,
-		// 		absolutPath: absPath,
-		// 		logicalPath: projectName + "/" + directory
-		// 	};
+	addFileToProject(locicalDirectory: Item, fileUri: vscode.Uri): void {
+		const newFile: File = {
+			name: path.basename(fileUri.fsPath),
+			type: "file",
+			items: [],
+			absolutPath: fileUri.fsPath
+		};
 
-		// 	this.jsonData.projects.find(project => project.name === projectName)
-		// 	?.directorys.find(item => item.name === directory)?.files.push(newFile);
-
-		// 	fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
-		// 	// vscode.window.showInformationMessage(`Adding ${fileName} to project`);
-		// }
+		if(this.projectContainsTheFile(locicalDirectory, newFile)) {
+			vscode.window.showInformationMessage(`Directory already contains the ${newFile.name} file!`);
+		} else {
+			locicalDirectory.items.push(newFile);
+			fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
+		}
 	}
 }
-
