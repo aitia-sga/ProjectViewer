@@ -243,13 +243,16 @@ interface MyQuickPickItem extends vscode.QuickPickItem {
     item: projects.Item;
 }
 
-function showItemPicker(items: projects.Item[]): Promise<projects.Item | undefined> {
+function showItemPicker(items: projects.Item[], isRoot = true): Promise<projects.Item | undefined> {
     return new Promise((resolve, reject) => {
         const quickPick = vscode.window.createQuickPick<MyQuickPickItem>();
-        quickPick.items = [
-            { label: `Select current directory`, item: { name: 'Current', type: 'current', items: [] } },
-            ...items.map(item => ({ label: item.name, item }))
-        ];
+        
+        quickPick.items = isRoot 
+            ? items.map(item => ({ label: item.name, item }))
+            : [
+                { label: `Select current directory`, item: { name: 'Current', type: 'current', items: [] } },
+                ...items.map(item => ({ label: item.name, item }))
+              ];
 
         quickPick.onDidAccept(() => {
             const selectedItem = quickPick.selectedItems[0].item;
@@ -258,8 +261,7 @@ function showItemPicker(items: projects.Item[]): Promise<projects.Item | undefin
             if (selectedItem.type === 'current') {
                 resolve(undefined);
             } else if (selectedItem.items.length > 0) {
-                // Recursively show next level
-                showItemPicker(selectedItem.items).then(nextSelectedItem => {
+                showItemPicker(selectedItem.items, false).then(nextSelectedItem => {
                     if (nextSelectedItem) {
                         resolve(nextSelectedItem);
                     } else {
