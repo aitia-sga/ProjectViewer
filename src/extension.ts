@@ -205,7 +205,7 @@ function showFolderPicker(currentPath: string) {
     try {
         const files = fs.readdirSync(currentPath);
         quickPick.items = [
-            { label: `Select: ${currentPath}`, fullPath: currentPath },  // The special item
+            { label: `Select current directory`, fullPath: currentPath },
             ...files.map(file => ({
                 label: file,
                 fullPath: path.join(currentPath, file)
@@ -221,12 +221,12 @@ function showFolderPicker(currentPath: string) {
         const selectedPath = quickPick.selectedItems[0].fullPath;
         try {
             if (fs.statSync(selectedPath).isDirectory()) {
-                if (selectedPath === currentPath) {  // The special item is selected
+                if (selectedPath === currentPath) {
                     vscode.window.showInformationMessage(`Selected Path: ${currentPath}`);
                     quickPick.hide();
                 } else {
                     quickPick.hide();  
-                    showFolderPicker(selectedPath);  // Show the next level
+                    showFolderPicker(selectedPath);
                 }
             }
         } catch (error: any) {
