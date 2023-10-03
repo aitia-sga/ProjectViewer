@@ -31,7 +31,7 @@ export type Item = {
 };
 
 // type Project = Item;
-interface Project extends Item {}
+export interface Project extends Item {}
 export interface LogicalDirectory extends Item {}
 export interface File extends Item { absolutPath: string; }
 

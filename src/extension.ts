@@ -108,7 +108,13 @@ export function activate(context: vscode.ExtensionContext) {
 			// 	vscode.window.showInformationMessage(`Selected Path: ${selectedProject.name}`);
 			// }
 
-			showItemPicker(myProjects.getProjects()[0]).then(selectedItem => {
+			// showItemPicker(myProjects.getProjects()[0]).then(selectedItem => {
+			// 	if (selectedItem) {
+			// 		vscode.window.showInformationMessage(`Selected: ${selectedItem.name}`);
+			// 	}
+			// });
+
+			showItemPicker(myProjects.getProjects()).then(selectedItem => {
 				if (selectedItem) {
 					vscode.window.showInformationMessage(`Selected: ${selectedItem.name}`);
 				}
@@ -123,9 +129,9 @@ export function activate(context: vscode.ExtensionContext) {
 	);
 }
 
-interface MyQuickPickItem extends vscode.QuickPickItem {
-    fullPath: string;
-}
+// interface MyQuickPickItem extends vscode.QuickPickItem {
+//     fullPath: string;
+// }
 
 // function showFolderPicker(currentPath: string) {
 //     const quickPick = vscode.window.createQuickPick<MyQuickPickItem>();
@@ -198,40 +204,77 @@ interface MyQuickPickItem extends vscode.QuickPickItem {
 // }
 
 
-async function showItemPicker(currentItem: projects.Item): Promise<projects.Item | undefined> {
-    const quickPick = vscode.window.createQuickPick<{ label: string; item?: projects.Item }>();
-    quickPick.items = [
-        { label: 'Select current directory' },
-        ...currentItem.items.map(item => ({ label: item.name, item }))
-    ];
-    quickPick.show();
+// async function showItemPicker(currentItem: projects.Item): Promise<projects.Item | undefined> {
+//     const quickPick = vscode.window.createQuickPick<{ label: string; item?: projects.Item }>();
+//     quickPick.items = [
+//         { label: 'Select current directory' },
+//         ...currentItem.items.map(item => ({ label: item.name, item }))
+//     ];
+//     quickPick.show();
 
-    return new Promise(resolve => {
+//     return new Promise(resolve => {
+//         quickPick.onDidAccept(() => {
+//             const selectedItem = quickPick.selectedItems[0]?.item;
+//             quickPick.hide();
+
+//             if (!selectedItem) {
+//                 resolve(currentItem);
+//                 return;
+//             }
+
+//             if (selectedItem?.items && selectedItem.items.length > 0) {
+//                 showItemPicker(selectedItem).then(subItem => {
+//                     resolve(subItem);
+//                 });
+//             } else {
+//                 resolve(selectedItem);
+//             }
+//         });
+
+//         quickPick.onDidHide(() => {
+//             resolve(undefined);
+//             quickPick.dispose();
+//         });
+//     });
+// }
+
+
+interface MyQuickPickItem extends vscode.QuickPickItem {
+    item: projects.Item;
+}
+
+function showItemPicker(items: projects.Item[]): Promise<projects.Item | undefined> {
+    return new Promise((resolve, reject) => {
+        const quickPick = vscode.window.createQuickPick<MyQuickPickItem>();
+        quickPick.items = [
+            { label: `Select current directory`, item: { name: 'Current', type: 'current', items: [] } },
+            ...items.map(item => ({ label: item.name, item }))
+        ];
+
         quickPick.onDidAccept(() => {
-            const selectedItem = quickPick.selectedItems[0]?.item;
+            const selectedItem = quickPick.selectedItems[0].item;
             quickPick.hide();
 
-            if (!selectedItem) {
-                resolve(currentItem);
-                return;
-            }
-
-            if (selectedItem?.items && selectedItem.items.length > 0) {
-                showItemPicker(selectedItem).then(subItem => {
-                    resolve(subItem);
+            if (selectedItem.type === 'current') {
+                resolve(undefined);
+            } else if (selectedItem.items.length > 0) {
+                // Recursively show next level
+                showItemPicker(selectedItem.items).then(nextSelectedItem => {
+                    if (nextSelectedItem) {
+                        resolve(nextSelectedItem);
+                    } else {
+                        resolve(selectedItem);
+                    }
                 });
             } else {
                 resolve(selectedItem);
             }
         });
 
-        quickPick.onDidHide(() => {
-            resolve(undefined);
-            quickPick.dispose();
-        });
+        quickPick.onDidHide(() => quickPick.dispose());
+        quickPick.show();
     });
 }
-
 
 
 class ProjectsTreeProvider implements vscode.TreeDataProvider<any> {
