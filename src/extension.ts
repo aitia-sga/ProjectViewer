@@ -198,15 +198,26 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 
 	getTreeItem(element: any): vscode.TreeItem {
 		if (element.type == 'project' || element.type == 'logicalDirectory') {
-			return {
-				label: element.name,
-				contextValue: element.type,
-				collapsibleState: vscode.TreeItemCollapsibleState.Collapsed
-			};
+			let treeItem = new vscode.TreeItem(element.name);
+			treeItem.label = element.name;
+			treeItem.contextValue = element.type;
+			treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+			if (element.type === 'logicalDirectory') {
+				treeItem.iconPath = new vscode.ThemeIcon('folder-active');
+				treeItem.tooltip = `${element.name} (Logical Directory)`;
+				treeItem.description = '(Logical Directory)';
+			}
+			else
+				treeItem.iconPath = new vscode.ThemeIcon('project');
+				// treeItem.iconPath = new vscode.ThemeIcon('organization');
+
+			return treeItem;
 		} else if (element.type === 'physicalDirectory') {
 			return {
 				label: element.name,
+				tooltip: element.absolutPath,
 				contextValue: 'physicalDirectory',
+				iconPath: new vscode.ThemeIcon('folder'),
             	collapsibleState: vscode.TreeItemCollapsibleState.Collapsed
 			};
 		} else /*if(element == 'file')*/ {
@@ -214,6 +225,8 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 				label: element.name,
 				collapsibleState: vscode.TreeItemCollapsibleState.None,
 				contextValue: 'file',
+				iconPath: new vscode.ThemeIcon('file'),
+				tooltip: element.absolutPath,
 				command: {
 					command: 'vscode.open',
 					arguments: [vscode.Uri.file(element.absolutPath)],
