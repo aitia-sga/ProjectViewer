@@ -77,9 +77,6 @@ export function activate(context: vscode.ExtensionContext) {
 					fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4));
 					activeProjectsProvider.refresh();
 				}
-
-				// fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4));
-				// projectsProvider.refresh(); activeProjectsProvider.refresh();
 			}
 		}),
 
