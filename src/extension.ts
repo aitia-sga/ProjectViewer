@@ -87,20 +87,18 @@ export function activate(context: vscode.ExtensionContext) {
 				// const exportedFilePath = "";
 				// fs.writeFileSync(exportedFilePath, JSON.stringify(exportedProject, null, 4));
 
-				const uris = await vscode.window.showOpenDialog({
-					canSelectFiles: false,
-					canSelectFolders: true,
-					canSelectMany: false,
-					openLabel: 'Select Export Folder'
+				const uri = await vscode.window.showSaveDialog({
+					defaultUri: vscode.Uri.file(path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, 'exportedProject.json')),
+					filters: {
+						'JSON': ['json']
+					},
+					saveLabel: 'Export'
 				});
 			
-				// Check if a folder was selected
-				if (uris && uris[0]) {
-					// Construct the path to the export file
-					const exportedFilePath = path.join(uris[0].fsPath, 'exportedProject.json');
-					
+				// Check if a file name and location were selected
+				if (uri) {
 					// Write the export file
-					fs.writeFileSync(exportedFilePath, JSON.stringify(exportedProject, null, 4));
+					fs.writeFileSync(uri.fsPath, JSON.stringify(exportedProject, null, 4));
 					
 					// Optionally inform the user that the export was successful
 					vscode.window.showInformationMessage('Project exported successfully!');
@@ -108,6 +106,7 @@ export function activate(context: vscode.ExtensionContext) {
 					// Optionally inform the user that the export was cancelled
 					vscode.window.showInformationMessage('Project export cancelled.');
 				}
+				
 			}),
 			
 		vscode.commands.registerCommand('projectViewer.createNewFolder', async (project) => {
