@@ -91,7 +91,7 @@ export function activate(context: vscode.ExtensionContext) {
 				});
 			
 				if (uri) {
-					fs.writeFileSync(uri.fsPath, JSON.stringify(exportedProject, null, 4));
+					fs.writeFileSync(uri.fsPath, JSON.stringify(myProjects.getProjects().filter(project => project == exportedProject), null, 4));
 					vscode.window.showInformationMessage('Project exported successfully!');
 				} else
 					vscode.window.showInformationMessage('Project export cancelled.');				
