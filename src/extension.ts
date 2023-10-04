@@ -45,19 +45,43 @@ export function activate(context: vscode.ExtensionContext) {
 				}
 			}
 		}),
+
+		vscode.commands.registerCommand('projectViewer.newProject', async () => {
+			const userInput = await vscode.window.showInputBox({
+				prompt: 'Enter the name of the project',
+				placeHolder: 'Project name'
+			});
+			
+			if (userInput) {
+				myProjects.createNewProject(userInput);
+				projectsProvider.refresh();
+			} else
+				vscode.window.showInformationMessage('No input provided');	
+		}),
 		
-				vscode.commands.registerCommand('projectViewer.newProject', async () => {
-					const userInput = await vscode.window.showInputBox({
-						prompt: 'Enter the name of the project',
-						placeHolder: 'Project name'
-					});
-					
-					if (userInput) {
-						myProjects.createNewProject(userInput);
-						projectsProvider.refresh();
-					} else
-						vscode.window.showInformationMessage('No input provided');	
-				}),
+		vscode.commands.registerCommand('projectViewer.deleteProject', async (deletedProject) => {
+			const result = await vscode.window.showInformationMessage(
+				'Are you sure you want to delete this project?',
+				{ modal: true },
+				'Yes'
+			);
+				
+			if (result === 'Yes') {
+				myProjects.deleteProject(deletedProject);
+				projectsProvider.refresh();
+
+				const projectIndex = activeProjectsData.activeProjects.indexOf(deletedProject.name);
+				if(projectIndex !== -1)
+				{
+					activeProjectsData.activeProjects.splice(projectIndex, 1);
+					fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4));
+					activeProjectsProvider.refresh();
+				}
+
+				// fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4));
+				// projectsProvider.refresh(); activeProjectsProvider.refresh();
+			}
+		}),
 
 		vscode.commands.registerCommand('projectViewer.createNewFolder', async (project) => {
 			if(!myProjects.containsProject) {vscode.window.showErrorMessage('The selected project cannot be found!'); return; }
@@ -180,13 +204,20 @@ function showItemPicker(items: projects.Item[], isRoot = true): Promise<projects
 
 
 class ProjectsTreeProvider implements vscode.TreeDataProvider<any> {
-	private _onDidChangeTreeData: vscode.EventEmitter<any> = new vscode.EventEmitter<any>();
-	readonly onDidChangeTreeData: vscode.Event<any> = this._onDidChangeTreeData.event;
+	// private _onDidChangeTreeData: vscode.EventEmitter<any> = new vscode.EventEmitter<any>();
+	// readonly onDidChangeTreeData: vscode.Event<any> = this._onDidChangeTreeData.event;
 
-	constructor(private projects: any[]) {}
+	private _onDidChangeTreeData: vscode.EventEmitter<any | undefined> = new vscode.EventEmitter<any | undefined>();
+	readonly onDidChangeTreeData: vscode.Event<any | undefined> = this._onDidChangeTreeData.event;
 
-	refresh(): void {
-		this._onDidChangeTreeData.fire(undefined);
+	constructor(private projects: projects.Project[]) {}
+
+	// refresh(): void {
+	// 	this._onDidChangeTreeData.fire(undefined);
+	// }
+
+	refresh(element?: any): void {
+		this._onDidChangeTreeData.fire(element);
 	}
 
 	getTreeItem(element: any): vscode.TreeItem {
@@ -232,8 +263,6 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 		this.watchers.forEach(w => w.close());
 		this.watchers = [];
 	}
-
-
 
 	getTreeItem(element: any): vscode.TreeItem {
 		if (element.type == 'project' || element.type == 'logicalDirectory') {

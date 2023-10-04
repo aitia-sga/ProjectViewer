@@ -51,6 +51,11 @@
 					"group": "0_project@name"
 				},
 				{
+					"command": "projectViewer.deleteProject",
+					"when": "viewItem == project",
+					"group": "0_project@name"
+				},
+				{
 					"command": "projectViewer.deleteFolderWithFiles",
 					"when": "view == activeProjectsView && viewItem == logicalDirectory",                	
 					"group": "0_project@name"
@@ -107,6 +112,10 @@
 					"light": "resources/plus2.png",
 					"dark": "resources/plus2.png"
 				}
+			},
+			{
+				"command": "projectViewer.deleteProject",
+				"title": "Delete project with contents"
 			},
 			{
 				"command": "projectViewer.addToProject",

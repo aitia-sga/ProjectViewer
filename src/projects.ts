@@ -88,6 +88,15 @@ export class MyProjects {
 		}
 	}
 
+	deleteProject(deletedProject: Project): void {
+		const projectIndex = this.jsonData.projects.indexOf(deletedProject);
+		if(projectIndex !== -1)
+		{
+			this.jsonData.projects.splice(projectIndex, 1);
+			fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
+		}
+	}
+
 	containsProject(proj: Project): boolean {
 		return this.jsonData.projects.includes(proj);
 	}
