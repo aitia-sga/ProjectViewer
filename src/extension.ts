@@ -81,9 +81,34 @@ export function activate(context: vscode.ExtensionContext) {
 			}),
 			
 			vscode.commands.registerCommand('projectViewer.exportProject', async (exportedProject) => {
-				const exportedFilePath = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, '.vscode', 'exportedProject.json');
-				fs.writeFileSync(exportedFilePath, JSON.stringify(exportedProject, null, 4));
-		}),
+				// const exportedFilePath = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, '.vscode', 'exportedProject.json');
+				
+				//TODO
+				// const exportedFilePath = "";
+				// fs.writeFileSync(exportedFilePath, JSON.stringify(exportedProject, null, 4));
+
+				const uris = await vscode.window.showOpenDialog({
+					canSelectFiles: false,
+					canSelectFolders: true,
+					canSelectMany: false,
+					openLabel: 'Select Export Folder'
+				});
+			
+				// Check if a folder was selected
+				if (uris && uris[0]) {
+					// Construct the path to the export file
+					const exportedFilePath = path.join(uris[0].fsPath, 'exportedProject.json');
+					
+					// Write the export file
+					fs.writeFileSync(exportedFilePath, JSON.stringify(exportedProject, null, 4));
+					
+					// Optionally inform the user that the export was successful
+					vscode.window.showInformationMessage('Project exported successfully!');
+				} else {
+					// Optionally inform the user that the export was cancelled
+					vscode.window.showInformationMessage('Project export cancelled.');
+				}
+			}),
 			
 		vscode.commands.registerCommand('projectViewer.createNewFolder', async (project) => {
 			if(!myProjects.containsProject) {vscode.window.showErrorMessage('The selected project cannot be found!'); return; }
