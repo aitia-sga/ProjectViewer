@@ -193,6 +193,7 @@ class ProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 		return {
 			label: element.name,
 			contextValue: 'project',
+			iconPath: new vscode.ThemeIcon('project'),
 			collapsibleState: vscode.TreeItemCollapsibleState.None,
 		};
 	}
