@@ -64,6 +64,13 @@ export class MyProjects {
 		return locicalDirectory.items.some(file => (file as File).absolutPath === newFile.absolutPath);
 	}
 
+	renameAvailable(renamedItem: Item, newName: string): boolean {
+		if(renamedItem.type == 'project')
+			return !this.projectExists(newName);
+
+		return true;
+	}
+
 	createNewProject(projectName: string): void {
 		if(this.projectExists(projectName)) 
 			vscode.window.showInformationMessage(`Project ${projectName} already exists!`);
@@ -112,22 +119,27 @@ export class MyProjects {
 
 	removeObject(obj: any, removedObj: any): boolean {
 		if (!obj || typeof obj !== 'object')
-			return false;
+		return false;
 	
-		if (Array.isArray(obj.items)) {
-			for (let i = 0; i < obj.items.length; i++) {
-				if (obj.items[i] === removedObj) {
-					obj.items.splice(i, 1);
-					return true;
-				}
-	
+	if (Array.isArray(obj.items)) {
+		for (let i = 0; i < obj.items.length; i++) {
+			if (obj.items[i] === removedObj) {
+				obj.items.splice(i, 1);
+				return true;
+			}
+			
 				if (this.removeObject(obj.items[i], removedObj))
 					return true;
 			}
 		}
-	
+		
 		return false;
 	}	
+	
+	renamedItem(renamedItem: Item, newName: string): void {
+		renamedItem.name = newName;
+		fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
+	}
 
 	addFileToProject(locicalDirectory: Item, fileUri: vscode.Uri, itemType: string): void {
 		const newFile: File = {

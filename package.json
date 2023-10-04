@@ -56,6 +56,10 @@
 					"group": "0_project@name"
 				},
 				{
+					"command": "projectViewer.rename",
+					"when": "view == activeProjectsView && (viewItem == project || viewItem == logicalDirectory)"
+				},
+				{
 					"command": "projectViewer.removeFromProject",
 					"when": "view == activeProjectsView && viewItem == file",                	
 					"group": "0_project@name"
@@ -91,6 +95,10 @@
 			{
 				"command": "projectViewer.deleteFolderWithFiles",
 				"title": "Delete folder and files "
+			},
+			{
+				"command": "projectViewer.rename",
+				"title": "Rename"
 			},
 			{
 				"command": "projectViewer.newProject",

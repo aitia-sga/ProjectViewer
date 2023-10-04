@@ -45,6 +45,19 @@ export function activate(context: vscode.ExtensionContext) {
 				}
 			}
 		}),
+		
+				vscode.commands.registerCommand('projectViewer.newProject', async () => {
+					const userInput = await vscode.window.showInputBox({
+						prompt: 'Enter the name of the project',
+						placeHolder: 'Project name'
+					});
+					
+					if (userInput) {
+						myProjects.createNewProject(userInput);
+						projectsProvider.refresh();
+					} else
+						vscode.window.showInformationMessage('No input provided');	
+				}),
 
 		vscode.commands.registerCommand('projectViewer.createNewFolder', async (project) => {
 			if(!myProjects.containsProject) {vscode.window.showErrorMessage('The selected project cannot be found!'); return; }
@@ -61,22 +74,47 @@ export function activate(context: vscode.ExtensionContext) {
 				vscode.window.showInformationMessage('No input provided');	
 		}),
 
-		vscode.commands.registerCommand('projectViewer.newProject', async () => {
-			const userInput = await vscode.window.showInputBox({
-				prompt: 'Enter the name of the project',
-				placeHolder: 'Project name'
-			});
-			
-			if (userInput) {
-				myProjects.createNewProject(userInput);
-				projectsProvider.refresh();
-			} else
-				vscode.window.showInformationMessage('No input provided');	
-		}),
-
 		vscode.commands.registerCommand('projectViewer.deleteFolderWithFiles', (directory: projects.LogicalDirectory) => {
 			myProjects.removeObjectFromProject(directory);
 			activeProjectsProvider.refresh();
+		}),
+
+		vscode.commands.registerCommand('projectViewer.rename', async (item: projects.Item) => {
+			const options: vscode.InputBoxOptions = {
+				prompt: "Enter the new name",
+				value: item.name
+			};
+
+			let newName = await vscode.window.showInputBox(options);
+
+			if(newName && newName !== item.name) {
+				if(!myProjects.renameAvailable(item, newName)) {
+					vscode.window.showInformationMessage(`${newName} project is already exists!`);
+					return;
+				}
+
+				myProjects.renamedItem(item, newName);
+				
+				if(item.type === 'project') {
+					if(activeProjectsData.activeProjects.includes(item.name)) {
+						const projectIndex = activeProjectsData.activeProjects.indexOf(item.name);
+						if(projectIndex !== -1)
+						{
+							activeProjectsData.activeProjects.splice(projectIndex, 1);
+							fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4));
+						}
+					}
+
+					if(!activeProjectsData.activeProjects.includes(newName)) {
+						activeProjectsData.activeProjects.push(newName);
+						fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4));
+					}
+					
+					projectsProvider.refresh();
+				}
+
+				activeProjectsProvider.refresh();
+			}
 		}),
 
 		vscode.commands.registerCommand('projectViewer.addToProject', async (fileUri: vscode.Uri) => {			
