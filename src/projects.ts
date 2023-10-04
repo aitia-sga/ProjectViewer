@@ -39,7 +39,7 @@ export class MyProjects {
 
 	jsonPath: string;
 	jsonString: string;
-	jsonData: ProjectsJSON;
+	jsonData: Project[];
 
 	constructor(jsonPath: string) {
 		this.jsonPath = jsonPath;
@@ -49,11 +49,13 @@ export class MyProjects {
 	}
 
 	getProjects(): Project[] {
-		return this.jsonData.projects;
+		return this.jsonData;
+	}
+
 	}
 
 	projectExists(projectName: string): boolean {
-		return this.jsonData.projects.some(project => project.name === projectName);
+		return this.jsonData.some(project => project.name === projectName);
 	}
 
 	directoryExists(actItem: Item, newDirectory: string): boolean {
@@ -82,23 +84,23 @@ export class MyProjects {
 				items: []
 			};
 			
-			this.jsonData.projects.push(newProject);
+			this.jsonData.push(newProject);
 		
 			fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
 		}
 	}
 
 	deleteProject(deletedProject: Project): void {
-		const projectIndex = this.jsonData.projects.indexOf(deletedProject);
+		const projectIndex = this.jsonData.indexOf(deletedProject);
 		if(projectIndex !== -1)
 		{
-			this.jsonData.projects.splice(projectIndex, 1);
+			this.jsonData.splice(projectIndex, 1);
 			fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
 		}
 	}
 
 	containsProject(proj: Project): boolean {
-		return this.jsonData.projects.includes(proj);
+		return this.jsonData.includes(proj);
 	}
 
 	createNewFolder(parent: Item, newDirectory: string):void  {
@@ -118,7 +120,7 @@ export class MyProjects {
 	}
 
 	removeObjectFromProject(removedObject: Item): void {
-		this.jsonData.projects.forEach(element => {
+		this.jsonData.forEach(element => {
 			if(this.removeObject(element, removedObject)) {
 				fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
 				return;
