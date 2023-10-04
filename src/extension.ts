@@ -56,7 +56,7 @@ export function activate(context: vscode.ExtensionContext) {
 				myProjects.createNewProject(userInput);
 				projectsProvider.refresh();
 			} else
-				vscode.window.showInformationMessage('No input provided');	
+			vscode.window.showInformationMessage('No input provided');	
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.deleteProject', async (deletedProject) => {
@@ -77,6 +77,32 @@ export function activate(context: vscode.ExtensionContext) {
 						fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4));
 						activeProjectsProvider.refresh();
 					}
+				}
+			}),
+			
+			vscode.commands.registerCommand('projectViewer.importProject', async (exportedProject) => {
+				// Open the dialog for the user to select a folder
+				const uris = await vscode.window.showOpenDialog({
+					canSelectFiles: true,
+					canSelectFolders: false,
+					canSelectMany: false,
+					openLabel: 'Select Imported file',
+					
+					filters: {
+						'JSON': ['json']
+					},
+				});
+				
+				// Check if a folder was selected
+				if (uris && uris[0]) {
+					
+					const importedProjects = new projects.MyProjects(uris[0].fsPath);
+					myProjects.importProjects(importedProjects.getProjects());
+					projectsProvider.refresh();
+					vscode.window.showInformationMessage('Project import successfully!');
+
+				} else {
+					vscode.window.showInformationMessage('Project import cancelled.');
 				}
 			}),
 			

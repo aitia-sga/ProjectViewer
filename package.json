@@ -80,6 +80,11 @@
 					"command": "projectViewer.newProject",
 					"group": "navigation",
 					"when": "view == projectsView"
+				},
+				{
+					"command": "projectViewer.importProject",
+					"group": "navigation",
+					"when": "view == projectsView"
 				}
 			],
 			"explorer/context": [
@@ -113,6 +118,14 @@
 			{
 				"command": "projectViewer.newProject",
 				"title": "New project",
+				"icon": {
+					"light": "resources/plus2.png",
+					"dark": "resources/plus2.png"
+				}
+			},
+			{
+				"command": "projectViewer.importProject",
+				"title": "Import project",
 				"icon": {
 					"light": "resources/plus2.png",
 					"dark": "resources/plus2.png"

@@ -52,7 +52,16 @@ export class MyProjects {
 		return this.jsonData;
 	}
 
-	}
+	importProjects(importedProjects: Project[]): void {
+		importedProjects.forEach(element => {
+			if(!this.projectExists(element.name))
+				this.jsonData.push(element);
+			else
+				vscode.window.showInformationMessage(`Project ${element.name} already exists!`);
+		});
+
+		fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
+	} 
 
 	projectExists(projectName: string): boolean {
 		return this.jsonData.some(project => project.name === projectName);
