@@ -82,9 +82,17 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand('projectViewer.addToProject', async (fileUri: vscode.Uri) => {			
 			if (!fileUri)  { vscode.window.showErrorMessage('fileUri is empty!'); return; }
 
+			let fileType = "file";
+
+			fs.stat(fileUri.fsPath, (err: any, stats: any) => {
+				if(err) { vscode.window.showErrorMessage(`Cannot retrieve file information: ${err.message}`); }
+				else if(stats.isDirectory())
+					fileType = "physicalDirectory";
+			})
+
 			showItemPicker(myProjects.getProjects()).then(selectedItem => {
 				if (selectedItem) {
-					myProjects.addFileToProject(selectedItem, fileUri)
+					myProjects.addFileToProject(selectedItem, fileUri, fileType)
 					activeProjectsProvider.refresh();
 				}
 			});

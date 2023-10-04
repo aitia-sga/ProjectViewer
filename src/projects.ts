@@ -129,10 +129,10 @@ export class MyProjects {
 		return false;
 	}	
 
-	addFileToProject(locicalDirectory: Item, fileUri: vscode.Uri): void {
+	addFileToProject(locicalDirectory: Item, fileUri: vscode.Uri, itemType: string): void {
 		const newFile: File = {
 			name: path.basename(fileUri.fsPath),
-			type: "file",
+			type: itemType,
 			items: [],
 			absolutPath: fileUri.fsPath
 		};
