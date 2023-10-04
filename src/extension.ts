@@ -64,22 +64,27 @@ export function activate(context: vscode.ExtensionContext) {
 				'Are you sure you want to delete this project?',
 				{ modal: true },
 				'Yes'
-			);
+				);
 				
-			if (result === 'Yes') {
-				myProjects.deleteProject(deletedProject);
-				projectsProvider.refresh();
-
-				const projectIndex = activeProjectsData.activeProjects.indexOf(deletedProject.name);
-				if(projectIndex !== -1)
-				{
-					activeProjectsData.activeProjects.splice(projectIndex, 1);
-					fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4));
-					activeProjectsProvider.refresh();
+				if (result === 'Yes') {
+					myProjects.deleteProject(deletedProject);
+					projectsProvider.refresh();
+					
+					const projectIndex = activeProjectsData.activeProjects.indexOf(deletedProject.name);
+					if(projectIndex !== -1)
+					{
+						activeProjectsData.activeProjects.splice(projectIndex, 1);
+						fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4));
+						activeProjectsProvider.refresh();
+					}
 				}
-			}
+			}),
+			
+			vscode.commands.registerCommand('projectViewer.exportProject', async (exportedProject) => {
+				const exportedFilePath = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, '.vscode', 'exportedProject.json');
+				fs.writeFileSync(exportedFilePath, JSON.stringify(exportedProject, null, 4));
 		}),
-
+			
 		vscode.commands.registerCommand('projectViewer.createNewFolder', async (project) => {
 			if(!myProjects.containsProject) {vscode.window.showErrorMessage('The selected project cannot be found!'); return; }
 			
