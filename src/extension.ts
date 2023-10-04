@@ -220,71 +220,35 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 			return Promise.resolve(this.projectsData.filter((project: any) => this.activeProjectsNames.includes(project.name)));
 		} else if (element.type === 'project' || element.type === 'logicalDirectory') {
 			return Promise.resolve(element.items);
-		}
-		
-		
-	// 	else if (element.type === 'physicalDirectory') {
-	// 		return new Promise(resolve => {
-	// 			fs.readdir(element.absolutPath, (err, files) => {
-	// 				if (err) {
-	// 					vscode.window.showErrorMessage(`Error reading directory: ${err.message}`);
-	// 					resolve([]);
-	// 				} else {
-	// 					const items = files.map(file => ({
-	// 						name: file,
-	// 						type: fs.statSync(path.join(element.absolutPath, file)).isDirectory() ? 
-	// 							  'physicalDirectory' : 'file',
-	// 						absolutPath: path.join(element.absolutPath, file)
-	// 					}));
-	// 					resolve(items);
-	// 				}
-	// 			});
+		} else if (element.type === 'physicalDirectory') {
+			return new Promise(resolve => {
+				fs.readdir(element.absolutPath, (err, files) => {
+					if (err) {
+						vscode.window.showErrorMessage(`Error reading directory: ${err.message}`);
+						resolve([]);
+					} else {
+						const items = files.map(file => ({
+							name: file,
+							type: fs.statSync(path.join(element.absolutPath, file)).isDirectory() ? 
+								'physicalDirectory' : 'file',
+							absolutPath: path.join(element.absolutPath, file)
+						}));
 
-	// 			// Setting up fs.watch to watch the physical directory for changes.
-	// 			const watcher = fs.watch(element.absolutPath, (eventType, filename) => {
-	// 				// Handling the event. Here simply refreshing the tree when any change occurs.
-	// 				this.refresh(element);
-	// 			});
+						// Setting up fs.watch to watch the physical directory for changes.
+						const watcher = fs.watch(element.absolutPath, (_eventType: any, _filename: any) => {
+							if(_filename)
+								this.refresh(element);
+						});
 
-	// 			// Storing the watcher so that it can be closed later if needed.
-	// 			this.watchers.push(watcher);
-	// 		});
-	// 	} else {
-	// 		return Promise.resolve([]);
-	// 	}
-	// }
+						// Storing the watcher so that it can be closed later if needed.
+						this.watchers.push(watcher);
 
-
-	else if (element.type === 'physicalDirectory') {
-		return new Promise(resolve => {
-			fs.readdir(element.absolutPath, (err, files) => {
-				if (err) {
-					vscode.window.showErrorMessage(`Error reading directory: ${err.message}`);
-					resolve([]);
-				} else {
-					const items = files.map(file => ({
-						name: file,
-						type: fs.statSync(path.join(element.absolutPath, file)).isDirectory() ? 
-							  'physicalDirectory' : 'file',
-						absolutPath: path.join(element.absolutPath, file)
-					}));
-
-					// Setting up fs.watch to watch the physical directory for changes.
-					const watcher = fs.watch(element.absolutPath, (_eventType: any, _filename: any) => {
-						if(_filename)
-							this.refresh(element);
-					});
-
-					// Storing the watcher so that it can be closed later if needed.
-					this.watchers.push(watcher);
-
-					resolve(items);
-				}
+						resolve(items);
+					}
+				});
 			});
-		});
-	} else {
-		return Promise.resolve([]);
+		} else {
+			return Promise.resolve([]);
+		}
 	}
-	}
-
 }
