@@ -9,7 +9,7 @@ interface MyQuickPickItem extends vscode.QuickPickItem { item: projects.Item; }
 
 
 export function activate(context: vscode.ExtensionContext) {
-	const myProjects = new projects.MyProjects(path.join(context.extensionPath, 'projects.json'));
+	const myProjects = new projects.MyProjects(path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, '.vscode', 'projects.json'));
 	const activeProjectsPath = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, '.vscode', 'activeProjects.json');
 
 	let activeProjectsData: { activeProjects: string[] };
