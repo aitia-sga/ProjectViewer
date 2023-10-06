@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as projects from './projects';
-import { ExecException } from 'child_process';
+
 
 interface MyQuickPickItem extends vscode.QuickPickItem { item: projects.Item; }
 
@@ -15,8 +15,10 @@ export function activate(context: vscode.ExtensionContext) {
 		if(vscode.workspace.workspaceFolders![0].uri.fsPath) {
 			vsCodeFolder = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, '.vscode');
 
-			if(!fs.existsSync(vsCodeFolder))
-				fs.mkdirSync(vsCodeFolder)
+			if(!fs.existsSync(vsCodeFolder)) {
+				try { fs.mkdirSync(vsCodeFolder); }
+				catch {vscode.window.showErrorMessage(".vscode floder create error!"); }
+			}
 
 		} else { vscode.window.showErrorMessage('No workspace is open! Please open a workspace or folder!'); }
 		
@@ -43,7 +45,7 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand('projectViewer.addProjectToActive', (project) => {
 			if (!activeProjectsData.activeProjects.includes(project.name)) {
 				activeProjectsData.activeProjects.push(project.name);
-				fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4));
+				try { fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4)); } catch {}
 				activeProjectsProvider.refresh();
 			}
 		}),
@@ -54,7 +56,7 @@ export function activate(context: vscode.ExtensionContext) {
 				if(projectIndex !== -1)
 				{
 					activeProjectsData.activeProjects.splice(projectIndex, 1);
-					fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4));
+					try { fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4)); } catch {}
 					activeProjectsProvider.refresh();
 				}
 			}
@@ -88,7 +90,7 @@ export function activate(context: vscode.ExtensionContext) {
 					if(projectIndex !== -1)
 					{
 						activeProjectsData.activeProjects.splice(projectIndex, 1);
-						fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4));
+						try { fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4)); } catch {}
 						activeProjectsProvider.refresh();
 					}
 				}
@@ -129,7 +131,7 @@ export function activate(context: vscode.ExtensionContext) {
 				});
 			
 				if (uri) {
-					fs.writeFileSync(uri.fsPath, JSON.stringify(myProjects.getProjects().filter(project => project == exportedProject), null, 4));
+					try { fs.writeFileSync(uri.fsPath, JSON.stringify(myProjects.getProjects().filter(project => project == exportedProject), null, 4)); } catch {}
 					vscode.window.showInformationMessage('Project exported successfully!');
 				} else
 					vscode.window.showInformationMessage('Project export cancelled.');				
@@ -177,13 +179,13 @@ export function activate(context: vscode.ExtensionContext) {
 						if(projectIndex !== -1)
 						{
 							activeProjectsData.activeProjects.splice(projectIndex, 1);
-							fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4));
+							try { fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4)); } catch {}
 						}
 					}
 
 					if(!activeProjectsData.activeProjects.includes(newName)) {
 						activeProjectsData.activeProjects.push(newName);
-						fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4));
+						try { fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4)); } catch {}
 					}
 					
 					projectsProvider.refresh();

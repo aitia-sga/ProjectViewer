@@ -54,7 +54,7 @@ export class MyProjects {
 				vscode.window.showInformationMessage(`Project ${element.name} already exists!`);
 		});
 
-		fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
+		try { fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8'); } catch {}
 	} 
 
 	projectExists(projectName: string): boolean {
@@ -89,7 +89,7 @@ export class MyProjects {
 			
 			this.jsonData.push(newProject);
 		
-			fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
+			try { fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8'); } catch {}
 		}
 	}
 
@@ -98,7 +98,7 @@ export class MyProjects {
 		if(projectIndex !== -1)
 		{
 			this.jsonData.splice(projectIndex, 1);
-			fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
+			try { fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8'); } catch {}
 		}
 	}
 
@@ -118,14 +118,14 @@ export class MyProjects {
 			};
 
 			parent.items.push(newDir)
-			fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
+			try { fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8'); } catch {}
 		}
 	}
 
 	removeObjectFromProject(removedObject: Item): void {
 		this.jsonData.forEach(element => {
 			if(this.removeObject(element, removedObject)) {
-				fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
+				try { fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8'); } catch {}
 				return;
 			}
 		});
@@ -152,7 +152,7 @@ export class MyProjects {
 	
 	renamedItem(renamedItem: Item, newName: string): void {
 		renamedItem.name = newName;
-		fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
+		try { fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8'); } catch {}
 	}
 
 	addFileToProject(locicalDirectory: Item, fileUri: vscode.Uri, itemType: string): void {
@@ -167,7 +167,7 @@ export class MyProjects {
 			vscode.window.showInformationMessage(`Directory already contains the ${newFile.name} file!`);
 		} else {
 			locicalDirectory.items.push(newFile);
-			fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8');
+			try { fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8'); } catch {}
 		}
 	}
 }
