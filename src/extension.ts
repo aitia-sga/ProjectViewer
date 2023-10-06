@@ -9,7 +9,20 @@ interface MyQuickPickItem extends vscode.QuickPickItem { item: projects.Item; }
 
 
 export function activate(context: vscode.ExtensionContext) {
-	const myProjects = new projects.MyProjects(path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, '.vscode', 'projects.json'));
+	let vsCodeFolder = "";
+
+	try {
+		if(vscode.workspace.workspaceFolders![0].uri.fsPath) {
+			vsCodeFolder = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, '.vscode');
+
+			if(!fs.existsSync(vsCodeFolder))
+				fs.mkdirSync(vsCodeFolder)
+
+		} else { vscode.window.showErrorMessage('No workspace is open! Please open a workspace or folder!'); }
+		
+	} catch { vscode.window.showErrorMessage('No workspace is open! Please open a workspace or folder!'); }
+
+	const myProjects = new projects.MyProjects(path.join(vsCodeFolder, 'projects.json'));
 	const activeProjectsPath = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, '.vscode', 'activeProjects.json');
 
 	let activeProjectsData: { activeProjects: string[] };
