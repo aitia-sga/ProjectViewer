@@ -38,16 +38,22 @@ export interface File extends Item { absolutPath: string; }
 export class MyProjects {
 
 	jsonPath: string;
-	jsonString: string;
 	jsonData: Project[];
 
 	constructor(jsonPath: string) {
 		this.jsonPath = jsonPath;
 
-		this.jsonString = fs.readFileSync(jsonPath, 'utf-8');
-		this.jsonData = JSON.parse(this.jsonString);
-	}
+		try { 
+			const jsonString = fs.readFileSync(jsonPath, 'utf-8');
 
+			const filteredString = jsonString.split('\n').filter(line => !line.trim().startsWith('//'));
+			try { this.jsonData = JSON.parse(filteredString.join('\n')); }
+			catch { this.jsonData = []; }
+		
+		}
+		catch { this.jsonData = []; }
+	}
+	
 	getProjects(): Project[] {
 		return this.jsonData;
 	}
