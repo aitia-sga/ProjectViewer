@@ -95,7 +95,6 @@ export function activate(context: vscode.ExtensionContext) {
 			}),
 			
 			vscode.commands.registerCommand('projectViewer.importProject', async (exportedProject) => {
-				// Open the dialog for the user to select a folder
 				const uris = await vscode.window.showOpenDialog({
 					canSelectFiles: true,
 					canSelectFolders: false,
@@ -107,7 +106,6 @@ export function activate(context: vscode.ExtensionContext) {
 					},
 				});
 				
-				// Check if a folder was selected
 				if (uris && uris[0]) {
 					
 					const importedProjects = new projects.MyProjects(uris[0].fsPath);
@@ -258,17 +256,10 @@ function showItemPicker(items: projects.Item[], isRoot = true): Promise<projects
 
 
 class ProjectsTreeProvider implements vscode.TreeDataProvider<any> {
-	// private _onDidChangeTreeData: vscode.EventEmitter<any> = new vscode.EventEmitter<any>();
-	// readonly onDidChangeTreeData: vscode.Event<any> = this._onDidChangeTreeData.event;
-
 	private _onDidChangeTreeData: vscode.EventEmitter<any | undefined> = new vscode.EventEmitter<any | undefined>();
 	readonly onDidChangeTreeData: vscode.Event<any | undefined> = this._onDidChangeTreeData.event;
 
 	constructor(private projects: projects.Project[]) {}
-
-	// refresh(): void {
-	// 	this._onDidChangeTreeData.fire(undefined);
-	// }
 
 	refresh(element?: any): void {
 		this._onDidChangeTreeData.fire(element);
@@ -292,16 +283,6 @@ class ProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 }
 
 class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
-	// private _onDidChangeTreeData: vscode.EventEmitter<any> = new vscode.EventEmitter<any>();
-	// readonly onDidChangeTreeData: vscode.Event<any> = this._onDidChangeTreeData.event;
-	// private watchers: fs.FSWatcher[] = [];
-
-	// constructor(private projectsData: any, private activeProjectsNames: string[]) {}
-
-	// refresh(): void {
-	// 	this._onDidChangeTreeData.fire(undefined);
-	// }
-
 	private _onDidChangeTreeData: vscode.EventEmitter<any | undefined> = new vscode.EventEmitter<any | undefined>();
 	readonly onDidChangeTreeData: vscode.Event<any | undefined> = this._onDidChangeTreeData.event;
 
@@ -331,7 +312,6 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 			}
 			else
 				treeItem.iconPath = new vscode.ThemeIcon('project');
-				// treeItem.iconPath = new vscode.ThemeIcon('organization');
 
 			return treeItem;
 		} else if (element.type === 'physicalDirectory') {
@@ -377,13 +357,11 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 							absolutPath: path.join(element.absolutPath, file)
 						}));
 
-						// Setting up fs.watch to watch the physical directory for changes.
 						const watcher = fs.watch(element.absolutPath, (_eventType: any, _filename: any) => {
 							if(_filename)
 								this.refresh(element);
 						});
 
-						// Storing the watcher so that it can be closed later if needed.
 						this.watchers.push(watcher);
 
 						resolve(items);

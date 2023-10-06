@@ -3,21 +3,10 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-// export type File = {
-// 	fileName: string;
-// 	absolutPath: string;
-// 	logicalPath: string;
-// };
-
 export type Directory = {
 	name: string;
 	files: File[];
 };
-
-// export type Project = {
-// 	name: string;
-// 	directorys: Directory[];
-// };
 
 type ProjectsJSON = {
 	projects: Project[];
@@ -30,7 +19,6 @@ export type Item = {
 	items: Item[];
 };
 
-// type Project = Item;
 export interface Project extends Item {}
 export interface LogicalDirectory extends Item {}
 export interface File extends Item { absolutPath: string; }
