@@ -17,7 +17,7 @@
 				{
 					"id": "projectViewer",
 					"title": "Project Viewer",
-					"icon": "resources/folder.png"
+					"icon": "$(folder)"
 				}
 			]
 		},
@@ -118,18 +118,12 @@
 			{
 				"command": "projectViewer.newProject",
 				"title": "New project",
-				"icon": {
-					"light": "resources/plus2.png",
-					"dark": "resources/plus2.png"
-				}
+				"icon": "$(plus)"
 			},
 			{
 				"command": "projectViewer.importProject",
 				"title": "Import project",
-				"icon": {
-					"light": "resources/plus2.png",
-					"dark": "resources/plus2.png"
-				}
+				"icon": "$(arrow-down)"
 			},
 			{
 				"command": "projectViewer.deleteProject",
