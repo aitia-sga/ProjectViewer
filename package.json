@@ -67,7 +67,7 @@
 				},
 				{
 					"command": "projectViewer.rename",
-					"when": "view == activeProjectsView && (viewItem == project || viewItem == logicalDirectory)"
+					"when": "viewItem == project || viewItem == logicalDirectory"
 				},
 				{
 					"command": "projectViewer.removeFromProject",
