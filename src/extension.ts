@@ -14,7 +14,8 @@ export function activate(context: vscode.ExtensionContext) {
 
 	let activeProjectsData: { activeProjects: string[] };
 	try {
-		activeProjectsData = JSON.parse(fs.readFileSync(activeProjectsPath, 'utf8'));
+		const filteredString = fs.readFileSync(activeProjectsPath, 'utf8').split('\n').filter(line => !line.trim().startsWith('//'));
+		activeProjectsData = JSON.parse(filteredString.join('\n'));
 	} catch {
 		activeProjectsData = { activeProjects: [] };
 	}
