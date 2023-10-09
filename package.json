@@ -105,7 +105,7 @@
 			},
 			{
 				"command": "projectViewer.createNewFolder",
-				"title": "Create new project folder"
+				"title": "Create new logical directory"
 			},
 			{
 				"command": "projectViewer.deleteFolderWithFiles",
