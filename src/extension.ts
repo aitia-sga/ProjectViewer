@@ -310,10 +310,12 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 			if (element.type === 'logicalDirectory') {
 				treeItem.iconPath = new vscode.ThemeIcon(element.icon ? element.icon : 'folder-active');
 				treeItem.tooltip = `${element.name} (Logical Directory)`;
-				treeItem.description = '(Logical Directory)';
+				treeItem.description = element.description ? element.description : '(Logical Directory)';
 			}
-			else
+			else {
+				treeItem.description = element.description ? element.description : '';
 				treeItem.iconPath = new vscode.ThemeIcon(element.icon ? element.icon : 'project');
+			}
 
 			return treeItem;
 		} else if (element.type === 'physicalDirectory') {
@@ -322,6 +324,7 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 				tooltip: element.absolutPath,
 				contextValue: 'physicalDirectory',
 				iconPath: new vscode.ThemeIcon(element.icon ? element.icon : 'folder'),
+				description: element.description ? element.description : '',
             	collapsibleState: vscode.TreeItemCollapsibleState.Collapsed
 			};
 		} else /*if(element == 'file')*/ {
@@ -331,6 +334,7 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 				contextValue: 'file',
 				iconPath: new vscode.ThemeIcon(element.icon ? element.icon : 'file'),
 				tooltip: element.absolutPath,
+				description: element.description ? element.description : '',
 				command: {
 					command: 'vscode.open',
 					arguments: [vscode.Uri.file(element.absolutPath)],
