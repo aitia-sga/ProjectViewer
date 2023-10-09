@@ -72,7 +72,7 @@ export function activate(context: vscode.ExtensionContext) {
 				myProjects.createNewProject(userInput);
 				projectsProvider.refresh();
 			} else
-			vscode.window.showInformationMessage('No input provided');	
+				vscode.window.showInformationMessage('No input provided');	
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.deleteProject', async (deletedProject) => {
@@ -146,7 +146,7 @@ export function activate(context: vscode.ExtensionContext) {
 			});
 
 			if (userInput) {
-				myProjects.createNewFolder(project, userInput);
+				myProjects.createNewFolder(project, userInput, (await descriptionRequest()));
 				activeProjectsProvider.refresh()
 			} else
 				vscode.window.showInformationMessage('No input provided');	
@@ -206,12 +206,25 @@ export function activate(context: vscode.ExtensionContext) {
 					fileType = "physicalDirectory";
 			})
 
-			showItemPicker(myProjects.getProjects()).then(selectedItem => {
+			// showItemPicker(myProjects.getProjects()).then(selectedItem => {
+			// 	if (selectedItem) {
+
+			// 		const dd = await descriptionRequest();
+			// 		myProjects.addFileToProject(selectedItem, fileUri, fileType, await descriptionRequest())
+			// 		activeProjectsProvider.refresh();
+			// 	}
+			// });
+
+			try {
+				const selectedItem = await showItemPicker(myProjects.getProjects());
 				if (selectedItem) {
-					myProjects.addFileToProject(selectedItem, fileUri, fileType)
+					const description = await descriptionRequest();
+					myProjects.addFileToProject(selectedItem, fileUri, fileType, description);
 					activeProjectsProvider.refresh();
 				}
-			});
+			} catch (err: any) {
+				vscode.window.showErrorMessage(`An error occurred: ${err.message}`);
+			}
 		}),
 
 		vscode.commands.registerCommand('projectViewer.removeFromProject', async (removedFile: projects.File) => {
@@ -219,6 +232,18 @@ export function activate(context: vscode.ExtensionContext) {
 			activeProjectsProvider.refresh();
 		})
 	);
+}
+
+async function descriptionRequest(): Promise<string> {
+	const userInput = await vscode.window.showInputBox({
+		prompt: 'Enter the description, or press Enter!',
+		placeHolder: 'Description'
+	});
+	
+	if (userInput)
+		return userInput;
+	else
+		return "";
 }
 
 function showItemPicker(items: projects.Item[], isRoot = true): Promise<projects.Item | undefined> {

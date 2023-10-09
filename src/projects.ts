@@ -8,11 +8,6 @@ export type Directory = {
 	files: File[];
 };
 
-type ProjectsJSON = {
-	projects: Project[];
-};
-
-
 export type Item = {
 	name: string;
 	type: string;
@@ -20,8 +15,8 @@ export type Item = {
 };
 
 export interface Project extends Item {}
-export interface LogicalDirectory extends Item {}
-export interface File extends Item { absolutPath: string; }
+export interface LogicalDirectory extends Item { description: string; }
+export interface File extends Item { absolutPath: string; description: string; }
 
 export class MyProjects {
 
@@ -106,7 +101,7 @@ export class MyProjects {
 		return this.jsonData.includes(proj);
 	}
 
-	createNewFolder(parent: Item, newDirectory: string):void  {
+	createNewFolder(parent: Item, newDirectory: string, description: string):void  {
 		if(this.directoryExists(parent, newDirectory)) 
 			vscode.window.showInformationMessage(`Directory ${newDirectory} already exists!`);
 		
@@ -114,6 +109,7 @@ export class MyProjects {
 			const newDir: LogicalDirectory = {
 				name: newDirectory,
 				type: "logicalDirectory",
+				description: description,
 				items: []
 			};
 
@@ -155,12 +151,13 @@ export class MyProjects {
 		try { fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8'); } catch {}
 	}
 
-	addFileToProject(locicalDirectory: Item, fileUri: vscode.Uri, itemType: string): void {
+	addFileToProject(locicalDirectory: Item, fileUri: vscode.Uri, itemType: string, description: string): void {
 		const newFile: File = {
 			name: path.basename(fileUri.fsPath),
 			type: itemType,
 			items: [],
-			absolutPath: fileUri.fsPath
+			absolutPath: fileUri.fsPath,
+			description: description
 		};
 
 		if(this.projectContainsTheFile(locicalDirectory, newFile)) {
