@@ -316,8 +316,7 @@ class ProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 
 	getChildren(element?: any): Thenable<any[]> {
 		if (!element) {
-			const sortedProjects = this.projects.sort((a, b) => a.name.localeCompare(b.name));
-			return Promise.resolve(sortedProjects);
+			return Promise.resolve(this.projects.sort((a, b) => a.name.localeCompare(b.name)));
 		}
 		return Promise.resolve([]);
 	}
@@ -393,8 +392,6 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 
 	getChildren(element?: any): Thenable<any[]> {
 		if (!element) {
-			// const projs = this.projectsData.filter((project: any) => this.activeProjectsNames.includes(project.name)).sort((a, b) => this.elementCompare(a, b));
-			// const sortedProjects = this.projectsData.sort((a, b) => this.elementCompare(a, b));
 			return Promise.resolve(this.projectsData.filter((project: any) => this.activeProjectsNames.includes(project.name))
 			.sort((a, b) => this.elementCompare(a, b)));
 
