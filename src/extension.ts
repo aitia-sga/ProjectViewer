@@ -371,7 +371,9 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 				label: element.name,
 				collapsibleState: vscode.TreeItemCollapsibleState.None,
 				contextValue: 'file',
-				iconPath: new vscode.ThemeIcon(element.icon ? element.icon : 'file'),
+				// iconPath: new vscode.ThemeIcon(element.icon ? element.icon : 'languageIds'),
+				iconPath: vscode.ThemeIcon.File,
+				resourceUri: vscode.Uri.parse(element.absolutPath),
 				tooltip: element.absolutPath,
 				description: element.description ? element.description : '',
 				command: {
