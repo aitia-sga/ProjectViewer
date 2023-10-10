@@ -346,7 +346,6 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 			treeItem.contextValue = element.type;
 			treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
 			if (element.type === 'logicalDirectory') {
-				treeItem.iconPath = new vscode.ThemeIcon(element.icon ? element.icon : 'folder-active');
 				treeItem.tooltip = `${element.name} (Logical Directory)`;
 				treeItem.description = element.description ? element.description : '(Logical Directory)';
 			}
