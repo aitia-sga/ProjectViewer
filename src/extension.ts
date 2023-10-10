@@ -196,6 +196,26 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		}),
 
+		vscode.commands.registerCommand('projectViewer.modifyDescription', async (item: projects.Item) => {
+			const options: vscode.InputBoxOptions = {
+				prompt: "Enter the new description",
+				placeHolder: 'Description',
+				value: item.description
+			};
+
+			let newDescription = await vscode.window.showInputBox(options);
+			if(!newDescription) newDescription = '';
+
+			if(newDescription !== item.description) {
+				myProjects.modifyDescription(item, newDescription);
+				
+				if(item.type === 'project')
+					projectsProvider.refresh();
+				
+				activeProjectsProvider.refresh();
+			}
+		}),
+
 		vscode.commands.registerCommand('projectViewer.addToProject', async (fileUri: vscode.Uri) => {			
 			if (!fileUri)  { vscode.window.showErrorMessage('fileUri is empty!'); return; }
 

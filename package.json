@@ -70,6 +70,10 @@
 					"when": "viewItem == project || viewItem == logicalDirectory"
 				},
 				{
+					"command": "projectViewer.modifyDescription",
+					"when": "viewItem == project || viewItem == logicalDirectory || viewItem == file"
+				},
+				{
 					"command": "projectViewer.removeFromProject",
 					"when": "view == activeProjectsView && viewItem == file",                	
 					"group": "0_project@name"
@@ -114,6 +118,10 @@
 			{
 				"command": "projectViewer.rename",
 				"title": "Rename"
+			},
+			{
+				"command": "projectViewer.modifyDescription",
+				"title": "Modify description"
 			},
 			{
 				"command": "projectViewer.newProject",

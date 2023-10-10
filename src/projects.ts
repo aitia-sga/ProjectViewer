@@ -149,6 +149,11 @@ export class MyProjects {
 		try { fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8'); } catch {}
 	}
 
+	modifyDescription(renamedItem: Item, newDescription: string): void {
+		renamedItem.description = newDescription;
+		try { fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8'); } catch {}
+	}
+
 	addFileToProject(locicalDirectory: Item, fileUri: vscode.Uri, itemType: string, description: string): void {
 		const newFile: File = {
 			name: path.basename(fileUri.fsPath),
