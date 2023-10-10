@@ -71,11 +71,11 @@
 				},
 				{
 					"command": "projectViewer.modifyDescription",
-					"when": "viewItem == project || viewItem == logicalDirectory || viewItem == file"
+					"when": "viewItem == project || viewItem == logicalDirectory || viewItem == file || viewItem == physicalDirectory"
 				},
 				{
 					"command": "projectViewer.removeFromProject",
-					"when": "view == activeProjectsView && viewItem == file",                	
+					"when": "view == activeProjectsView && (viewItem == file || viewItem == physicalDirectory)",                	
 					"group": "0_project@name"
 				}
 			],
