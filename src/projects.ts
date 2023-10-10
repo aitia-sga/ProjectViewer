@@ -8,11 +8,12 @@ export type Item = {
 	name: string;
 	type: string;
 	items: Item[];
+	description: string;
 };
 
-export interface Project extends Item { description: string; }
-export interface LogicalDirectory extends Item { description: string; }
-export interface File extends Item { absolutPath: string; description: string; }
+export interface Project extends Item {}
+export interface LogicalDirectory extends Item {}
+export interface File extends Item { absolutPath: string; }
 
 export class MyProjects {
 

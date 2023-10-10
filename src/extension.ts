@@ -254,7 +254,7 @@ function showItemPicker(items: projects.Item[], isRoot = true): Promise<projects
 		quickPick.items = isRoot 
 			? items.map(item => ({ label: item.name, item })).filter(item => item.item.type === 'logicalDirectory' || item.item.type === 'project')
 			: [
-				{ label: `Select current directory`, item: { name: 'Current', type: 'current', items: [] } },
+				{ label: `Select current directory`, item: { name: 'Current', type: 'current', description: '', items: [] } },
 				...items.map(item => ({ label: item.name, item })).filter(item => item.item.type === 'logicalDirectory' || item.item.type === 'project')
 			  ];
 
