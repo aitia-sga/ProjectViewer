@@ -316,7 +316,7 @@ class ProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 
 	getChildren(element?: any): Thenable<any[]> {
 		if (!element) {
-			return Promise.resolve(this.projects);
+			return Promise.resolve(this.projects.sort((a, b) => a.name.localeCompare(b.name)));
 		}
 		return Promise.resolve([]);
 	}
@@ -328,7 +328,7 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 
 	private watchers: fs.FSWatcher[] = [];
 
-	constructor(private projectsData: any, private activeProjectsNames: string[]) {}
+	constructor(private projectsData: projects.Project[], private activeProjectsNames: string[]) {}
 
 	refresh(element?: any): void {
 		this._onDidChangeTreeData.fire(element);
@@ -392,9 +392,12 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 
 	getChildren(element?: any): Thenable<any[]> {
 		if (!element) {
-			return Promise.resolve(this.projectsData.filter((project: any) => this.activeProjectsNames.includes(project.name)));
+			return Promise.resolve(this.projectsData.filter((project: any) => this.activeProjectsNames.includes(project.name))
+			.sort((a, b) => this.elementCompare(a, b)));
+
 		} else if (element.type === 'project' || element.type === 'logicalDirectory') {
-			return Promise.resolve(element.items);
+			return Promise.resolve(element.items.sort((a: projects.Item, b: projects.Item) => this.elementCompare(a, b)));
+			
 		} else if (element.type === 'physicalDirectory') {
 			return new Promise(resolve => {
 				fs.readdir(element.absolutPath, (err, files) => {
@@ -416,12 +419,27 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 
 						this.watchers.push(watcher);
 
-						resolve(items);
+						resolve(items.sort((a, b) => this.elementCompare(a, b)));
 					}
 				});
 			});
 		} else {
 			return Promise.resolve([]);
 		}
+	}
+
+	elementCompare(a: projects.Item | any, b: projects.Item | any): number {
+		if(a.type === b.type) return a.name.localeCompare(b.name);
+
+		if(a.type === 'logicalDirectory' && b.type === 'physicalDirectory') return -1;
+		if(b.type === 'logicalDirectory' && a.type === 'physicalDirectory') return 1;
+		
+		if(a.type === 'logicalDirectory' && b.type === 'file') return -1;
+		if(b.type === 'logicalDirectory' && a.type === 'file') return 1;
+
+		if(a.type === 'physicalDirectory' && b.type === 'file') return -1;
+		if(b.type === 'physicalDirectory' && a.type === 'file') return 1;
+
+		return 0;
 	}
 }
