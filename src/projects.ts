@@ -3,10 +3,6 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-export type Directory = {
-	name: string;
-	files: File[];
-};
 
 export type Item = {
 	name: string;
@@ -14,7 +10,7 @@ export type Item = {
 	items: Item[];
 };
 
-export interface Project extends Item {}
+export interface Project extends Item { description: string; }
 export interface LogicalDirectory extends Item { description: string; }
 export interface File extends Item { absolutPath: string; description: string; }
 
@@ -71,14 +67,15 @@ export class MyProjects {
 		return true;
 	}
 
-	createNewProject(projectName: string): void {
+	createNewProject(projectName: string, description: string): void {
 		if(this.projectExists(projectName)) 
 			vscode.window.showInformationMessage(`Project ${projectName} already exists!`);
 
 		else {
-			const newProject: Item = {
+			const newProject: Project = {
 				name: projectName,
 				type: "project",
+				description: description,
 				items: []
 			};
 			

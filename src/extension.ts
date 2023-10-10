@@ -69,7 +69,8 @@ export function activate(context: vscode.ExtensionContext) {
 			});
 			
 			if (userInput) {
-				myProjects.createNewProject(userInput);
+				const description = await descriptionRequest();
+				myProjects.createNewProject(userInput, description);
 				projectsProvider.refresh();
 			} else
 				vscode.window.showInformationMessage('No input provided');	
