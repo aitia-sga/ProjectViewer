@@ -367,21 +367,26 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 			};
 		} else {
 			// File
-			return {
-				label: element.name,
-				collapsibleState: vscode.TreeItemCollapsibleState.None,
-				contextValue: 'file',
-				// iconPath: new vscode.ThemeIcon(element.icon ? element.icon : 'languageIds'),
-				iconPath: vscode.ThemeIcon.File,
-				resourceUri: vscode.Uri.parse(element.absolutPath),
-				tooltip: element.absolutPath,
-				description: element.description ? element.description : '',
-				command: {
-					command: 'vscode.open',
-					arguments: [vscode.Uri.file(element.absolutPath)],
-					title: 'Open File'
-				}
-			};
+			let treeItemFile = new vscode.TreeItem(element.name);
+			treeItemFile.label = element.name;
+			treeItemFile.collapsibleState = vscode.TreeItemCollapsibleState.None;
+			treeItemFile.contextValue = 'file';
+
+			if(element.icon) {
+				treeItemFile.iconPath = new vscode.ThemeIcon(element.icon);
+			} else {
+				treeItemFile.iconPath = vscode.ThemeIcon.File;
+				treeItemFile.resourceUri = vscode.Uri.parse(element.absolutPath);
+			}
+			treeItemFile.tooltip = element.absolutPath;
+			treeItemFile.description = element.description ? element.description : '';
+			treeItemFile.command = {
+				command: 'vscode.open',
+				arguments: [vscode.Uri.file(element.absolutPath)],
+				title: 'Open File'
+			}
+
+			return treeItemFile;
 		}
 	}
 
