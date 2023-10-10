@@ -227,15 +227,6 @@ export function activate(context: vscode.ExtensionContext) {
 					fileType = "physicalDirectory";
 			})
 
-			// showItemPicker(myProjects.getProjects()).then(selectedItem => {
-			// 	if (selectedItem) {
-
-			// 		const dd = await descriptionRequest();
-			// 		myProjects.addFileToProject(selectedItem, fileUri, fileType, await descriptionRequest())
-			// 		activeProjectsProvider.refresh();
-			// 	}
-			// });
-
 			try {
 				const selectedItem = await showItemPicker(myProjects.getProjects());
 				if (selectedItem) {
@@ -264,7 +255,7 @@ async function descriptionRequest(): Promise<string> {
 	if (userInput)
 		return userInput;
 	else
-		return "";
+		return '';
 }
 
 function showItemPicker(items: projects.Item[], isRoot = true): Promise<projects.Item | undefined> {
@@ -374,7 +365,8 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 				description: element.description ? element.description : '',
             	collapsibleState: vscode.TreeItemCollapsibleState.Collapsed
 			};
-		} else /*if(element == 'file')*/ {
+		} else {
+			// File
 			return {
 				label: element.name,
 				collapsibleState: vscode.TreeItemCollapsibleState.None,
