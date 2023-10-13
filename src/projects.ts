@@ -208,6 +208,15 @@ export class MyProjects {
 	writeProjectsToFile(): void {
 		try {
 			let jsonString = JSON.stringify(this.jsonData, null, 4);
+			jsonString = path.normalize(jsonString);
+			jsonString = jsonString.replace(/\\/g, '/');
+
+			let workspacePath = vscode.workspace.workspaceFolders![0].uri.fsPath;
+			workspacePath = path.normalize(workspacePath).replace(/\\/g, '/');
+			jsonString = jsonString.replace(new RegExp(workspacePath, 'g'), '${workspaceFolder}');
+
+
+			console.log(jsonString);
 
 			fs.writeFileSync(this.jsonPath, jsonString, 'utf-8');
 		} catch {}
