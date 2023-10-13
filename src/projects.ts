@@ -24,7 +24,12 @@ export class MyProjects {
 		this.jsonPath = jsonPath;
 
 		try { 
-			const jsonString = fs.readFileSync(jsonPath, 'utf-8');
+			let jsonString = fs.readFileSync(jsonPath, 'utf-8');
+			console.log(jsonString);
+			jsonString = jsonString.replace(/\$\{workspaceFolder\}/g, vscode.workspace.workspaceFolders![0].uri.path);
+			// jsonString = jsonString.replace('${workspaceFolder}', workspacePath);
+			console.log(jsonString);
+			
 
 			const filteredString = jsonString.split('\n').filter(line => !line.trim().startsWith('//'));
 			try { this.jsonData = JSON.parse(filteredString.join('\n')); }
