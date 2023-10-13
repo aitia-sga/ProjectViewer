@@ -25,10 +25,40 @@ export class MyProjects {
 
 		try { 
 			let jsonString = fs.readFileSync(jsonPath, 'utf-8');
+			// console.log(jsonString);
+			
+			let workspacePath = vscode.workspace.workspaceFolders![0].uri.fsPath;
+			// workspacePath = path.normalize(workspacePath).replace(/\\/g, '\\');
+			console.log(workspacePath);
+			workspacePath = path.normalize(workspacePath);
+			console.log(workspacePath);
+			
+			// workspacePath = workspacePath.replace(/\\/g, '\\\\');
+			workspacePath = workspacePath.replace(/\\/g, '/');
+			console.log(workspacePath);
+
+
+			// jsonString = jsonString.replace(new RegExp('\$\{workspaceFolder\}', 'g'), workspacePath);
+
+			// workspacePath = path.win32(workspacePath);
+			jsonString = jsonString.replace(/\$\{workspaceFolder\}/g, workspacePath);
+
+
 			console.log(jsonString);
-			jsonString = jsonString.replace(/\$\{workspaceFolder\}/g, vscode.workspace.workspaceFolders![0].uri.path);
+			jsonString = path.normalize(jsonString);
+			jsonString = jsonString.replace(/\\/g, '/');
+			console.log(jsonString);
+			
+			// workspacePath = workspacePath.replace(/\\/g, '\\\\');
+
+
+
+			// jsonString = jsonString.replace(/\\/g, '/');
+
+
+			// jsonString = path.normalize(jsonString);
 			// jsonString = jsonString.replace('${workspaceFolder}', workspacePath);
-			console.log(jsonString);
+			// console.log(jsonString);
 			
 
 			const filteredString = jsonString.split('\n').filter(line => !line.trim().startsWith('//'));
