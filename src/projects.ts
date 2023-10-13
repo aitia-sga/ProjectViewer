@@ -24,12 +24,15 @@ export class MyProjects {
 		this.jsonPath = jsonPath;
 
 		try { 
-			const jsonString = fs.readFileSync(jsonPath, 'utf-8');
+			let jsonString = fs.readFileSync(jsonPath, 'utf-8');
+			let workspacePath = vscode.workspace.workspaceFolders![0].uri.fsPath;
+
+			jsonString = jsonString.replace(/\$\{workspaceFolder\}/g, workspacePath);
+			jsonString = path.normalize(jsonString).replace(/\\/g, '/');
 
 			const filteredString = jsonString.split('\n').filter(line => !line.trim().startsWith('//'));
 			try { this.jsonData = JSON.parse(filteredString.join('\n')); }
 			catch { this.jsonData = []; }
-		
 		}
 		catch { this.jsonData = []; }
 	}
@@ -46,7 +49,7 @@ export class MyProjects {
 				vscode.window.showInformationMessage(`Project ${element.name} already exists!`);
 		});
 
-		try { fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8'); } catch {}
+		this.writeProjectsToFile()
 	} 
 
 	projectExists(projectName: string): boolean {
@@ -81,8 +84,7 @@ export class MyProjects {
 			};
 			
 			this.jsonData.push(newProject);
-		
-			try { fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8'); } catch {}
+			this.writeProjectsToFile()
 		}
 	}
 
@@ -91,7 +93,7 @@ export class MyProjects {
 		if(projectIndex !== -1)
 		{
 			this.jsonData.splice(projectIndex, 1);
-			try { fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8'); } catch {}
+			this.writeProjectsToFile()
 		}
 	}
 
@@ -112,14 +114,14 @@ export class MyProjects {
 			};
 
 			parent.items.push(newDir)
-			try { fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8'); } catch {}
+			this.writeProjectsToFile()
 		}
 	}
 
 	removeObjectFromProject(removedObject: Item): void {
 		this.jsonData.forEach(element => {
 			if(this.removeObject(element, removedObject)) {
-				try { fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8'); } catch {}
+				this.writeProjectsToFile()
 				return;
 			}
 		});
@@ -146,12 +148,12 @@ export class MyProjects {
 	
 	renamedItem(renamedItem: Item, newName: string): void {
 		renamedItem.name = newName;
-		try { fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8'); } catch {}
+		this.writeProjectsToFile()
 	}
 
 	modifyDescription(renamedItem: Item, newDescription: string): void {
 		renamedItem.description = newDescription;
-		try { fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8'); } catch {}
+		this.writeProjectsToFile()
 	}
 
 	addFileToProject(locicalDirectory: Item, fileUri: vscode.Uri, itemType: string, description: string): void {
@@ -167,7 +169,21 @@ export class MyProjects {
 			vscode.window.showInformationMessage(`Directory already contains the ${newFile.name} file!`);
 		} else {
 			locicalDirectory.items.push(newFile);
-			try { fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8'); } catch {}
+			this.writeProjectsToFile()
 		}
+	}
+
+	writeProjectsToFile(): void {
+		try {
+			let jsonString = JSON.stringify(this.jsonData, null, 4);
+			jsonString = path.normalize(jsonString);
+			jsonString = jsonString.replace(/\\/g, '/');
+
+			let workspacePath = vscode.workspace.workspaceFolders![0].uri.fsPath;
+			workspacePath = path.normalize(workspacePath).replace(/\\/g, '/');
+			jsonString = jsonString.replace(new RegExp(workspacePath, 'g'), '${workspaceFolder}');
+
+			fs.writeFileSync(this.jsonPath, jsonString, 'utf-8');
+		} catch {}
 	}
 }
