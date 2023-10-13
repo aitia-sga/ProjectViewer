@@ -331,11 +331,9 @@ export function activate(context: vscode.ExtensionContext) {
 					for (const fileUri of fileUris) {
 						let fileType = "file";
 			
-						fs.stat(fileUri.fsPath, (err: any, stats: any) => {
-							if(err) { vscode.window.showErrorMessage(`Cannot retrieve file information: ${err.message}`); }
-							else if(stats.isDirectory())
-								fileType = "physicalDirectory";
-						})
+						const stats = fs.statSync(fileUri.fsPath);
+						if(stats.isDirectory()) 
+							fileType = "physicalDirectory";
 						
 						myProjects.addFileToProject(selectedItem, fileUri, fileType, description);
 						activeProjectsProvider.refresh();

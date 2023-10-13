@@ -94,8 +94,7 @@
 			"explorer/context": [
 				{
 					"command": "projectViewer.addToProject",
-					"group": "1_modification",
-					"when": "explorerResourceIsFolder == false"
+					"group": "1_modification"
 				}
 			]
 		},
