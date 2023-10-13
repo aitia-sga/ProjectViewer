@@ -30,12 +30,12 @@ export class MyProjects {
 			let workspacePath = vscode.workspace.workspaceFolders![0].uri.fsPath;
 			// workspacePath = path.normalize(workspacePath).replace(/\\/g, '\\');
 			console.log(workspacePath);
-			workspacePath = path.normalize(workspacePath);
-			console.log(workspacePath);
+			// workspacePath = path.normalize(workspacePath);
+			// console.log(workspacePath);
 			
-			// workspacePath = workspacePath.replace(/\\/g, '\\\\');
-			workspacePath = workspacePath.replace(/\\/g, '/');
-			console.log(workspacePath);
+			// // workspacePath = workspacePath.replace(/\\/g, '\\\\');
+			// workspacePath = workspacePath.replace(/\\/g, '/');
+			// console.log(workspacePath);
 
 
 			// jsonString = jsonString.replace(new RegExp('\$\{workspaceFolder\}', 'g'), workspacePath);
@@ -206,6 +206,10 @@ export class MyProjects {
 	}
 
 	writeProjectsToFile(): void {
-		try { fs.writeFileSync(this.jsonPath, JSON.stringify(this.jsonData, null, 4), 'utf-8'); } catch {}
+		try {
+			let jsonString = JSON.stringify(this.jsonData, null, 4);
+
+			fs.writeFileSync(this.jsonPath, jsonString, 'utf-8');
+		} catch {}
 	}
 }
