@@ -9,7 +9,7 @@
 	"categories": [
 		"Other"
 	],
-	"activationEvents": [],
+	"activationEvents": ["*"],
 	"main": "./out/extension.js",
 	"contributes": {
 		"viewsContainers": {
@@ -149,6 +149,7 @@
 				"command": "projectViewer.removeFromProject",
 				"title": "Remove from project"
 			}
+			
 		]
 	},
 	"scripts": {

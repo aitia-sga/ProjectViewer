@@ -41,7 +41,29 @@ export function activate(context: vscode.ExtensionContext) {
 	const activeProjectsProvider = new ActiveProjectsTreeProvider(myProjects.getProjects(), activeProjectsData.activeProjects);
 	vscode.window.registerTreeDataProvider('activeProjectsView', activeProjectsProvider);
 
+	let statusBarGoToExplorer = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 3);
+	statusBarGoToExplorer.text =  `$(files) Explorer`;
+	statusBarGoToExplorer.tooltip = 'Go to Explorer';
+	statusBarGoToExplorer.command = 'projectViewer.jumpToExplorer';
+	statusBarGoToExplorer.show();
+	context.subscriptions.push(statusBarGoToExplorer);
+
+	let statusBarGoToProjectViewer = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 2);
+	statusBarGoToProjectViewer.text =  `$(folder) Project Viewer`;
+	statusBarGoToProjectViewer.tooltip = 'Go to Project Viewer';
+	statusBarGoToProjectViewer.command = 'projectViewer.jumpToProjectViewer';
+	statusBarGoToProjectViewer.show();
+	context.subscriptions.push(statusBarGoToProjectViewer);
+
 	context.subscriptions.push(
+		vscode.commands.registerCommand('projectViewer.jumpToExplorer', () => {
+			vscode.commands.executeCommand('workbench.view.explorer');
+		}),
+
+		vscode.commands.registerCommand('projectViewer.jumpToProjectViewer', () => {
+			vscode.commands.executeCommand('workbench.view.extension.projectViewer');
+		}),
+		
 		vscode.commands.registerCommand('projectViewer.addProjectToActive', (project) => {
 			if (!activeProjectsData.activeProjects.includes(project.name)) {
 				activeProjectsData.activeProjects.push(project.name);
@@ -369,7 +391,7 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 				contextValue: 'physicalDirectory',
 				iconPath: new vscode.ThemeIcon(element.icon ? element.icon : 'folder'),
 				description: element.description ? element.description : '',
-            	collapsibleState: vscode.TreeItemCollapsibleState.Collapsed
+				collapsibleState: vscode.TreeItemCollapsibleState.Collapsed
 			};
 		} else {
 			// File
