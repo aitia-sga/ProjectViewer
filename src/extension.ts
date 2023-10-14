@@ -41,6 +41,15 @@ export function activate(context: vscode.ExtensionContext) {
 	const activeProjectsProvider = new ActiveProjectsTreeProvider(myProjects.getProjects(), activeProjectsData.activeProjects);
 	vscode.window.registerTreeDataProvider('activeProjectsView', activeProjectsProvider);
 
+	let statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 2);
+
+    statusBarItem.text =  `$(files) Explorer`;
+    statusBarItem.tooltip = "Go to Explorer";
+    statusBarItem.command = "projectViewer.jumpToExplorer";
+    statusBarItem.show();
+
+    context.subscriptions.push(statusBarItem);
+
 	context.subscriptions.push(
 		vscode.commands.registerCommand('projectViewer.jumpToExplorer', () => {
             vscode.commands.executeCommand('workbench.view.explorer');
