@@ -42,6 +42,10 @@ export function activate(context: vscode.ExtensionContext) {
 	vscode.window.registerTreeDataProvider('activeProjectsView', activeProjectsProvider);
 
 	context.subscriptions.push(
+		vscode.commands.registerCommand('projectViewer.jumpToExplorer', () => {
+            vscode.commands.executeCommand('workbench.view.explorer');
+        }),
+		
 		vscode.commands.registerCommand('projectViewer.addProjectToActive', (project) => {
 			if (!activeProjectsData.activeProjects.includes(project.name)) {
 				activeProjectsData.activeProjects.push(project.name);

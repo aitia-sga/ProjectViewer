@@ -89,6 +89,11 @@
 					"command": "projectViewer.importProject",
 					"group": "navigation",
 					"when": "view == projectsView"
+				},
+				{
+					"command": "projectViewer.jumpToExplorer",
+					"group": "navigation",
+					"when": "view == projectsView"
 				}
 			],
 			"explorer/context": [
@@ -148,7 +153,13 @@
 			{
 				"command": "projectViewer.removeFromProject",
 				"title": "Remove from project"
+			},
+			{
+				"command": "projectViewer.jumpToExplorer",
+				"title": "Jump to Explorer",
+				"icon": "$(arrow-left)"
 			}
+			
 		]
 	},
 	"scripts": {
