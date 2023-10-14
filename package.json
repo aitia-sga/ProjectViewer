@@ -2,7 +2,7 @@
 	"name": "projectviewer",
 	"displayName": "Project Viewer",
 	"description": "A basic example of a file explorer-like tree view.",
-	"version": "1.0.7",
+	"version": "1.0.8",
 	"engines": {
 		"vscode": "^1.42.0"
 	},
