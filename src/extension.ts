@@ -25,7 +25,7 @@ export function activate(context: vscode.ExtensionContext) {
 	} catch { vscode.window.showErrorMessage('No workspace is open! Please open a workspace or folder!'); }
 
 	const myProjects = new projects.MyProjects(path.join(vsCodeFolder, 'projects.json'));
-	const activeProjectsPath = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, '.vscode', 'activeProjects.json');
+	const activeProjectsPath = path.join(vsCodeFolder, 'activeProjects.json');
 
 	let activeProjectsData: { activeProjects: string[] };
 	try {
@@ -40,6 +40,38 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const activeProjectsProvider = new ActiveProjectsTreeProvider(myProjects.getProjects(), activeProjectsData.activeProjects);
 	vscode.window.registerTreeDataProvider('activeProjectsView', activeProjectsProvider);
+
+	
+	const projectsWatcher = fs.watch(path.join(vsCodeFolder, 'projects.json'), (eventType, filename) => {
+		if (filename) {
+			myProjects.updateProjects(); normalizeActiveProjects(myProjects.getProjects(), activeProjectsData, activeProjectsPath);
+			projectsProvider.updateProjects(myProjects.getProjects());
+			activeProjectsProvider.updateProjects(myProjects.getProjects());
+		}
+	});
+
+	context.subscriptions.push({
+		dispose: () => projectsWatcher.close()
+	});
+
+	const activeProjectsWatcher = fs.watch(activeProjectsPath, (eventType, filename) => {
+		if (filename) {
+			try {
+				const filteredString = fs.readFileSync(activeProjectsPath, 'utf8').split('\n').filter(line => !line.trim().startsWith('//'));
+				activeProjectsData = JSON.parse(filteredString.join('\n'));
+			} catch {
+				activeProjectsData = { activeProjects: [] };
+			}
+
+			activeProjectsProvider.updateActiveProjects(activeProjectsData.activeProjects);
+		}
+	});
+
+	context.subscriptions.push({
+		dispose: () => activeProjectsWatcher.close()
+	});
+
+
 
 	let statusBarGoToExplorer = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 3);
 	statusBarGoToExplorer.text =  `$(files) Explorer`;
@@ -265,8 +297,6 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		}),
 
-
-
 		vscode.commands.registerCommand('projectViewer.removeFromProject', async (removedFile: projects.File) => {
 			myProjects.removeObjectFromProject(removedFile);
 			activeProjectsProvider.refresh();
@@ -322,6 +352,20 @@ function showItemPicker(items: projects.Item[], isRoot = true): Promise<projects
 	});
 }
 
+function normalizeActiveProjects(projects: projects.Project[], actProjData: any, path: fs.PathOrFileDescriptor): void {
+	let needRefreshFile = false;
+
+	for (let i = 0; i < actProjData.activeProjects.length; i++) {
+		if(!projects.some(proj => proj.name === actProjData.activeProjects[i])) {
+			actProjData.activeProjects.splice(i, 1); needRefreshFile = true;
+		}
+	}
+
+	if(needRefreshFile) {
+		try { fs.writeFileSync(path, JSON.stringify(actProjData, null, 4)); } catch {}
+	}
+}
+
 
 class ProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 	private _onDidChangeTreeData: vscode.EventEmitter<any | undefined> = new vscode.EventEmitter<any | undefined>();
@@ -331,6 +375,11 @@ class ProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 
 	refresh(element?: any): void {
 		this._onDidChangeTreeData.fire(element);
+	}
+
+	updateProjects(projects: projects.Project[]) {
+		this.projects = projects;
+		this.refresh();
 	}
 
 	getTreeItem(element: any): vscode.TreeItem {
@@ -366,6 +415,16 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 	dispose() {
 		this.watchers.forEach(w => w.close());
 		this.watchers = [];
+	}
+
+	updateProjects(projectsData: projects.Project[]) {
+		this.projectsData = projectsData;
+		this.refresh();
+	}
+
+	updateActiveProjects(activeProjectsNames: string[]) {
+		this.activeProjectsNames = activeProjectsNames;
+		this.refresh();
 	}
 
 	getTreeItem(element: any): vscode.TreeItem {
@@ -470,4 +529,5 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 
 		return 0;
 	}
+
 }
