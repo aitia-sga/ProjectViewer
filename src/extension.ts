@@ -41,6 +41,23 @@ export function activate(context: vscode.ExtensionContext) {
 	const activeProjectsProvider = new ActiveProjectsTreeProvider(myProjects.getProjects(), activeProjectsData.activeProjects);
 	vscode.window.registerTreeDataProvider('activeProjectsView', activeProjectsProvider);
 
+	
+	const projectsJsonPath = path.join(vsCodeFolder, 'projects.json');
+
+	const watcher = fs.watch(projectsJsonPath, (eventType, filename) => {
+		if (filename) {
+			console.log("dfdfsdfsdsd");
+			projectsProvider.refresh();
+			activeProjectsProvider.refresh();
+		}
+	});
+
+	context.subscriptions.push({
+		dispose: () => watcher.close()
+	});
+
+
+
 	let statusBarGoToExplorer = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 3);
 	statusBarGoToExplorer.text =  `$(files) Explorer`;
 	statusBarGoToExplorer.tooltip = 'Go to Explorer';
@@ -264,8 +281,6 @@ export function activate(context: vscode.ExtensionContext) {
 				vscode.window.showErrorMessage(`An error occurred: ${err.message}`);
 			}
 		}),
-
-
 
 		vscode.commands.registerCommand('projectViewer.removeFromProject', async (removedFile: projects.File) => {
 			myProjects.removeObjectFromProject(removedFile);
