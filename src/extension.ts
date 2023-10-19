@@ -25,7 +25,7 @@ export function activate(context: vscode.ExtensionContext) {
 	} catch { vscode.window.showErrorMessage('No workspace is open! Please open a workspace or folder!'); }
 
 	const myProjects = new projects.MyProjects(path.join(vsCodeFolder, 'projects.json'));
-	const activeProjectsPath = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, '.vscode', 'activeProjects.json');
+	const activeProjectsPath = path.join(vsCodeFolder, 'activeProjects.json');
 
 	let activeProjectsData: { activeProjects: string[] };
 	try {
@@ -42,24 +42,20 @@ export function activate(context: vscode.ExtensionContext) {
 	vscode.window.registerTreeDataProvider('activeProjectsView', activeProjectsProvider);
 
 	
-	const projectsJsonPath = path.join(vsCodeFolder, 'projects.json');
-
-	const watcher = fs.watch(projectsJsonPath, (eventType, filename) => {
+	const projectsWatcher = fs.watch(path.join(vsCodeFolder, 'projects.json'), (eventType, filename) => {
 		if (filename) {
-			console.log("dfdfsdfsdsd");
-			projectsProvider.refresh();
-			activeProjectsProvider.refresh();
+			myProjects.updateProjects();
+			projectsProvider.updateProjects(myProjects.getProjects());
+			activeProjectsProvider.updateProjects(myProjects.getProjects());
 		}
 	});
 
 	context.subscriptions.push({
-		dispose: () => watcher.close()
+		dispose: () => projectsWatcher.close()
 	});
 
 	const activeProjectsWatcher = fs.watch(activeProjectsPath, (eventType, filename) => {
 		if (filename) {
-			console.log("dfdsf");
-
 			try {
 				const filteredString = fs.readFileSync(activeProjectsPath, 'utf8').split('\n').filter(line => !line.trim().startsWith('//'));
 				activeProjectsData = JSON.parse(filteredString.join('\n'));
@@ -367,6 +363,11 @@ class ProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 		this._onDidChangeTreeData.fire(element);
 	}
 
+	updateProjects(projects: projects.Project[]) {
+		this.projects = projects;
+		this.refresh();
+	}
+
 	getTreeItem(element: any): vscode.TreeItem {
 		return {
 			label: element.name,
@@ -400,6 +401,11 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 	dispose() {
 		this.watchers.forEach(w => w.close());
 		this.watchers = [];
+	}
+
+	updateProjects(projectsData: projects.Project[]) {
+		this.projectsData = projectsData;
+		this.refresh();
 	}
 
 	updateActiveProjects(activeProjectsNames: string[]) {

@@ -17,14 +17,22 @@ export interface File extends Item { absolutPath: string; }
 
 export class MyProjects {
 
-	jsonPath: string;
-	jsonData: Project[];
+	jsonPath: string = "";
+	jsonData: Project[] = [];
 
 	constructor(jsonPath: string) {
 		this.jsonPath = jsonPath;
+		this.updateProjects();
+	}
+	
+	getProjects(): Project[] {
+		return this.jsonData;
+	}
 
+	updateProjects(): void {
+		
 		try { 
-			let jsonString = fs.readFileSync(jsonPath, 'utf-8');
+			let jsonString = fs.readFileSync(this.jsonPath, 'utf-8');
 			let workspacePath = vscode.workspace.workspaceFolders![0].uri.fsPath;
 
 			jsonString = jsonString.replace(/\$\{workspaceFolder\}/g, workspacePath);
@@ -35,10 +43,6 @@ export class MyProjects {
 			catch { this.jsonData = []; }
 		}
 		catch { this.jsonData = []; }
-	}
-	
-	getProjects(): Project[] {
-		return this.jsonData;
 	}
 
 	importProjects(importedProjects: Project[]): void {
