@@ -44,7 +44,7 @@ export function activate(context: vscode.ExtensionContext) {
 	
 	const projectsWatcher = fs.watch(path.join(vsCodeFolder, 'projects.json'), (eventType, filename) => {
 		if (filename) {
-			myProjects.updateProjects();
+			myProjects.updateProjects(); normalizeActiveProjects(myProjects.getProjects(), activeProjectsData, activeProjectsPath);
 			projectsProvider.updateProjects(myProjects.getProjects());
 			activeProjectsProvider.updateProjects(myProjects.getProjects());
 		}
@@ -352,6 +352,20 @@ function showItemPicker(items: projects.Item[], isRoot = true): Promise<projects
 	});
 }
 
+function normalizeActiveProjects(projects: projects.Project[], actProjData: any, path: fs.PathOrFileDescriptor): void {
+	let needRefreshFile = false;
+
+	for (let i = 0; i < actProjData.activeProjects.length; i++) {
+		if(!projects.some(proj => proj.name === actProjData.activeProjects[i])) {
+			actProjData.activeProjects.splice(i, 1); needRefreshFile = true;
+		}
+	}
+
+	if(needRefreshFile) {
+		try { fs.writeFileSync(path, JSON.stringify(actProjData, null, 4)); } catch {}
+	}
+}
+
 
 class ProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 	private _onDidChangeTreeData: vscode.EventEmitter<any | undefined> = new vscode.EventEmitter<any | undefined>();
@@ -515,4 +529,5 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 
 		return 0;
 	}
+
 }
