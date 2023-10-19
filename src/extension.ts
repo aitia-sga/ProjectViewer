@@ -56,6 +56,25 @@ export function activate(context: vscode.ExtensionContext) {
 		dispose: () => watcher.close()
 	});
 
+	const activeProjectsWatcher = fs.watch(activeProjectsPath, (eventType, filename) => {
+		if (filename) {
+			console.log("dfdsf");
+
+			try {
+				const filteredString = fs.readFileSync(activeProjectsPath, 'utf8').split('\n').filter(line => !line.trim().startsWith('//'));
+				activeProjectsData = JSON.parse(filteredString.join('\n'));
+			} catch {
+				activeProjectsData = { activeProjects: [] };
+			}
+
+			activeProjectsProvider.updateActiveProjects(activeProjectsData.activeProjects);
+		}
+	});
+
+	context.subscriptions.push({
+		dispose: () => activeProjectsWatcher.close()
+	});
+
 
 
 	let statusBarGoToExplorer = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 3);
@@ -381,6 +400,11 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 	dispose() {
 		this.watchers.forEach(w => w.close());
 		this.watchers = [];
+	}
+
+	updateActiveProjects(activeProjectsNames: string[]) {
+		this.activeProjectsNames = activeProjectsNames;
+		this.refresh();
 	}
 
 	getTreeItem(element: any): vscode.TreeItem {
