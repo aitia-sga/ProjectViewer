@@ -44,7 +44,8 @@ export function activate(context: vscode.ExtensionContext) {
 	
 	const projectsWatcher = fs.watch(path.join(vsCodeFolder, 'projects.json'), (eventType, filename) => {
 		if (filename) {
-			myProjects.updateProjects(); normalizeActiveProjects(myProjects.getProjects(), activeProjectsData, activeProjectsPath);
+			myProjects.updateProjects();
+			// normalizeActiveProjects(myProjects.getProjects(), activeProjectsData, activeProjectsPath);
 			projectsProvider.updateProjects(myProjects.getProjects());
 			activeProjectsProvider.updateProjects(myProjects.getProjects());
 		}
@@ -491,7 +492,7 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 				return Promise.resolve(element.items);
 			else
 			return Promise.resolve(element.items.sort((a: projects.Item, b: projects.Item) => this.elementCompare(a, b)));
-			
+
 		} else if (element.type === 'physicalDirectory') {
 			return new Promise(resolve => {
 				fs.readdir(element.absolutPath, (err, files) => {
@@ -516,7 +517,7 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 						if(element.ordering === 'manual')
 							resolve(items);
 						else
-						resolve(items.sort((a, b) => this.elementCompare(a, b)));
+							resolve(items.sort((a, b) => this.elementCompare(a, b)));
 					}
 				});
 			});
