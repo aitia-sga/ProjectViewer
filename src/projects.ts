@@ -7,8 +7,9 @@ import * as path from 'path';
 export type Item = {
 	name: string;
 	type: string;
-	items: Item[];
 	description: string;
+	ordering: string;
+	items: Item[];
 };
 
 export interface Project extends Item {}
@@ -84,7 +85,8 @@ export class MyProjects {
 				name: projectName,
 				type: "project",
 				description: description,
-				items: []
+				items: [],
+				ordering: "auto"
 			};
 			
 			this.jsonData.push(newProject);
@@ -112,8 +114,9 @@ export class MyProjects {
 		else {
 			const newDir: LogicalDirectory = {
 				name: newDirectory,
-				type: "logicalDirectory",
+				type: 'logicalDirectory',
 				description: description,
+				ordering: 'auto',
 				items: []
 			};
 
@@ -164,9 +167,10 @@ export class MyProjects {
 		const newFile: File = {
 			name: path.basename(fileUri.fsPath),
 			type: itemType,
-			items: [],
 			absolutPath: fileUri.fsPath,
-			description: description
+			description: description,
+			ordering: 'auto',
+			items: []
 		};
 
 		if(this.projectContainsTheFile(locicalDirectory, newFile)) {

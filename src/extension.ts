@@ -44,7 +44,8 @@ export function activate(context: vscode.ExtensionContext) {
 	
 	const projectsWatcher = fs.watch(path.join(vsCodeFolder, 'projects.json'), (eventType, filename) => {
 		if (filename) {
-			myProjects.updateProjects(); normalizeActiveProjects(myProjects.getProjects(), activeProjectsData, activeProjectsPath);
+			myProjects.updateProjects();
+			// normalizeActiveProjects(myProjects.getProjects(), activeProjectsData, activeProjectsPath);
 			projectsProvider.updateProjects(myProjects.getProjects());
 			activeProjectsProvider.updateProjects(myProjects.getProjects());
 		}
@@ -324,7 +325,7 @@ function showItemPicker(items: projects.Item[], isRoot = true): Promise<projects
 		quickPick.items = isRoot 
 			? items.map(item => ({ label: item.name, item })).filter(item => item.item.type === 'logicalDirectory' || item.item.type === 'project')
 			: [
-				{ label: `Select current directory`, item: { name: 'Current', type: 'current', description: '', items: [] } },
+				{ label: `Select current directory`, item: { name: 'Current', type: 'current', description: '', ordering: 'auto', items: [] } },
 				...items.map(item => ({ label: item.name, item })).filter(item => item.item.type === 'logicalDirectory' || item.item.type === 'project')
 			  ];
 
@@ -479,12 +480,19 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 
 	getChildren(element?: any): Thenable<any[]> {
 		if (!element) {
-			return Promise.resolve(this.projectsData.filter((project: any) => this.activeProjectsNames.includes(project.name))
-			.sort((a, b) => this.elementCompare(a, b)));
+			// Ordered
+			// return Promise.resolve(this.projectsData.filter((project: any) => this.activeProjectsNames.includes(project.name))
+			// .sort((a, b) => this.elementCompare(a, b)));
+
+			// Don't ordered
+			return Promise.resolve(this.projectsData.filter((project: any) => this.activeProjectsNames.includes(project.name)));
 
 		} else if (element.type === 'project' || element.type === 'logicalDirectory') {
+			if(element.ordering === 'manual')
+				return Promise.resolve(element.items);
+			else
 			return Promise.resolve(element.items.sort((a: projects.Item, b: projects.Item) => this.elementCompare(a, b)));
-			
+
 		} else if (element.type === 'physicalDirectory') {
 			return new Promise(resolve => {
 				fs.readdir(element.absolutPath, (err, files) => {
@@ -506,7 +514,10 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 
 						this.watchers.push(watcher);
 
-						resolve(items.sort((a, b) => this.elementCompare(a, b)));
+						if(element.ordering === 'manual')
+							resolve(items);
+						else
+							resolve(items.sort((a, b) => this.elementCompare(a, b)));
 					}
 				});
 			});
