@@ -151,7 +151,17 @@ export async function activate(context: vscode.ExtensionContext) {
 			
 			if (userInput) {
 				const description = await descriptionRequest();
-				myProjects.createNewProject(userInput, description, template);
+				const projectFile = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, template, 'project', 'logicalView.json');
+				
+				if(fs.existsSync(projectFile) && fs.statSync(projectFile).size > 0)
+				{
+					const importedProjects = new projects.MyProjects(projectFile);
+					myProjects.importProjects(importedProjects.getProjects(), userInput, description, template);
+					projectsProvider.refresh();
+				}
+				else
+					myProjects.createNewProject(userInput, description, template);
+
 				projectsProvider.refresh();
 			} else
 				vscode.window.showInformationMessage('No input provided');	
