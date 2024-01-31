@@ -30,6 +30,10 @@
 				{
 					"id": "projectsView",
 					"name": "Projects"
+				},
+				{
+					"id": "templateProjectsView",
+					"name": "Template projects"
 				}
 			]
 		},
@@ -52,12 +56,12 @@
 				},
 				{
 					"command": "projectViewer.deleteProject",
-					"when": "viewItem == project",
+					"when": "view != templateProjectsView && viewItem == project",
 					"group": "0_project@name"
 				},
 				{
 					"command": "projectViewer.exportProject",
-					"when": "viewItem == project",
+					"when": "view != templateProjectsView && viewItem == project",
 					"group": "0_project@name"
 				},
 				{
@@ -67,16 +71,20 @@
 				},
 				{
 					"command": "projectViewer.rename",
-					"when": "viewItem == project || viewItem == logicalDirectory"
+					"when": "view != templateProjectsView && (viewItem == project || viewItem == logicalDirectory)"
 				},
 				{
 					"command": "projectViewer.modifyDescription",
-					"when": "viewItem == project || viewItem == logicalDirectory || viewItem == file || viewItem == physicalDirectory"
+					"when": "view != templateProjectsView && (viewItem == project || viewItem == logicalDirectory || viewItem == file || viewItem == physicalDirectory)"
 				},
 				{
 					"command": "projectViewer.removeFromProject",
 					"when": "view == activeProjectsView && (viewItem == file || viewItem == physicalDirectory)",                	
 					"group": "0_project@name"
+				},
+				{
+					"command": "projectViewer.newProjectFromTemplate",
+					"when": "view == templateProjectsView"
 				}
 			],
 			"view/title": [
@@ -148,6 +156,10 @@
 			{
 				"command": "projectViewer.removeFromProject",
 				"title": "Remove from project"
+			},
+			{
+				"command": "projectViewer.newProjectFromTemplate",
+				"title": "Create new project from template"
 			}
 			
 		]

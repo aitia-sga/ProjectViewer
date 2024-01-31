@@ -1,6 +1,7 @@
 
 import * as vscode from 'vscode';
 import * as fs from 'fs';
+import * as fsProm from 'fs/promises';
 import * as path from 'path';
 import * as projects from './projects';
 
@@ -8,7 +9,7 @@ import * as projects from './projects';
 interface MyQuickPickItem extends vscode.QuickPickItem { item: projects.Item; }
 
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
 	let vsCodeFolder = "";
 
 	try {
@@ -27,6 +28,14 @@ export function activate(context: vscode.ExtensionContext) {
 	const myProjects = new projects.MyProjects(path.join(vsCodeFolder, 'projects.json'));
 	const activeProjectsPath = path.join(vsCodeFolder, 'activeProjects.json');
 
+
+	// A függvény hívása, itt állítsd be a kezdő könyvtárat
+	const workspaceRoot = vscode.workspace.workspaceFolders![0].uri.fsPath; // Ide írd be a workspace elérési útját
+	// let directories: string[];
+
+	let directories: string[] = await findProjectDirectories(workspaceRoot);
+
+
 	let activeProjectsData: { activeProjects: string[] };
 	try {
 		const filteredString = fs.readFileSync(activeProjectsPath, 'utf8').split('\n').filter(line => !line.trim().startsWith('//'));
@@ -34,6 +43,9 @@ export function activate(context: vscode.ExtensionContext) {
 	} catch {
 		activeProjectsData = { activeProjects: [] };
 	}
+
+	const templateProjectsProvider = new TemplateProjectsTreeProvider(directories);
+	vscode.window.registerTreeDataProvider('templateProjectsView', templateProjectsProvider);
 
 	const projectsProvider = new ProjectsTreeProvider(myProjects.getProjects());
 	vscode.window.registerTreeDataProvider('projectsView', projectsProvider);
@@ -130,7 +142,21 @@ export function activate(context: vscode.ExtensionContext) {
 			} else
 				vscode.window.showInformationMessage('No input provided');	
 		}),
-		
+
+		vscode.commands.registerCommand('projectViewer.newProjectFromTemplate', async (template) => {
+			const userInput = await vscode.window.showInputBox({
+				prompt: 'Enter the name of the project',
+				placeHolder: 'Project name'
+			});
+			
+			if (userInput) {
+				const description = await descriptionRequest();
+				myProjects.createNewProject(userInput, description, template);
+				projectsProvider.refresh();
+			} else
+				vscode.window.showInformationMessage('No input provided');	
+		}),
+
 		vscode.commands.registerCommand('projectViewer.deleteProject', async (deletedProject) => {
 			const result = await vscode.window.showInformationMessage(
 				'Are you sure you want to delete this project?',
@@ -306,6 +332,30 @@ export function activate(context: vscode.ExtensionContext) {
 	);
 }
 
+
+async function findProjectDirectories(rootDir: string, relativePath: string = ''): Promise<string[]> {
+    let projectDirectories: string[] = [];
+
+    const entries = await fsProm.readdir(path.join(rootDir, relativePath), { withFileTypes: true });
+    for (const entry of entries) {
+		if (entry.isDirectory()) {
+			// Ellenőrizzük, hogy a jelenlegi könyvtár neve 'project'
+            if (entry.name === 'project') {
+				projectDirectories.push(relativePath);
+            } else {
+				// Ha nem, akkor rekurzívan bejárjuk az alkönyvtárakat
+				const entryRelativePath = path.join(relativePath, entry.name);
+                const subDirectories = await findProjectDirectories(rootDir, entryRelativePath);
+                projectDirectories = projectDirectories.concat(subDirectories);
+            }
+        }
+    }
+
+    return projectDirectories;
+}
+
+
+
 async function descriptionRequest(): Promise<string> {
 	const userInput = await vscode.window.showInputBox({
 		prompt: 'Enter the description, or press Enter!',
@@ -364,6 +414,39 @@ function normalizeActiveProjects(projects: projects.Project[], actProjData: any,
 
 	if(needRefreshFile) {
 		try { fs.writeFileSync(path, JSON.stringify(actProjData, null, 4)); } catch {}
+	}
+}
+
+class TemplateProjectsTreeProvider implements vscode.TreeDataProvider<any> {
+	private _onDidChangeTreeData: vscode.EventEmitter<any | undefined> = new vscode.EventEmitter<any | undefined>();
+	readonly onDidChangeTreeData: vscode.Event<any | undefined> = this._onDidChangeTreeData.event;
+
+	constructor(private templateProjects: string[]) {}
+
+	refresh(element?: any): void {
+		this._onDidChangeTreeData.fire(element);
+	}
+
+	updateProjects(templateProjects: string[]) {
+		this.templateProjects = templateProjects;
+		this.refresh();
+	}
+
+	getTreeItem(element: any): vscode.TreeItem {
+		return {
+			label: element,
+			contextValue: 'project',
+			iconPath: new vscode.ThemeIcon(element.icon ? element.icon : 'project'),
+			// description: element.description ? element.description : '',
+			collapsibleState: vscode.TreeItemCollapsibleState.None,
+		};
+	}
+
+	getChildren(element?: any): Thenable<any[]> {
+		if (!element) {
+			return Promise.resolve(this.templateProjects.sort());
+		}
+		return Promise.resolve([]);
 	}
 }
 
