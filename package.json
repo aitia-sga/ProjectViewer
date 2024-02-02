@@ -85,6 +85,36 @@
 				{
 					"command": "projectViewer.newProjectFromTemplate",
 					"when": "view == templateProjectsView"
+				},
+				{
+					"command": "projectViewer.buildAppDebug",
+					"when": "view == projectsView && viewItem == project",
+					"group": "inline"
+				},
+				{
+					"command": "projectViewer.buildAppAndLibsDebug",
+					"when": "view == projectsView && viewItem == project",
+					"group": "inline"
+				},
+				{
+					"command": "projectViewer.buildAppRelease",
+					"when": "view == projectsView && viewItem == project",
+					"group": "inline"
+				},
+				{
+					"command": "projectViewer.buildAppAndLibsRelease",
+					"when": "view == projectsView && viewItem == project",
+					"group": "inline"
+				},
+				{
+					"command": "projectViewer.debug",
+					"when": "view == projectsView && viewItem == project",
+					"group": "inline"
+				},
+				{
+					"command": "projectViewer.showLog",
+					"when": "view == projectsView && viewItem == project",
+					"group": "inline"
 				}
 			],
 			"view/title": [
@@ -95,6 +125,46 @@
 				},
 				{
 					"command": "projectViewer.importProject",
+					"group": "navigation",
+					"when": "view == projectsView"
+				},
+				{
+					"command": "projectViewer.buildAllAppDebug",
+					"group": "navigation",
+					"when": "view == projectsView"
+				},
+				{
+					"command": "projectViewer.buildAllLibDebug",
+					"group": "navigation",
+					"when": "view == projectsView"
+				},
+				{
+					"command": "projectViewer.buildAllContribDebug",
+					"group": "navigation",
+					"when": "view == projectsView"
+				},
+				{
+					"command": "projectViewer.buildAllDebug",
+					"group": "navigation",
+					"when": "view == projectsView"
+				},
+				{
+					"command": "projectViewer.buildAllAppRelease",
+					"group": "navigation",
+					"when": "view == projectsView"
+				},
+				{
+					"command": "projectViewer.buildAllLibRelease",
+					"group": "navigation",
+					"when": "view == projectsView"
+				},
+				{
+					"command": "projectViewer.buildAllContribRelease",
+					"group": "navigation",
+					"when": "view == projectsView"
+				},
+				{
+					"command": "projectViewer.buildAllRelease",
 					"group": "navigation",
 					"when": "view == projectsView"
 				}
@@ -142,6 +212,46 @@
 				"icon": "$(arrow-down)"
 			},
 			{
+				"command": "projectViewer.buildAllAppDebug",
+				"title": "Build all app in debug mode",
+				"icon": "resources/A_debug.svg"
+			},
+			{
+				"command": "projectViewer.buildAllLibDebug",
+				"title": "Build all lib in debug mode",
+				"icon": "resources/L_debug.svg"
+			},
+			{
+				"command": "projectViewer.buildAllContribDebug",
+				"title": "Build all contrib in debug mode",
+				"icon": "resources/C_debug.svg"
+			},
+			{
+				"command": "projectViewer.buildAllDebug",
+				"title": "Build all in debug mode",
+				"icon": "resources/Infinite_debug.svg"
+			},
+			{
+				"command": "projectViewer.buildAllAppRelease",
+				"title": "Build all app in release mode",
+				"icon": "resources/A_release.svg"
+			},
+			{
+				"command": "projectViewer.buildAllLibRelease",
+				"title": "Build all lib in release mode",
+				"icon": "resources/L_release.svg"
+			},
+			{
+				"command": "projectViewer.buildAllContribRelease",
+				"title": "Build all contrib in release mode",
+				"icon": "resources/C_release.svg"
+			},
+			{
+				"command": "projectViewer.buildAllRelease",
+				"title": "Build all in release mode",
+				"icon": "resources/Infinite_release.svg"
+			},
+			{
 				"command": "projectViewer.deleteProject",
 				"title": "Delete project with contents"
 			},
@@ -160,6 +270,36 @@
 			{
 				"command": "projectViewer.newProjectFromTemplate",
 				"title": "Create new project from template"
+			},
+			{
+				"command": "projectViewer.buildAppDebug",
+				"title": "Build app in debug mode",
+				"icon": "resources/A_debug.svg"
+			},
+			{
+				"command": "projectViewer.buildAppAndLibsDebug",
+				"title": "Build all lib and app in debug mode",
+				"icon": "resources/AL_debug.svg"
+			},
+			{
+				"command": "projectViewer.buildAppRelease",
+				"title": "Build app in debug mode",
+				"icon": "resources/A_release.svg"
+			},
+			{
+				"command": "projectViewer.buildAppAndLibsRelease",
+				"title": "Build all lib and app in debug mode",
+				"icon": "resources/AL_release.svg"
+			},
+			{
+				"command": "projectViewer.debug",
+				"title": "Start debugging",
+				"icon": "resources/D.svg"
+			},
+			{
+				"command": "projectViewer.showLog",
+				"title": "Show syslog",
+				"icon": "resources/LG.svg"
 			}
 			
 		]

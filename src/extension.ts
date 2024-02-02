@@ -28,10 +28,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	const myProjects = new projects.MyProjects(path.join(vsCodeFolder, 'projects.json'));
 	const activeProjectsPath = path.join(vsCodeFolder, 'activeProjects.json');
 
-
-	// A függvény hívása, itt állítsd be a kezdő könyvtárat
-	const workspaceRoot = vscode.workspace.workspaceFolders![0].uri.fsPath; // Ide írd be a workspace elérési útját
-	// let directories: string[];
+	const workspaceRoot = vscode.workspace.workspaceFolders![0].uri.fsPath;
 
 	let directories: string[] = await findProjectDirectories(workspaceRoot);
 
@@ -337,8 +334,38 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand('projectViewer.removeFromProject', async (removedFile: projects.File) => {
 			myProjects.removeObjectFromProject(removedFile);
 			activeProjectsProvider.refresh();
-		})
-			  
+		}),
+
+		vscode.commands.registerCommand('projectViewer.buildAppDebug', (project) => {
+			vscode.window.showInformationMessage(`Action for project: ${project.name}`);
+
+			const workspacePath = vscode.workspace.workspaceFolders![0].uri.fsPath
+
+			const scriptPath = path.join(workspacePath, '/scripts/buildAllLib.sh debug');
+			// const scriptPath = path.join(workspacePath, '/scripts/build.sh app/5g/keydb5g ');
+			console.log('scr: ' + scriptPath);
+			// exec(scriptPath, (error: Error | null, stdout: string, stderr: string) => {
+			// 	if (error) {
+			// 		console.error(`exec error: ${error.message}`);
+			// 		return;
+			// 	}
+			// 	if (stderr) {
+			// 		console.error(`stderr: ${stderr}`);
+			// 		return;
+			// 	}
+			// 	console.log(`stdout: ${stdout}`);
+			// });
+
+			const terminal = vscode.window.createTerminal(`Shell Script for ${project.name}`);
+			terminal.show();
+
+			// Itt add meg a shell script elérési útját és a parancsot
+			// const scriptPath: string = '/path/to/your/script.sh';
+			// Küld egy parancsot a terminálnak a script futtatására
+			terminal.sendText(scriptPath);
+
+
+		})			  
 	);
 }
 
