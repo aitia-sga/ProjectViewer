@@ -362,7 +362,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.runOtherScript', (project: projects.Project) => {
-			runComand(workspaceRoot, project.otherScript);
+			runOtherScript(workspaceRoot, project.otherScript);
 		}),
 		
 
@@ -536,17 +536,21 @@ function showItemPicker(items: projects.Item[], isRoot = true): Promise<projects
 }
 
 function runComand(workspace: string, command: string, mode: string = '', project: string = ''): void {
+
+	if(!command || !command.length)
+		return;
+
 	const scriptPath = path.join(workspace, 'scripts', command);
 
 	let script = scriptPath;
 	let terminalName = command;
 
-	if(project.length) {
+	if(project && project.length) {
 		script += ' ' + project; 
 		terminalName += ' ' + project;
 	}
 	
-	if(mode.length) {
+	if(mode && mode.length) {
 		script += ' ' + mode; 
 		terminalName += ' ' + mode;
 	}
@@ -556,6 +560,20 @@ function runComand(workspace: string, command: string, mode: string = '', projec
 	const terminal = vscode.window.createTerminal(terminalName);
 	terminal.show();
 	terminal.sendText(script);
+}
+
+function runOtherScript(workspace: string, script: string): void {
+
+	if(!script || !script.length)
+		return;
+
+	const scriptPath = path.join(workspace, script);
+
+	console.log(`Call ${script}`);
+
+	const terminal = vscode.window.createTerminal(script);
+	terminal.show();
+	terminal.sendText(scriptPath);
 }
 
 function startDebugging(debugConfigurationName: string) {
