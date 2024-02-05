@@ -337,35 +337,61 @@ export async function activate(context: vscode.ExtensionContext) {
 		}),
 
 		vscode.commands.registerCommand('projectViewer.buildAppDebug', (project) => {
-			vscode.window.showInformationMessage(`Action for project: ${project.name}`);
+			runComand(workspaceRoot, 'build.sh', 'debug', project.template)
+		}),
+		
+		vscode.commands.registerCommand('projectViewer.buildAppAndLibsDebug', (project) => {
+			runComand(workspaceRoot, 'buildAppAndAllLib.sh', 'debug', project.template)
+		}),
+		
+		vscode.commands.registerCommand('projectViewer.buildAppRelease', (project) => {
+			runComand(workspaceRoot, 'build.sh', 'release', project.template)
+		}),
+		
+		vscode.commands.registerCommand('projectViewer.buildAppAndLibsRelease', (project) => {
+			runComand(workspaceRoot, 'buildAppAndAllLib.sh', 'release', project.template)
+		}),
+		
+		vscode.commands.registerCommand('projectViewer.debug', (project) => {
+			startDebugging(project.debugConfName)
+		}),
+		
+		vscode.commands.registerCommand('projectViewer.showLog', (project) => {
+			runComand(workspaceRoot, 'showsyslog.sh', project.template)
+		}),
+		
 
-			const workspacePath = vscode.workspace.workspaceFolders![0].uri.fsPath
-
-			const scriptPath = path.join(workspacePath, '/scripts/buildAllLib.sh debug');
-			// const scriptPath = path.join(workspacePath, '/scripts/build.sh app/5g/keydb5g ');
-			console.log('scr: ' + scriptPath);
-			// exec(scriptPath, (error: Error | null, stdout: string, stderr: string) => {
-			// 	if (error) {
-			// 		console.error(`exec error: ${error.message}`);
-			// 		return;
-			// 	}
-			// 	if (stderr) {
-			// 		console.error(`stderr: ${stderr}`);
-			// 		return;
-			// 	}
-			// 	console.log(`stdout: ${stdout}`);
-			// });
-
-			const terminal = vscode.window.createTerminal(`Shell Script for ${project.name}`);
-			terminal.show();
-
-			// Itt add meg a shell script elérési útját és a parancsot
-			// const scriptPath: string = '/path/to/your/script.sh';
-			// Küld egy parancsot a terminálnak a script futtatására
-			terminal.sendText(scriptPath);
-
-
-		})			  
+		vscode.commands.registerCommand('projectViewer.buildAllAppDebug', () => {
+			runComand(workspaceRoot, 'buildAllApp.sh', 'debug')
+		}),
+		
+		vscode.commands.registerCommand('projectViewer.buildAllLibDebug', () => {
+			runComand(workspaceRoot, 'buildAllLib.sh', 'debug')
+		}),
+		
+		vscode.commands.registerCommand('projectViewer.buildAllContribDebug', () => {
+			runComand(workspaceRoot, 'buildAllContrib.sh', 'debug')
+		}),
+		
+		vscode.commands.registerCommand('projectViewer.buildAllDebug', () => {
+			runComand(workspaceRoot, 'buildAll.sh', 'debug')
+		}),
+		
+		vscode.commands.registerCommand('projectViewer.buildAllAppRelease', () => {
+			runComand(workspaceRoot, 'buildAllApp.sh', 'release')
+		}),
+		
+		vscode.commands.registerCommand('projectViewer.buildAllLibRelease', () => {
+			runComand(workspaceRoot, 'buildAllLib.sh', 'release')
+		}),
+		
+		vscode.commands.registerCommand('projectViewer.buildAllContribRelease', () => {
+			runComand(workspaceRoot, 'buildAllContrib.sh', 'release')
+		}),
+		
+		vscode.commands.registerCommand('projectViewer.buildAllRelease', () => {
+			runComand(workspaceRoot, 'buildAll.sh', 'release')
+		}),
 	);
 }
 
@@ -391,8 +417,6 @@ async function findProjectDirectories(rootDir: string, relativePath: string = ''
     return projectDirectories;
 }
 
-
-
 async function descriptionRequest(): Promise<string> {
 	const userInput = await vscode.window.showInputBox({
 		prompt: 'Enter the description, or press Enter!',
@@ -401,8 +425,20 @@ async function descriptionRequest(): Promise<string> {
 	
 	if (userInput)
 		return userInput;
-	else
-		return '';
+
+	return '';
+}
+
+async function debugConfNameRequest(): Promise<string> {
+	const userInput = await vscode.window.showInputBox({
+		prompt: 'Enter the debug configuration name, or press Enter!',
+		placeHolder: 'Debug configuration'
+	});
+	
+	if (userInput)
+		return userInput;
+
+	return '';
 }
 
 function showItemPicker(items: projects.Item[], isRoot = true): Promise<projects.Item | undefined> {
@@ -438,6 +474,38 @@ function showItemPicker(items: projects.Item[], isRoot = true): Promise<projects
 		quickPick.onDidHide(() => quickPick.dispose());
 		quickPick.show();
 	});
+}
+
+function runComand(workspace: string, command: string, mode: string = '', project: string = ''): void {
+	const scriptPath = path.join(workspace, 'scripts', command);
+
+	let script = scriptPath;
+	let terminalName = command;
+
+	if(project.length)
+	{
+		script += ' ' + project; 
+		terminalName += ' ' + project;
+	}
+	
+	if(mode.length)
+	{
+		script += ' ' + mode; 
+		terminalName += ' ' + mode;
+	}
+
+	console.log(`Call ${script}`);
+
+	const terminal = vscode.window.createTerminal(terminalName);
+	terminal.show();
+	terminal.sendText(script);
+}
+
+function startDebugging(debugConfigurationName: string) {
+	if(debugConfigurationName && debugConfigurationName.length)
+		vscode.debug.startDebugging(vscode.workspace.workspaceFolders![0], debugConfigurationName);
+	else
+		console.log('debugConfigurationName is empty');
 }
 
 function normalizeActiveProjects(projects: projects.Project[], actProjData: any, path: fs.PathOrFileDescriptor): void {
