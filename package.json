@@ -88,32 +88,32 @@
 				},
 				{
 					"command": "projectViewer.buildAppDebug",
-					"when": "view == projectsView && viewItem == project",
+					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project",
 					"group": "inline"
 				},
 				{
 					"command": "projectViewer.buildAppAndLibsDebug",
-					"when": "view == projectsView && viewItem == project",
+					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project",
 					"group": "inline"
 				},
 				{
 					"command": "projectViewer.buildAppRelease",
-					"when": "view == projectsView && viewItem == project",
+					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project",
 					"group": "inline"
 				},
 				{
 					"command": "projectViewer.buildAppAndLibsRelease",
-					"when": "view == projectsView && viewItem == project",
+					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project",
 					"group": "inline"
 				},
 				{
 					"command": "projectViewer.debug",
-					"when": "view == projectsView && viewItem == project",
+					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project",
 					"group": "inline"
 				},
 				{
 					"command": "projectViewer.showLog",
-					"when": "view == projectsView && viewItem == project",
+					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project",
 					"group": "inline"
 				}
 			],
