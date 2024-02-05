@@ -167,6 +167,11 @@
 					"command": "projectViewer.buildAllRelease",
 					"group": "navigation",
 					"when": "view == projectsView"
+				},
+				{
+					"command": "projectViewer.refreshTemplateList",
+					"group": "navigation",
+					"when": "view == templateProjectsView"
 				}
 			],
 			"explorer/context": [
@@ -300,6 +305,11 @@
 				"command": "projectViewer.showLog",
 				"title": "Show syslog",
 				"icon": "resources/LG.svg"
+			},
+			{
+				"command": "projectViewer.refreshTemplateList",
+				"title": "Refresh template list",
+				"icon": "$(refresh)"
 			}
 			
 		]

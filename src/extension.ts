@@ -30,8 +30,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	const workspaceRoot = vscode.workspace.workspaceFolders![0].uri.fsPath;
 
-	let directories: string[] = await findProjectDirectories(workspaceRoot);
-
+	const directories = await findProjectDirectories(workspaceRoot);
 
 	let activeProjectsData: { activeProjects: string[] };
 	try {
@@ -392,6 +391,10 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand('projectViewer.buildAllRelease', () => {
 			runComand(workspaceRoot, 'buildAll.sh', 'release')
 		}),
+		
+		vscode.commands.registerCommand('projectViewer.refreshTemplateList', () => {
+			templateProjectsProvider.updateProjects(workspaceRoot);
+		})
 	);
 }
 
@@ -402,11 +405,9 @@ async function findProjectDirectories(rootDir: string, relativePath: string = ''
     const entries = await fsProm.readdir(path.join(rootDir, relativePath), { withFileTypes: true });
     for (const entry of entries) {
 		if (entry.isDirectory()) {
-			// Ellenőrizzük, hogy a jelenlegi könyvtár neve 'project'
             if (entry.name === 'project') {
 				projectDirectories.push(relativePath);
             } else {
-				// Ha nem, akkor rekurzívan bejárjuk az alkönyvtárakat
 				const entryRelativePath = path.join(relativePath, entry.name);
                 const subDirectories = await findProjectDirectories(rootDir, entryRelativePath);
                 projectDirectories = projectDirectories.concat(subDirectories);
@@ -482,14 +483,12 @@ function runComand(workspace: string, command: string, mode: string = '', projec
 	let script = scriptPath;
 	let terminalName = command;
 
-	if(project.length)
-	{
+	if(project.length) {
 		script += ' ' + project; 
 		terminalName += ' ' + project;
 	}
 	
-	if(mode.length)
-	{
+	if(mode.length) {
 		script += ' ' + mode; 
 		terminalName += ' ' + mode;
 	}
@@ -532,8 +531,8 @@ class TemplateProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 		this._onDidChangeTreeData.fire(element);
 	}
 
-	updateProjects(templateProjects: string[]) {
-		this.templateProjects = templateProjects;
+	async updateProjects(workspaceRoot: string) {
+		this.templateProjects = await findProjectDirectories(workspaceRoot);
 		this.refresh();
 	}
 
@@ -542,7 +541,6 @@ class TemplateProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 			label: element,
 			contextValue: 'project',
 			iconPath: new vscode.ThemeIcon(element.icon ? element.icon : 'project'),
-			// description: element.description ? element.description : '',
 			collapsibleState: vscode.TreeItemCollapsibleState.None,
 		};
 	}
