@@ -170,10 +170,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 		vscode.commands.registerCommand('projectViewer.deleteProject', async (deletedProject) => {
 			const result = await vscode.window.showInformationMessage(
-				'Are you sure you want to delete this project?',
-				{ modal: true },
-				'Yes'
-				);
+				'Are you sure you want to delete this project?', { modal: true }, 'Yes');
 				
 				if (result === 'Yes') {
 					myProjects.deleteProject(deletedProject);
@@ -341,68 +338,76 @@ export async function activate(context: vscode.ExtensionContext) {
 		}),
 
 		vscode.commands.registerCommand('projectViewer.buildAppDebug', (project) => {
-			runComand(workspaceRoot, 'build.sh', 'debug', project.template)
+			runComand(workspaceRoot, 'build.sh', 'debug', project.template);
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.buildAppAndLibsDebug', (project) => {
-			runComand(workspaceRoot, 'buildAppAndAllLib.sh', 'debug', project.template)
+			runComand(workspaceRoot, 'buildAppAndAllLib.sh', 'debug', project.template);
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.buildAppRelease', (project) => {
-			runComand(workspaceRoot, 'build.sh', 'release', project.template)
+			runComand(workspaceRoot, 'build.sh', 'release', project.template);
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.buildAppAndLibsRelease', (project) => {
-			runComand(workspaceRoot, 'buildAppAndAllLib.sh', 'release', project.template)
+			runComand(workspaceRoot, 'buildAppAndAllLib.sh', 'release', project.template);
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.debug', (project) => {
-			startDebugging(project.debugConfName)
+			startDebugging(project.debugConfName);
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.showLog', (project) => {
-			runComand(workspaceRoot, 'showsyslog.sh', project.template)
+			runComand(workspaceRoot, 'showsyslog.sh', project.template);
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.runOtherScript', (project) => {
-			runComand(workspaceRoot, project.otherScript)
+			runComand(workspaceRoot, project.otherScript);
 		}),
 		
 
 		vscode.commands.registerCommand('projectViewer.buildAllAppDebug', () => {
-			runComand(workspaceRoot, 'buildAllApp.sh', 'debug')
+			runComand(workspaceRoot, 'buildAllApp.sh', 'debug');
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.buildAllLibDebug', () => {
-			runComand(workspaceRoot, 'buildAllLib.sh', 'debug')
+			runComand(workspaceRoot, 'buildAllLib.sh', 'debug');
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.buildAllContribDebug', () => {
-			runComand(workspaceRoot, 'buildAllContrib.sh', 'debug')
+			runComand(workspaceRoot, 'buildAllContrib.sh', 'debug');
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.buildAllDebug', () => {
-			runComand(workspaceRoot, 'buildAll.sh', 'debug')
+			runComand(workspaceRoot, 'buildAll.sh', 'debug');
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.buildAllAppRelease', () => {
-			runComand(workspaceRoot, 'buildAllApp.sh', 'release')
+			runComand(workspaceRoot, 'buildAllApp.sh', 'release');
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.buildAllLibRelease', () => {
-			runComand(workspaceRoot, 'buildAllLib.sh', 'release')
+			runComand(workspaceRoot, 'buildAllLib.sh', 'release');
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.buildAllContribRelease', () => {
-			runComand(workspaceRoot, 'buildAllContrib.sh', 'release')
+			runComand(workspaceRoot, 'buildAllContrib.sh', 'release');
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.buildAllRelease', () => {
-			runComand(workspaceRoot, 'buildAll.sh', 'release')
+			runComand(workspaceRoot, 'buildAll.sh', 'release');
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.refreshTemplateList', () => {
 			templateProjectsProvider.updateProjects(workspaceRoot);
+		}),
+		
+		vscode.commands.registerCommand('projectViewer.cleanAll', async () => {
+			const result = await vscode.window.showInformationMessage(
+				'Are you sure you want to clean all?', { modal: false }, 'Yes');
+				
+			if (result === 'Yes')
+				runComand(workspaceRoot, 'cleanAll.sh');
 		})
 	);
 }
