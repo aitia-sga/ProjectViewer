@@ -120,6 +120,14 @@
 					"command": "projectViewer.runOtherScript",
 					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project",
 					"group": "inline"
+				},
+				{
+					"command": "projectViewer.modifyDebugConf",
+					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project"
+				},
+				{
+					"command": "projectViewer.modifyOtherScript",
+					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project"
 				}
 			],
 			"view/title": [
@@ -325,6 +333,14 @@
 				"command": "projectViewer.runOtherScript",
 				"title": "Run other script",
 				"icon": "resources/O.svg"
+			},
+			{
+				"command": "projectViewer.modifyDebugConf",
+				"title": "Modify debug configuration"
+			},
+			{
+				"command": "projectViewer.modifyOtherScript",
+				"title": "Modify other script"
 			},
 			{
 				"command": "projectViewer.refreshTemplateList",

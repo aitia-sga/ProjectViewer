@@ -105,7 +105,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			vscode.commands.executeCommand('workbench.view.extension.projectViewer');
 		}),
 		
-		vscode.commands.registerCommand('projectViewer.addProjectToActive', (project) => {
+		vscode.commands.registerCommand('projectViewer.addProjectToActive', (project: projects.Project) => {
 			if (!activeProjectsData.activeProjects.includes(project.name)) {
 				activeProjectsData.activeProjects.push(project.name);
 				try { fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4)); } catch {}
@@ -113,7 +113,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			}
 		}),
 
-		vscode.commands.registerCommand('projectViewer.removeProjectFromActive', (project) => {
+		vscode.commands.registerCommand('projectViewer.removeProjectFromActive', (project: projects.Project) => {
 			if (activeProjectsData.activeProjects.includes(project.name)) {
 				const projectIndex = activeProjectsData.activeProjects.indexOf(project.name);
 				if(projectIndex !== -1)
@@ -227,7 +227,7 @@ export async function activate(context: vscode.ExtensionContext) {
 					vscode.window.showInformationMessage('Project export cancelled.');				
 			}),
 			
-		vscode.commands.registerCommand('projectViewer.createNewFolder', async (project) => {
+		vscode.commands.registerCommand('projectViewer.createNewFolder', async (project: projects.Project) => {
 			if(!myProjects.containsProject) {vscode.window.showErrorMessage('The selected project cannot be found!'); return; }
 			
 			const userInput = await vscode.window.showInputBox({
@@ -337,31 +337,31 @@ export async function activate(context: vscode.ExtensionContext) {
 			activeProjectsProvider.refresh();
 		}),
 
-		vscode.commands.registerCommand('projectViewer.buildAppDebug', (project) => {
+		vscode.commands.registerCommand('projectViewer.buildAppDebug', (project: projects.Project) => {
 			runComand(workspaceRoot, 'build.sh', 'debug', project.template);
 		}),
 		
-		vscode.commands.registerCommand('projectViewer.buildAppAndLibsDebug', (project) => {
+		vscode.commands.registerCommand('projectViewer.buildAppAndLibsDebug', (project: projects.Project) => {
 			runComand(workspaceRoot, 'buildAppAndAllLib.sh', 'debug', project.template);
 		}),
 		
-		vscode.commands.registerCommand('projectViewer.buildAppRelease', (project) => {
+		vscode.commands.registerCommand('projectViewer.buildAppRelease', (project: projects.Project) => {
 			runComand(workspaceRoot, 'build.sh', 'release', project.template);
 		}),
 		
-		vscode.commands.registerCommand('projectViewer.buildAppAndLibsRelease', (project) => {
+		vscode.commands.registerCommand('projectViewer.buildAppAndLibsRelease', (project: projects.Project) => {
 			runComand(workspaceRoot, 'buildAppAndAllLib.sh', 'release', project.template);
 		}),
 		
-		vscode.commands.registerCommand('projectViewer.debug', (project) => {
+		vscode.commands.registerCommand('projectViewer.debug', (project: projects.Project) => {
 			startDebugging(project.debugConfName);
 		}),
 		
-		vscode.commands.registerCommand('projectViewer.showLog', (project) => {
+		vscode.commands.registerCommand('projectViewer.showLog', (project: projects.Project) => {
 			runComand(workspaceRoot, 'showsyslog.sh', project.template);
 		}),
 		
-		vscode.commands.registerCommand('projectViewer.runOtherScript', (project) => {
+		vscode.commands.registerCommand('projectViewer.runOtherScript', (project: projects.Project) => {
 			runComand(workspaceRoot, project.otherScript);
 		}),
 		
@@ -408,6 +408,38 @@ export async function activate(context: vscode.ExtensionContext) {
 				
 			if (result === 'Yes')
 				runComand(workspaceRoot, 'cleanAll.sh');
+		}),
+		
+		vscode.commands.registerCommand('projectViewer.modifyDebugConf', async (project: projects.Project) => {
+			const options: vscode.InputBoxOptions = {
+				prompt: "Enter the new debug configuration name",
+				placeHolder: 'Debug configuration name',
+				value: project.debugConfName
+			};
+
+			let newDebugConfName = await vscode.window.showInputBox(options);
+			if(!newDebugConfName) newDebugConfName = '';
+
+			if(newDebugConfName !== project.debugConfName) {
+				myProjects.modifyDebugConfName(project, newDebugConfName);
+				projectsProvider.refresh();	
+			}
+		}),
+		
+		vscode.commands.registerCommand('projectViewer.modifyOtherScript', async (project: projects.Project) => {
+			const options: vscode.InputBoxOptions = {
+				prompt: "Enter the new other script file with relative path",
+				placeHolder: 'Other script file with relative path',
+				value: project.otherScript
+			};
+			
+			let newOtherScript = await vscode.window.showInputBox(options);
+			if(!newOtherScript) newOtherScript = '';
+			
+			if(newOtherScript !== project.otherScript) {
+				myProjects.modifyOtherScript(project, newOtherScript);
+				projectsProvider.refresh();	
+			}
 		})
 	);
 }

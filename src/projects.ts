@@ -12,7 +12,7 @@ export type Item = {
 	items: Item[];
 };
 
-export interface Project extends Item { template: string; debugConfName: string; otherScripts: string; }
+export interface Project extends Item { template: string; debugConfName: string; otherScript: string; }
 export interface LogicalDirectory extends Item {}
 export interface File extends Item { absolutPath: string; }
 
@@ -82,7 +82,7 @@ export class MyProjects {
 		return true;
 	}
 
-	createNewProject(projectName: string, description: string, debugConfName: string = '', otherScripts: string = '', template: string = 'none'): void {
+	createNewProject(projectName: string, description: string, debugConfName: string = '', otherScript: string = '', template: string = 'none'): void {
 		if(this.projectExists(projectName)) 
 			vscode.window.showInformationMessage(`Project ${projectName} already exists!`);
 
@@ -95,7 +95,7 @@ export class MyProjects {
 				ordering: "auto",
 				template: template,
 				debugConfName: debugConfName,
-				otherScripts: otherScripts
+				otherScript: otherScript
 			};
 			
 			this.jsonData.push(newProject);
@@ -167,8 +167,18 @@ export class MyProjects {
 		this.writeProjectsToFile()
 	}
 
-	modifyDescription(renamedItem: Item, newDescription: string): void {
-		renamedItem.description = newDescription;
+	modifyDescription(modifyedItem: Item, newDescription: string): void {
+		modifyedItem.description = newDescription;
+		this.writeProjectsToFile()
+	}
+
+	modifyDebugConfName(modifyedProject: Project, newDebugConfName: string): void {
+		modifyedProject.debugConfName = newDebugConfName;
+		this.writeProjectsToFile()
+	}
+
+	modifyOtherScript(modifyedProject: Project, newOtherScript: string): void {
+		modifyedProject.otherScript = newOtherScript;
 		this.writeProjectsToFile()
 	}
 
