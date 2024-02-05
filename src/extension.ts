@@ -8,6 +8,7 @@ import * as projects from './projects';
 
 interface MyQuickPickItem extends vscode.QuickPickItem { item: projects.Item; }
 
+let sharedTerminal: vscode.Terminal | undefined;
 
 export async function activate(context: vscode.ExtensionContext) {
 	let vsCodeFolder = "";
@@ -543,23 +544,20 @@ function runComand(workspace: string, command: string, mode: string = '', projec
 	const scriptPath = path.join(workspace, 'scripts', command);
 
 	let script = scriptPath;
-	let terminalName = command;
 
-	if(project && project.length) {
+	if(project && project.length)
 		script += ' ' + project; 
-		terminalName += ' ' + project;
-	}
 	
-	if(mode && mode.length) {
+	if(mode && mode.length)
 		script += ' ' + mode; 
-		terminalName += ' ' + mode;
-	}
 
 	console.log(`Call ${script}`);
 
-	const terminal = vscode.window.createTerminal(terminalName);
-	terminal.show();
-	terminal.sendText(script);
+	if(!sharedTerminal)
+		sharedTerminal = vscode.window.createTerminal('Project viewer');
+	
+	sharedTerminal.show();
+	sharedTerminal.sendText(script);
 }
 
 function runOtherScript(workspace: string, script: string): void {
@@ -571,9 +569,11 @@ function runOtherScript(workspace: string, script: string): void {
 
 	console.log(`Call ${script}`);
 
-	const terminal = vscode.window.createTerminal(script);
-	terminal.show();
-	terminal.sendText(scriptPath);
+	if(!sharedTerminal)
+		sharedTerminal = vscode.window.createTerminal('Project viewer');
+
+	sharedTerminal.show();
+	sharedTerminal.sendText(scriptPath);
 }
 
 function startDebugging(debugConfigurationName: string) {
