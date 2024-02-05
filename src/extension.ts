@@ -133,7 +133,10 @@ export async function activate(context: vscode.ExtensionContext) {
 			
 			if (userInput) {
 				const description = await descriptionRequest();
-				myProjects.createNewProject(userInput, description);
+				const debugConfName = await debugConfNameRequest();
+				const otherScript = await otherScriptRequest();
+
+				myProjects.createNewProject(userInput, description, debugConfName, otherScript);
 				projectsProvider.refresh();
 			} else
 				vscode.window.showInformationMessage('No input provided');	
@@ -147,6 +150,8 @@ export async function activate(context: vscode.ExtensionContext) {
 			
 			if (userInput) {
 				const description = await descriptionRequest();
+				const debugConfName = await debugConfNameRequest();
+				const otherScript = await otherScriptRequest();
 				const projectFile = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, template, 'project', 'logicalView.json');
 				
 				if(fs.existsSync(projectFile) && fs.statSync(projectFile).size > 0)
@@ -156,7 +161,7 @@ export async function activate(context: vscode.ExtensionContext) {
 					projectsProvider.refresh();
 				}
 				else
-					myProjects.createNewProject(userInput, description, template);
+					myProjects.createNewProject(userInput, description, debugConfName, otherScript, template);
 
 				projectsProvider.refresh();
 			} else
@@ -359,6 +364,10 @@ export async function activate(context: vscode.ExtensionContext) {
 			runComand(workspaceRoot, 'showsyslog.sh', project.template)
 		}),
 		
+		vscode.commands.registerCommand('projectViewer.runOtherScript', (project) => {
+			runComand(workspaceRoot, project.otherScript)
+		}),
+		
 
 		vscode.commands.registerCommand('projectViewer.buildAllAppDebug', () => {
 			runComand(workspaceRoot, 'buildAllApp.sh', 'debug')
@@ -434,6 +443,18 @@ async function debugConfNameRequest(): Promise<string> {
 	const userInput = await vscode.window.showInputBox({
 		prompt: 'Enter the debug configuration name, or press Enter!',
 		placeHolder: 'Debug configuration'
+	});
+	
+	if (userInput)
+		return userInput;
+
+	return '';
+}
+
+async function otherScriptRequest(): Promise<string> {
+	const userInput = await vscode.window.showInputBox({
+		prompt: 'Enter the other script name with relative path, or press Enter!',
+		placeHolder: 'Other script'
 	});
 	
 	if (userInput)

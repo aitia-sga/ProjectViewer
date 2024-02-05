@@ -115,6 +115,11 @@
 					"command": "projectViewer.showLog",
 					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project",
 					"group": "inline"
+				},
+				{
+					"command": "projectViewer.runOtherScript",
+					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project",
+					"group": "inline"
 				}
 			],
 			"view/title": [
@@ -305,6 +310,11 @@
 				"command": "projectViewer.showLog",
 				"title": "Show syslog",
 				"icon": "resources/LG.svg"
+			},
+			{
+				"command": "projectViewer.runOtherScript",
+				"title": "Run other script",
+				"icon": "resources/O.svg"
 			},
 			{
 				"command": "projectViewer.refreshTemplateList",

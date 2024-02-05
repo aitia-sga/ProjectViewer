@@ -12,7 +12,7 @@ export type Item = {
 	items: Item[];
 };
 
-export interface Project extends Item { template: string; debugConfName: string; }
+export interface Project extends Item { template: string; debugConfName: string; otherScripts: string; }
 export interface LogicalDirectory extends Item {}
 export interface File extends Item { absolutPath: string; }
 
@@ -82,7 +82,7 @@ export class MyProjects {
 		return true;
 	}
 
-	createNewProject(projectName: string, description: string, template: string = 'none', debugConfName: string = ''): void {
+	createNewProject(projectName: string, description: string, debugConfName: string = '', otherScripts: string = '', template: string = 'none'): void {
 		if(this.projectExists(projectName)) 
 			vscode.window.showInformationMessage(`Project ${projectName} already exists!`);
 
@@ -94,7 +94,8 @@ export class MyProjects {
 				items: [],
 				ordering: "auto",
 				template: template,
-				debugConfName: debugConfName
+				debugConfName: debugConfName,
+				otherScripts: otherScripts
 			};
 			
 			this.jsonData.push(newProject);
