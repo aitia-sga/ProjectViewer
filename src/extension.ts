@@ -155,8 +155,7 @@ export async function activate(context: vscode.ExtensionContext) {
 				const otherScript = await otherScriptRequest();
 				const projectFile = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, template, 'project', 'logicalView.json');
 				
-				if(fs.existsSync(projectFile) && fs.statSync(projectFile).size > 0)
-				{
+				if(fs.existsSync(projectFile) && fs.statSync(projectFile).size > 0) {
 					const importedProjects = new projects.MyProjects(projectFile);
 					myProjects.importProjects(importedProjects.getProjects(), userInput, description, template);
 					projectsProvider.refresh();
@@ -178,8 +177,7 @@ export async function activate(context: vscode.ExtensionContext) {
 					projectsProvider.refresh();
 					
 					const projectIndex = activeProjectsData.activeProjects.indexOf(deletedProject.name);
-					if(projectIndex !== -1)
-					{
+					if(projectIndex !== -1) {
 						activeProjectsData.activeProjects.splice(projectIndex, 1);
 						try { fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4)); } catch {}
 						activeProjectsProvider.refresh();
@@ -463,6 +461,36 @@ export async function activate(context: vscode.ExtensionContext) {
 					vscode.window.showInformationMessage('Update template successfully!');
 				} catch {}
 			}			
+		}),
+
+		vscode.commands.registerCommand('projectViewer.reloadTemplate', async (reloadedProject: projects.Project) => {
+			if(!reloadedProject || !reloadedProject.template)
+				return;
+
+			const result = await vscode.window.showInformationMessage(
+				'Are you sure you want to reload template project?', { modal: true }, 'Yes');
+				
+			if (result === 'Yes') {
+				const projectName = reloadedProject.name;
+				const description = reloadedProject.description;
+				const debugConfName = reloadedProject.debugConfName;
+				const otherScript = reloadedProject.otherScript;
+				
+				// Delete project
+				myProjects.deleteProject(reloadedProject);
+				
+				// Reimport project
+				const projectFile = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, reloadedProject.template, 'project', 'logicalView.json');
+				
+				if(fs.existsSync(projectFile) && fs.statSync(projectFile).size > 0) {
+					const importedProjects = new projects.MyProjects(projectFile);
+					myProjects.importProjects(importedProjects.getProjects(), projectName, description, reloadedProject.template);
+				}
+				else
+					myProjects.createNewProject(projectName, description, debugConfName, otherScript, reloadedProject.template);
+			
+				projectsProvider.refresh();
+			}		
 		}),
 	);
 }

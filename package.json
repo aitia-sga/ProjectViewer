@@ -132,6 +132,10 @@
 				{
 					"command": "projectViewer.updateTemplate",
 					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project"
+				},
+				{
+					"command": "projectViewer.reloadTemplate",
+					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project"
 				}
 			],
 			"view/title": [
@@ -349,6 +353,10 @@
 			{
 				"command": "projectViewer.updateTemplate",
 				"title": "Update template"
+			},
+			{
+				"command": "projectViewer.reloadTemplate",
+				"title": "Reload template"
 			},
 			{
 				"command": "projectViewer.refreshTemplateList",
