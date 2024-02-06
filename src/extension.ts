@@ -222,8 +222,10 @@ export async function activate(context: vscode.ExtensionContext) {
 				});
 			
 				if (uri) {
-					try { fs.writeFileSync(uri.fsPath, JSON.stringify(myProjects.getProjects().filter(project => project == exportedProject), null, 4)); } catch {}
-					vscode.window.showInformationMessage('Project exported successfully!');
+					try {
+						fs.writeFileSync(uri.fsPath, JSON.stringify(myProjects.getProjects().filter(project => project == exportedProject), null, 4));
+						vscode.window.showInformationMessage('Project exported successfully!');
+					} catch { vscode.window.showInformationMessage('Project export cancelled.'); }
 				} else
 					vscode.window.showInformationMessage('Project export cancelled.');				
 			}),
@@ -405,7 +407,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		
 		vscode.commands.registerCommand('projectViewer.cleanAll', async () => {
 			const result = await vscode.window.showInformationMessage(
-				'Are you sure you want to clean all?', { modal: false }, 'Yes');
+				'Are you sure you want to clean all?', { modal: true }, 'Yes');
 				
 			if (result === 'Yes')
 				runComand(workspaceRoot, 'cleanAll.sh');
@@ -441,10 +443,29 @@ export async function activate(context: vscode.ExtensionContext) {
 				myProjects.modifyOtherScript(project, newOtherScript);
 				projectsProvider.refresh();	
 			}
-		})
+		}),
+
+		vscode.commands.registerCommand('projectViewer.updateTemplate', async (exportedProject: projects.Project) => {
+			if(!exportedProject || !exportedProject.template)
+				return;
+
+			const result = await vscode.window.showInformationMessage(
+				'Are you sure you want to update template project?', { modal: true }, 'Yes');
+				
+			if (result === 'Yes') {
+				const template = path.join(workspaceRoot, exportedProject.template, 'project/logicalView.json');				
+
+				try {
+					// fs.writeFileSync(template, JSON.stringify(myProjects.getProjects().filter(project => project == exportedProject), null, 4));
+					const proj = myProjects.getProjects().filter(project => project == exportedProject);
+
+					fs.writeFileSync(template, JSON.stringify(proj, null, 4));
+					vscode.window.showInformationMessage('Update template successfully!');
+				} catch {}
+			}			
+		}),
 	);
 }
-
 
 async function findProjectDirectories(rootDir: string, relativePath: string = ''): Promise<string[]> {
     let projectDirectories: string[] = [];

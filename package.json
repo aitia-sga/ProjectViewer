@@ -128,6 +128,10 @@
 				{
 					"command": "projectViewer.modifyOtherScript",
 					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project"
+				},
+				{
+					"command": "projectViewer.updateTemplate",
+					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project"
 				}
 			],
 			"view/title": [
@@ -341,6 +345,10 @@
 			{
 				"command": "projectViewer.modifyOtherScript",
 				"title": "Modify other script"
+			},
+			{
+				"command": "projectViewer.updateTemplate",
+				"title": "Update template"
 			},
 			{
 				"command": "projectViewer.refreshTemplateList",
