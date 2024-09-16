@@ -369,7 +369,9 @@ export async function activate(context: vscode.ExtensionContext) {
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.showLog', (project: projects.Project) => {
-			runComand(workspaceRoot, 'showsyslog.sh', project.template);
+			const splitted = project.template.split('/');
+
+			runComand(workspaceRoot, 'showsyslog.sh', splitted[splitted.length-1]);
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.runOtherScript', (project: projects.Project) => {
