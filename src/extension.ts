@@ -370,8 +370,9 @@ export async function activate(context: vscode.ExtensionContext) {
 		
 		vscode.commands.registerCommand('projectViewer.showLog', (project: projects.Project) => {
 			const splitted = project.template.split('/');
+			const programName = splitted[splitted.length-1];
 
-			runComand(workspaceRoot, 'showsyslog.sh', splitted[splitted.length-1]);
+			runComand(workspaceRoot, 'showsyslog.sh', programName, '', ('Log ' + programName));
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.runOtherScript', (project: projects.Project) => {
@@ -598,7 +599,7 @@ function showItemPicker(items: projects.Item[], isRoot = true): Promise<projects
 	});
 }
 
-function runComand(workspace: string, command: string, mode: string = '', project: string = ''): void {
+function runComand(workspace: string, command: string, mode: string = '', project: string = '', terminalName: string = ''): void {
 
 	if(!command || !command.length)
 		return;
@@ -615,11 +616,18 @@ function runComand(workspace: string, command: string, mode: string = '', projec
 
 	console.log(`Call ${script}`);
 
-	if(!sharedTerminal)
-		sharedTerminal = vscode.window.createTerminal('Project viewer');
-	
-	sharedTerminal.show();
-	sharedTerminal.sendText(script);
+	if(terminalName) {
+		const terminal = vscode.window.createTerminal(terminalName);
+		terminal.show();
+		terminal.sendText(script);
+	}
+	else {
+		if(!sharedTerminal)
+			sharedTerminal = vscode.window.createTerminal('Project viewer');
+		
+		sharedTerminal.show();
+		sharedTerminal.sendText(script);
+	}
 }
 
 function runOtherScript(workspace: string, script: string): void {
