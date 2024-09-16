@@ -26,6 +26,10 @@ export async function activate(context: vscode.ExtensionContext) {
 		
 	} catch { vscode.window.showErrorMessage('No workspace is open! Please open a workspace or folder!'); }
 
+
+	const isAitiaProject = vsCodeFolder.includes('aitia');
+	vscode.commands.executeCommand('setContext', 'aitiaProject', isAitiaProject);
+
 	const projectsPath = path.join(vsCodeFolder, 'projects.json');
 	const activeProjectsPath = path.join(vsCodeFolder, 'activeProjects.json');
 
@@ -49,14 +53,15 @@ export async function activate(context: vscode.ExtensionContext) {
 	}
 
 	const templateProjectsProvider = new TemplateProjectsTreeProvider(directories);
-	vscode.window.registerTreeDataProvider('templateProjectsView', templateProjectsProvider);
+	if(isAitiaProject) {
+		vscode.window.registerTreeDataProvider('templateProjectsView', templateProjectsProvider);
+	}
 
 	const projectsProvider = new ProjectsTreeProvider(myProjects.getProjects());
 	vscode.window.registerTreeDataProvider('projectsView', projectsProvider);
 
 	const activeProjectsProvider = new ActiveProjectsTreeProvider(myProjects.getProjects(), activeProjectsData.activeProjects);
 	vscode.window.registerTreeDataProvider('activeProjectsView', activeProjectsProvider);
-
 	
 	const projectsWatcher = fs.watch(projectsPath, (eventType, filename) => {
 		if (filename) {
@@ -405,7 +410,8 @@ export async function activate(context: vscode.ExtensionContext) {
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.refreshTemplateList', () => {
-			templateProjectsProvider.updateProjects(workspaceRoot);
+			if(isAitiaProject)
+				templateProjectsProvider.updateProjects(workspaceRoot);
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.cleanAll', async () => {
@@ -449,7 +455,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		}),
 
 		vscode.commands.registerCommand('projectViewer.updateTemplate', async (exportedProject: projects.Project) => {
-			if(!exportedProject || !exportedProject.template)
+			if(!exportedProject || !exportedProject.template || !isAitiaProject)
 				return;
 
 			const result = await vscode.window.showInformationMessage(
@@ -469,7 +475,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		}),
 
 		vscode.commands.registerCommand('projectViewer.reloadTemplate', async (reloadedProject: projects.Project) => {
-			if(!reloadedProject || !reloadedProject.template)
+			if(!reloadedProject || !reloadedProject.template || !isAitiaProject)
 				return;
 
 			const result = await vscode.window.showInformationMessage(

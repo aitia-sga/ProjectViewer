@@ -38,7 +38,8 @@
 				},
 				{
 					"id": "templateProjectsView",
-					"name": "Template projects"
+					"name": "Template projects",
+					"when": "aitiaProject == true"
 				}
 			]
 		},
@@ -89,26 +90,26 @@
 				},
 				{
 					"command": "projectViewer.newProjectFromTemplate",
-					"when": "view == templateProjectsView"
+					"when": "view == templateProjectsView && aitiaProject == true"
 				},
 				{
 					"command": "projectViewer.buildAppDebug",
-					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project",
+					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project && aitiaProject == true",
 					"group": "inline"
 				},
 				{
 					"command": "projectViewer.buildAppAndLibsDebug",
-					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project",
+					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project && aitiaProject == true",
 					"group": "inline"
 				},
 				{
 					"command": "projectViewer.buildAppRelease",
-					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project",
+					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project && aitiaProject == true",
 					"group": "inline"
 				},
 				{
 					"command": "projectViewer.buildAppAndLibsRelease",
-					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project",
+					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project && aitiaProject == true",
 					"group": "inline"
 				},
 				{
@@ -118,7 +119,7 @@
 				},
 				{
 					"command": "projectViewer.showLog",
-					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project",
+					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project && aitiaProject == true",
 					"group": "inline"
 				},
 				{
@@ -136,11 +137,11 @@
 				},
 				{
 					"command": "projectViewer.updateTemplate",
-					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project"
+					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project && aitiaProject == true"
 				},
 				{
 					"command": "projectViewer.reloadTemplate",
-					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project"
+					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project && aitiaProject == true"
 				}
 			],
 			"view/title": [
@@ -157,52 +158,52 @@
 				{
 					"command": "projectViewer.buildAllAppDebug",
 					"group": "navigation",
-					"when": "view == projectsView"
+					"when": "view == projectsView && aitiaProject == true"
 				},
 				{
 					"command": "projectViewer.buildAllLibDebug",
 					"group": "navigation",
-					"when": "view == projectsView"
+					"when": "view == projectsView && aitiaProject == true"
 				},
 				{
 					"command": "projectViewer.buildAllContribDebug",
 					"group": "navigation",
-					"when": "view == projectsView"
+					"when": "view == projectsView && aitiaProject == true"
 				},
 				{
 					"command": "projectViewer.buildAllDebug",
 					"group": "navigation",
-					"when": "view == projectsView"
+					"when": "view == projectsView && aitiaProject == true"
 				},
 				{
 					"command": "projectViewer.buildAllAppRelease",
 					"group": "navigation",
-					"when": "view == projectsView"
+					"when": "view == projectsView && aitiaProject == true"
 				},
 				{
 					"command": "projectViewer.buildAllLibRelease",
 					"group": "navigation",
-					"when": "view == projectsView"
+					"when": "view == projectsView && aitiaProject == true"
 				},
 				{
 					"command": "projectViewer.buildAllContribRelease",
 					"group": "navigation",
-					"when": "view == projectsView"
+					"when": "view == projectsView && aitiaProject == true"
 				},
 				{
 					"command": "projectViewer.buildAllRelease",
 					"group": "navigation",
-					"when": "view == projectsView"
+					"when": "view == projectsView && aitiaProject == true"
 				},
 				{
 					"command": "projectViewer.cleanAll",
 					"group": "navigation",
-					"when": "view == projectsView"
+					"when": "view == projectsView && aitiaProject == true"
 				},
 				{
 					"command": "projectViewer.refreshTemplateList",
 					"group": "navigation",
-					"when": "view == templateProjectsView"
+					"when": "view == templateProjectsView && aitiaProject == true"
 				}
 			],
 			"explorer/context": [
