@@ -26,9 +26,16 @@ export async function activate(context: vscode.ExtensionContext) {
 		
 	} catch { vscode.window.showErrorMessage('No workspace is open! Please open a workspace or folder!'); }
 
-	const myProjects = new projects.MyProjects(path.join(vsCodeFolder, 'projects.json'));
+	const projectsPath = path.join(vsCodeFolder, 'projects.json');
 	const activeProjectsPath = path.join(vsCodeFolder, 'activeProjects.json');
 
+	if(!fs.existsSync(projectsPath))
+		fs.writeFileSync(projectsPath, "");
+
+	if(!fs.existsSync(activeProjectsPath))
+		fs.writeFileSync(activeProjectsPath, "");
+
+	const myProjects = new projects.MyProjects(projectsPath);
 	const workspaceRoot = vscode.workspace.workspaceFolders![0].uri.fsPath;
 
 	const directories = await findProjectDirectories(workspaceRoot);
@@ -51,7 +58,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	vscode.window.registerTreeDataProvider('activeProjectsView', activeProjectsProvider);
 
 	
-	const projectsWatcher = fs.watch(path.join(vsCodeFolder, 'projects.json'), (eventType, filename) => {
+	const projectsWatcher = fs.watch(projectsPath, (eventType, filename) => {
 		if (filename) {
 			myProjects.updateProjects();
 			// normalizeActiveProjects(myProjects.getProjects(), activeProjectsData, activeProjectsPath);
@@ -80,8 +87,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push({
 		dispose: () => activeProjectsWatcher.close()
 	});
-
-
 
 	let statusBarGoToExplorer = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 3);
 	statusBarGoToExplorer.text =  `$(files) Explorer`;
