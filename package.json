@@ -128,6 +128,11 @@
 					"group": "inline"
 				},
 				{
+					"command": "projectViewer.runOtherScriptInNewTerminal",
+					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project",
+					"group": "inline"
+				},
+				{
 					"command": "projectViewer.modifyDebugConf",
 					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project"
 				},
@@ -347,6 +352,11 @@
 				"command": "projectViewer.runOtherScript",
 				"title": "Run other script",
 				"icon": "resources/O.svg"
+			},
+			{
+				"command": "projectViewer.runOtherScriptInNewTerminal",
+				"title": "Run other script in new terminal",
+				"icon": "resources/ON.svg"
 			},
 			{
 				"command": "projectViewer.modifyDebugConf",

@@ -379,6 +379,11 @@ export async function activate(context: vscode.ExtensionContext) {
 			runOtherScript(workspaceRoot, project.otherScript);
 		}),
 		
+		vscode.commands.registerCommand('projectViewer.runOtherScriptInNewTerminal', (project: projects.Project) => {
+			const splitted = project.template.split('/');
+			const terminalName = splitted[splitted.length-1] + ' other script';
+			runOtherScript(workspaceRoot, project.otherScript, terminalName);
+		}),
 
 		vscode.commands.registerCommand('projectViewer.buildAllAppDebug', () => {
 			runComand(workspaceRoot, 'buildAllApp.sh', 'debug');
@@ -614,8 +619,6 @@ function runComand(workspace: string, command: string, mode: string = '', projec
 	if(mode && mode.length)
 		script += ' ' + mode; 
 
-	console.log(`Call ${script}`);
-
 	if(terminalName) {
 		const terminal = vscode.window.createTerminal(terminalName);
 		terminal.show();
@@ -630,27 +633,32 @@ function runComand(workspace: string, command: string, mode: string = '', projec
 	}
 }
 
-function runOtherScript(workspace: string, script: string): void {
+function runOtherScript(workspace: string, script: string, terminalName: string = ''): void {
 
 	if(!script || !script.length)
 		return;
 
 	const scriptPath = path.join(workspace, script);
 
-	console.log(`Call ${script}`);
+	if(terminalName) {
+		const terminal = vscode.window.createTerminal(terminalName);
+		terminal.show();
+		terminal.sendText(scriptPath);
+	}
+	else {
+		if(!sharedTerminal)
+			sharedTerminal = vscode.window.createTerminal('Project viewer');
 
-	if(!sharedTerminal)
-		sharedTerminal = vscode.window.createTerminal('Project viewer');
-
-	sharedTerminal.show();
-	sharedTerminal.sendText(scriptPath);
+		sharedTerminal.show();
+		sharedTerminal.sendText(scriptPath);
+	}
 }
 
 function startDebugging(debugConfigurationName: string) {
 	if(debugConfigurationName && debugConfigurationName.length)
 		vscode.debug.startDebugging(vscode.workspace.workspaceFolders![0], debugConfigurationName);
 	else
-		console.log('debugConfigurationName is empty');
+		vscode.window.showInformationMessage('Debug configuration name is empty');
 }
 
 function normalizeActiveProjects(projects: projects.Project[], actProjData: any, path: fs.PathOrFileDescriptor): void {
