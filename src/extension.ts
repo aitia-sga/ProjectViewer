@@ -26,8 +26,8 @@ export async function activate(context: vscode.ExtensionContext) {
 		
 	} catch { vscode.window.showErrorMessage('No workspace is open! Please open a workspace or folder!'); }
 
-
-	const isAitiaProject = vsCodeFolder.includes('aitia');
+	// const isAitiaProject = vsCodeFolder.includes('aitia');
+	const isAitiaProject = true;
 	vscode.commands.executeCommand('setContext', 'aitiaProject', isAitiaProject);
 
 	const projectsPath = path.join(vsCodeFolder, 'projects.json');
@@ -471,7 +471,7 @@ export async function activate(context: vscode.ExtensionContext) {
 				'Are you sure you want to update template project?', { modal: true }, 'Yes');
 				
 			if (result === 'Yes') {
-				const template = path.join(workspaceRoot, exportedProject.template, 'project/logicalView.json');				
+				const template = path.join(workspaceRoot, exportedProject.template, 'project', 'logicalView.json');				
 
 				try {
 					// fs.writeFileSync(template, JSON.stringify(myProjects.getProjects().filter(project => project == exportedProject), null, 4));
@@ -692,11 +692,15 @@ class TemplateProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 	}
 
 	getTreeItem(element: any): vscode.TreeItem {
+		const logicalViewJsonFile = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, element, 'project', 'logicalView.json');
+		const jsonFileIsExists = fs.existsSync(logicalViewJsonFile);
+
 		return {
 			label: element,
 			contextValue: 'project',
-			iconPath: new vscode.ThemeIcon(element.icon ? element.icon : 'project'),
+			iconPath: new vscode.ThemeIcon('project'),
 			collapsibleState: vscode.TreeItemCollapsibleState.None,
+			description: jsonFileIsExists ? 'exists' : ''
 		};
 	}
 
@@ -707,7 +711,6 @@ class TemplateProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 		return Promise.resolve([]);
 	}
 }
-
 
 class ProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 	private _onDidChangeTreeData: vscode.EventEmitter<any | undefined> = new vscode.EventEmitter<any | undefined>();
@@ -881,5 +884,4 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 
 		return 0;
 	}
-
 }
