@@ -161,17 +161,18 @@ export async function activate(context: vscode.ExtensionContext) {
 			
 			if (userInput) {
 				const description = await descriptionRequest();
-				const debugConfName = await debugConfNameRequest();
 				const otherScript = await otherScriptRequest();
 				const projectFile = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, template, 'project', 'logicalView.json');
 				
 				if(fs.existsSync(projectFile) && fs.statSync(projectFile).size > 0) {
 					const importedProjects = new projects.MyProjects(projectFile);
-					myProjects.importProjects(importedProjects.getProjects(), userInput, description, template);
+					myProjects.importProjects(importedProjects.getProjects(), userInput, description, template, otherScript);
 					projectsProvider.refresh();
 				}
-				else
+				else {
+					const debugConfName = await debugConfNameRequest();
 					myProjects.createNewProject(userInput, description, debugConfName, otherScript, template);
+				}
 
 				projectsProvider.refresh();
 			} else

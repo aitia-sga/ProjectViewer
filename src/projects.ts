@@ -46,13 +46,14 @@ export class MyProjects {
 		catch { this.jsonData = []; }
 	}
 
-	importProjects(importedProjects: Project[], name: string = "", description: string = "", template: string = ""): void {
+	importProjects(importedProjects: Project[], name: string = "", description: string = "", template: string = "", otherScript: string = ""): void {
 		importedProjects.forEach(element => {
 
 			// Change name, description and template if possible
 			if(name.length) element.name = name;
 			if(description.length) element.description = description;
 			if(template.length) element.template = template;
+			element.otherScript = otherScript;
 
 			if(!this.projectExists(element.name))
 				this.jsonData.push(element);
