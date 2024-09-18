@@ -2,7 +2,7 @@
 	"name": "projectviewer",
 	"displayName": "Project Viewer",
 	"description": "A basic example of a file explorer-like tree view.",
-	"publisher": "StrahlBalazs",
+	"publisher": "AitiaInternationalZrt",
 	"icon": "resources/icon.png",
 	"version": "1.0.12",
 	"engines": {
