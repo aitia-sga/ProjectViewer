@@ -4,7 +4,7 @@
 	"description": "A basic example of a file explorer-like tree view.",
 	"publisher": "AitiaInternationalZrt",
 	"icon": "resources/icon.png",
-	"version": "1.0.12",
+	"version": "1.0.13",
 	"engines": {
 		"vscode": "^1.42.0"
 	},
@@ -379,6 +379,10 @@
 				"command": "projectViewer.refreshTemplateList",
 				"title": "Refresh template list",
 				"icon": "$(refresh)"
+			},
+			{
+				"command": "projectViewer.needMotivation",
+				"title": "Need motivation"
 			}
 			
 		]

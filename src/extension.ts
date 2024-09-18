@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as fsProm from 'fs/promises';
 import * as path from 'path';
 import * as projects from './projects';
+import * as motivations from './motivation';
 
 
 interface MyQuickPickItem extends vscode.QuickPickItem { item: projects.Item; }
@@ -511,6 +512,9 @@ export async function activate(context: vscode.ExtensionContext) {
 				projectsProvider.refresh();
 			}		
 		}),
+		vscode.commands.registerCommand('projectViewer.needMotivation', async (exportedProject: projects.Project) => {
+			vscode.window.showInformationMessage(motivations.Motivation.needMotivation(), { modal: true });
+		})
 	);
 }
 
