@@ -638,7 +638,7 @@ function runOtherScript(workspace: string, script: string, terminalName: string 
 	if(!script || !script.length)
 		return;
 
-	const scriptPath = path.join(workspace, script);
+	const scriptPath = path.join(workspace, script);	
 
 	if(terminalName) {
 		const terminal = vscode.window.createTerminal(terminalName);

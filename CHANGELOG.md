@@ -1,9 +1,5 @@
 # Change Log
 
-All notable changes to the "projectviewer" extension will be documented in this file.
+## v1.0.12
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
-## [Unreleased]
-
-- Initial release
+- First public release

@@ -4,3 +4,5 @@ node_modules
 .vscode-test/
 *.vsix
 projects*.json
+.vscode/activeProjects.json
+.vscode/projects.json
