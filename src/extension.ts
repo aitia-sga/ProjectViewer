@@ -92,14 +92,14 @@ export async function activate(context: vscode.ExtensionContext) {
 		dispose: () => activeProjectsWatcher.close()
 	});
 
-	let statusBarGoToExplorer = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 3);
+	let statusBarGoToExplorer = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 4);
 	statusBarGoToExplorer.text =  `$(files) Explorer`;
 	statusBarGoToExplorer.tooltip = 'Go to Explorer';
 	statusBarGoToExplorer.command = 'projectViewer.jumpToExplorer';
 	statusBarGoToExplorer.show();
 	context.subscriptions.push(statusBarGoToExplorer);
 
-	let statusBarGoToProjectViewer = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 2);
+	let statusBarGoToProjectViewer = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 4);
 	statusBarGoToProjectViewer.text =  `$(folder) Project Viewer`;
 	statusBarGoToProjectViewer.tooltip = 'Go to Project Viewer';
 	statusBarGoToProjectViewer.command = 'projectViewer.jumpToProjectViewer';
