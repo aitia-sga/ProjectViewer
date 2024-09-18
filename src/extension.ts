@@ -22,9 +22,8 @@ export async function activate(context: vscode.ExtensionContext) {
 				catch {vscode.window.showErrorMessage(".vscode floder create error!"); }
 			}
 
-		} else { vscode.window.showErrorMessage('No workspace is open! Please open a workspace or folder!'); }
-		
-	} catch { vscode.window.showErrorMessage('No workspace is open! Please open a workspace or folder!'); }
+		}
+	} catch {}
 
 	// const isAitiaProject = vsCodeFolder.includes('aitia');
 	const isAitiaProject = true;
