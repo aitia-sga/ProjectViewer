@@ -472,14 +472,10 @@ export async function activate(context: vscode.ExtensionContext) {
 				
 			if (result === 'Yes') {
 				const template = path.join(workspaceRoot, exportedProject.template, 'project', 'logicalView.json');				
-
-				try {
-					// fs.writeFileSync(template, JSON.stringify(myProjects.getProjects().filter(project => project == exportedProject), null, 4));
-					const proj = myProjects.getProjects().filter(project => project == exportedProject);
-
-					fs.writeFileSync(template, JSON.stringify(proj, null, 4));
+				if(myProjects.updateTemplate(exportedProject, template))
 					vscode.window.showInformationMessage('Update template successfully!');
-				} catch {}
+				else
+					vscode.window.showErrorMessage('Update template error!');
 			}			
 		}),
 

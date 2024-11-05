@@ -213,4 +213,20 @@ export class MyProjects {
 			fs.writeFileSync(this.jsonPath, jsonString, 'utf-8');
 		} catch {}
 	}
+
+	updateTemplate(exportedProject: Project, template: string): boolean {
+		try {
+			const proj = this.jsonData.filter(project => project == exportedProject);
+			let jsonString = JSON.stringify(proj, null, 4);
+			jsonString = path.normalize(jsonString);
+			jsonString = jsonString.replace(/\\/g, '/');
+
+			let workspacePath = vscode.workspace.workspaceFolders![0].uri.fsPath;
+			workspacePath = path.normalize(workspacePath).replace(/\\/g, '/');
+			jsonString = jsonString.replace(new RegExp(workspacePath, 'g'), '${workspaceFolder}');
+
+			fs.writeFileSync(template, jsonString, 'utf-8');
+			return true;
+		} catch { return false; }
+	}
 }
