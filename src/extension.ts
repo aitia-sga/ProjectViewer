@@ -514,8 +514,10 @@ export async function activate(context: vscode.ExtensionContext) {
 	);
 }
 
-async function findProjectDirectories(rootDir: string, relativePath: string = ''): Promise<string[]> {
+async function findProjectDirectories(rootDir: string, relativePath: string = '', depth: number = 0): Promise<string[]> {
     let projectDirectories: string[] = [];
+	if (depth > 1)
+		return projectDirectories;
 
     const entries = await fsProm.readdir(path.join(rootDir, relativePath), { withFileTypes: true });
     for (const entry of entries) {
@@ -524,7 +526,7 @@ async function findProjectDirectories(rootDir: string, relativePath: string = ''
 				projectDirectories.push(relativePath);
             } else {
 				const entryRelativePath = path.join(relativePath, entry.name);
-                const subDirectories = await findProjectDirectories(rootDir, entryRelativePath);
+                const subDirectories = await findProjectDirectories(rootDir, entryRelativePath, depth+1);
                 projectDirectories = projectDirectories.concat(subDirectories);
             }
         }
