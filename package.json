@@ -4,7 +4,7 @@
 	"description": "A basic example of a file explorer-like tree view.",
 	"publisher": "AitiaInternationalZrt",
 	"icon": "resources/icon.png",
-	"version": "1.0.14",
+	"version": "1.1.0",
 	"engines": {
 		"vscode": "^1.42.0"
 	},
@@ -39,7 +39,7 @@
 				},
 				{
 					"id": "templateProjectsView",
-					"name": "Template projects",
+					"name": "Build targets",
 					"when": "aitiaProject == true"
 				}
 			]
