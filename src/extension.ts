@@ -57,27 +57,27 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.window.registerTreeDataProvider('templateProjectsView', templateProjectsProvider);
 	}
 
-	// const projectsProvider = new ProjectsTreeProvider(myProjects.getProjects());
+	const projectsProvider = new ProjectsTreeProvider(myProjects.getProjects());
 
 	const projectFiles = await findProjectDirectories(workspaceRoot, '', 0, false);
-	const projectsProvider = new TemplateProjectsTreeProvider(projectFiles);
-	vscode.window.registerTreeDataProvider('projectsView', projectsProvider);
+	const savedProjectsProvider = new TemplateProjectsTreeProvider(projectFiles);
+	vscode.window.registerTreeDataProvider('projectsView', savedProjectsProvider);
 
 	const activeProjectsProvider = new ActiveProjectsTreeProvider(myProjects.getProjects(), activeProjectsData.activeProjects);
 	vscode.window.registerTreeDataProvider('activeProjectsView', activeProjectsProvider);
 	
-	// const projectsWatcher = fs.watch(projectsPath, (eventType, filename) => {
-	// 	if (filename) {
-	// 		myProjects.updateProjects();
-	// 		// normalizeActiveProjects(myProjects.getProjects(), activeProjectsData, activeProjectsPath);
-	// 		projectsProvider.updateProjects(myProjects.getProjects());
-	// 		activeProjectsProvider.updateProjects(myProjects.getProjects());
-	// 	}
-	// });
+	const projectsWatcher = fs.watch(projectsPath, (eventType, filename) => {
+		if (filename) {
+			myProjects.updateProjects();
+			// normalizeActiveProjects(myProjects.getProjects(), activeProjectsData, activeProjectsPath);
+			projectsProvider.updateProjects(myProjects.getProjects());
+			activeProjectsProvider.updateProjects(myProjects.getProjects());
+		}
+	});
 
-	// context.subscriptions.push({
-	// 	dispose: () => projectsWatcher.close()
-	// });
+	context.subscriptions.push({
+		dispose: () => projectsWatcher.close()
+	});
 
 	const activeProjectsWatcher = fs.watch(activeProjectsPath, (eventType, filename) => {
 		if (filename) {
@@ -119,11 +119,34 @@ export async function activate(context: vscode.ExtensionContext) {
 			vscode.commands.executeCommand('workbench.view.extension.projectViewer');
 		}),
 		
-		vscode.commands.registerCommand('projectViewer.addProjectToActive', (project: projects.Project) => {
-			if (!activeProjectsData.activeProjects.includes(project.name)) {
-				activeProjectsData.activeProjects.push(project.name);
-				try { fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4)); } catch {}
-				activeProjectsProvider.refresh();
+		vscode.commands.registerCommand('projectViewer.addProjectToActive', (project) => {
+			// if (!activeProjectsData.activeProjects.includes(project.name)) {
+			// 	activeProjectsData.activeProjects.push(project.name);
+			// 	try { fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4)); } catch {}
+			// 	activeProjectsProvider.refresh();
+			// }
+			// const uris = await vscode.window.showOpenDialog({
+			// 	canSelectFiles: true,
+			// 	canSelectFolders: false,
+			// 	canSelectMany: false,
+			// 	openLabel: 'Select Imported file',
+				
+			// 	filters: {
+			// 		'JSON': ['json']
+			// 	},
+			// });
+			
+			const uris = path.join(workspaceRoot, project.name);
+
+			if (uris && uris[0]) {
+				
+				const importedProjects = new projects.MyProjects(uris);
+				myProjects.importProjects(importedProjects.getProjects());
+				projectsProvider.refresh();
+				vscode.window.showInformationMessage('Project import successfully!');
+
+			} else {
+				vscode.window.showInformationMessage('Project import cancelled.');
 			}
 		}),
 
@@ -490,7 +513,7 @@ async function findProjectDirectories(rootDir: string, relativePath: string = ''
 					const files = await fsProm.readdir(path.join(rootDir, relativePath, 'project'), { withFileTypes: true });
 					for (const file of files) {
 						if (file.isFile() && file.name.includes('.json'))
-							projectDirectories.push(path.join(relativePath, file.name).toString());
+							projectDirectories.push(path.join(relativePath, 'project', file.name).toString());
 					}
 				}
             } else {
