@@ -366,10 +366,9 @@ export async function activate(context: vscode.ExtensionContext) {
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.showLog', (project: projects.Project) => {
-			const splitted = project.template.split('/');
-			const programName = splitted[splitted.length-1];
-
-			runComand(workspaceRoot, 'showsyslog.sh', programName, '', ('Log ' + programName));
+			const terminal = vscode.window.createTerminal('Log ' + project.template);
+			terminal.show();
+			terminal.sendText('tail -f /var/log/syslog | grep ' + project.template);
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.runOtherScript', (project: projects.Project) => {
