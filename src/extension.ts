@@ -349,16 +349,8 @@ export async function activate(context: vscode.ExtensionContext) {
 			runComand(workspaceRoot, 'build.sh', 'debug', project.template);
 		}),
 		
-		vscode.commands.registerCommand('projectViewer.buildAppAndLibsDebug', (project: projects.Project) => {
-			runComand(workspaceRoot, 'buildAppAndAllLib.sh', 'debug', project.template);
-		}),
-		
 		vscode.commands.registerCommand('projectViewer.buildAppRelease', (project: projects.Project) => {
 			runComand(workspaceRoot, 'build.sh', 'release', project.template);
-		}),
-		
-		vscode.commands.registerCommand('projectViewer.buildAppAndLibsRelease', (project: projects.Project) => {
-			runComand(workspaceRoot, 'buildAppAndAllLib.sh', 'release', project.template);
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.debug', (project: projects.Project) => {
@@ -381,50 +373,10 @@ export async function activate(context: vscode.ExtensionContext) {
 			const terminalName = splitted[splitted.length-1] + ' other script';
 			runOtherScript(workspaceRoot, project.otherScript, terminalName);
 		}),
-
-		vscode.commands.registerCommand('projectViewer.buildAllAppDebug', () => {
-			runComand(workspaceRoot, 'buildAllApp.sh', 'debug');
-		}),
-		
-		vscode.commands.registerCommand('projectViewer.buildAllLibDebug', () => {
-			runComand(workspaceRoot, 'buildAllLib.sh', 'debug');
-		}),
-		
-		vscode.commands.registerCommand('projectViewer.buildAllContribDebug', () => {
-			runComand(workspaceRoot, 'buildAllContrib.sh', 'debug');
-		}),
-		
-		vscode.commands.registerCommand('projectViewer.buildAllDebug', () => {
-			runComand(workspaceRoot, 'buildAll.sh', 'debug');
-		}),
-		
-		vscode.commands.registerCommand('projectViewer.buildAllAppRelease', () => {
-			runComand(workspaceRoot, 'buildAllApp.sh', 'release');
-		}),
-		
-		vscode.commands.registerCommand('projectViewer.buildAllLibRelease', () => {
-			runComand(workspaceRoot, 'buildAllLib.sh', 'release');
-		}),
-		
-		vscode.commands.registerCommand('projectViewer.buildAllContribRelease', () => {
-			runComand(workspaceRoot, 'buildAllContrib.sh', 'release');
-		}),
-		
-		vscode.commands.registerCommand('projectViewer.buildAllRelease', () => {
-			runComand(workspaceRoot, 'buildAll.sh', 'release');
-		}),
 		
 		vscode.commands.registerCommand('projectViewer.refreshTemplateList', () => {
 			if(isAitiaProject)
 				templateProjectsProvider.updateProjects(workspaceRoot);
-		}),
-		
-		vscode.commands.registerCommand('projectViewer.cleanAll', async () => {
-			const result = await vscode.window.showInformationMessage(
-				'Are you sure you want to clean all?', { modal: true }, 'Yes');
-				
-			if (result === 'Yes')
-				runComand(workspaceRoot, 'cleanAll.sh');
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.modifyDebugConf', async (project: projects.Project) => {
