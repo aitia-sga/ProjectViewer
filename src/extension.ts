@@ -57,24 +57,27 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.window.registerTreeDataProvider('templateProjectsView', templateProjectsProvider);
 	}
 
-	const projectsProvider = new ProjectsTreeProvider(myProjects.getProjects());
+	// const projectsProvider = new ProjectsTreeProvider(myProjects.getProjects());
+
+	const projectFiles = await findProjectDirectories(workspaceRoot, '', 0, false);
+	const projectsProvider = new TemplateProjectsTreeProvider(projectFiles);
 	vscode.window.registerTreeDataProvider('projectsView', projectsProvider);
 
 	const activeProjectsProvider = new ActiveProjectsTreeProvider(myProjects.getProjects(), activeProjectsData.activeProjects);
 	vscode.window.registerTreeDataProvider('activeProjectsView', activeProjectsProvider);
 	
-	const projectsWatcher = fs.watch(projectsPath, (eventType, filename) => {
-		if (filename) {
-			myProjects.updateProjects();
-			// normalizeActiveProjects(myProjects.getProjects(), activeProjectsData, activeProjectsPath);
-			projectsProvider.updateProjects(myProjects.getProjects());
-			activeProjectsProvider.updateProjects(myProjects.getProjects());
-		}
-	});
+	// const projectsWatcher = fs.watch(projectsPath, (eventType, filename) => {
+	// 	if (filename) {
+	// 		myProjects.updateProjects();
+	// 		// normalizeActiveProjects(myProjects.getProjects(), activeProjectsData, activeProjectsPath);
+	// 		projectsProvider.updateProjects(myProjects.getProjects());
+	// 		activeProjectsProvider.updateProjects(myProjects.getProjects());
+	// 	}
+	// });
 
-	context.subscriptions.push({
-		dispose: () => projectsWatcher.close()
-	});
+	// context.subscriptions.push({
+	// 	dispose: () => projectsWatcher.close()
+	// });
 
 	const activeProjectsWatcher = fs.watch(activeProjectsPath, (eventType, filename) => {
 		if (filename) {
@@ -153,21 +156,24 @@ export async function activate(context: vscode.ExtensionContext) {
 
 		vscode.commands.registerCommand('projectViewer.newProjectFromTemplate', async (template) => {
 			const userInput = await vscode.window.showInputBox({
-				prompt: 'Enter the name of the project',
+				prompt: 'Enter thfsdfsdasdfase name of the project',
 				placeHolder: 'Project name'
 			});
 			
 			if (userInput) {
+				console.log('sdfsdfsdf');
 				const description = await descriptionRequest();
-				const projectFile = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, template, 'project', 'logicalView.json');
+				const projectFile = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, template, 'project', userInput + '.json');
 				
 				if(fs.existsSync(projectFile) && fs.statSync(projectFile).size > 0) {
-					const importedProjects = new projects.MyProjects(projectFile);
-					myProjects.importProjects(importedProjects.getProjects(), userInput, description, template);
-					projectsProvider.refresh();
+					// const importedProjects = new projects.MyProjects(projectFile);
+					// myProjects.importProjects(importedProjects.getProjects(), userInput, description, template);
+					// projectsProvider.refresh();
 				}
 				else {
-					myProjects.createNewProject(userInput, description, '', '', template);
+					// myProjects.createNewProject(userInput, description, '', '', template);
+
+					fs.writeFileSync(projectFile, '', 'utf-8');	
 				}
 
 				projectsProvider.refresh();
@@ -469,7 +475,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	);
 }
 
-async function findProjectDirectories(rootDir: string, relativePath: string = '', depth: number = 0): Promise<string[]> {
+async function findProjectDirectories(rootDir: string, relativePath: string = '', depth: number = 0, findProjectFolders: boolean = true): Promise<string[]> {
     let projectDirectories: string[] = [];
 	if (depth > 1)
 		return projectDirectories;
@@ -477,11 +483,19 @@ async function findProjectDirectories(rootDir: string, relativePath: string = ''
     const entries = await fsProm.readdir(path.join(rootDir, relativePath), { withFileTypes: true });
     for (const entry of entries) {
 		if (entry.isDirectory()) {
-            if (entry.name === 'project') {
-				projectDirectories.push(relativePath);
+			if (entry.name === 'project') {
+				if(findProjectFolders)
+					projectDirectories.push(relativePath);
+				else {
+					const files = await fsProm.readdir(path.join(rootDir, relativePath, 'project'), { withFileTypes: true });
+					for (const file of files) {
+						if (file.isFile() && file.name.includes('.json'))
+							projectDirectories.push(path.join(relativePath, file.name).toString());
+					}
+				}
             } else {
 				const entryRelativePath = path.join(relativePath, entry.name);
-                const subDirectories = await findProjectDirectories(rootDir, entryRelativePath, depth+1);
+                const subDirectories = await findProjectDirectories(rootDir, entryRelativePath, depth+1, findProjectFolders);
                 projectDirectories = projectDirectories.concat(subDirectories);
             }
         }
