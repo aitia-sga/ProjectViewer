@@ -352,6 +352,14 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand('projectViewer.buildAppRelease', (project: projects.Project) => {
 			runComand(workspaceRoot, 'build.sh', 'release', project.template);
 		}),
+
+		vscode.commands.registerCommand('projectViewer.buildCleanAppDebug', (project: projects.Project) => {
+			runComand(workspaceRoot, 'build-clean.sh', 'debug', project.template);
+		}),
+		
+		vscode.commands.registerCommand('projectViewer.buildCleanAppRelease', (project: projects.Project) => {
+			runComand(workspaceRoot, 'build-clean.sh', 'release', project.template);
+		}),
 		
 		vscode.commands.registerCommand('projectViewer.debug', (project: projects.Project) => {
 			startDebugging(project.debugConfName);
@@ -559,7 +567,7 @@ function runComand(workspace: string, command: string, mode: string = '', projec
 	if(!command || !command.length)
 		return;
 
-	const scriptPath = path.join(workspace, 'scripts', command);
+	const scriptPath = path.join(workspace, command);
 
 	let script = scriptPath;
 

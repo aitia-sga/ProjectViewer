@@ -104,6 +104,16 @@
 					"group": "inline"
 				},
 				{
+					"command": "projectViewer.buildCleanAppDebug",
+					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project && aitiaProject == true",
+					"group": "inline"
+				},
+				{
+					"command": "projectViewer.buildCleanAppRelease",
+					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project && aitiaProject == true",
+					"group": "inline"
+				},
+				{
 					"command": "projectViewer.debug",
 					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project",
 					"group": "inline"
@@ -222,12 +232,22 @@
 			{
 				"command": "projectViewer.buildAppDebug",
 				"title": "Build app in debug mode",
-				"icon": "resources/A_debug.svg"
+				"icon": "resources/B_debug.svg"
 			},
 			{
 				"command": "projectViewer.buildAppRelease",
 				"title": "Build app in release mode",
-				"icon": "resources/A_release.svg"
+				"icon": "resources/B_release.svg"
+			},
+			{
+				"command": "projectViewer.buildCleanAppDebug",
+				"title": "Build app in debug mode",
+				"icon": "resources/BC_debug.svg"
+			},
+			{
+				"command": "projectViewer.buildCleanAppRelease",
+				"title": "Build app in release mode",
+				"icon": "resources/BC_release.svg"
 			},
 			{
 				"command": "projectViewer.debug",
