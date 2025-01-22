@@ -136,14 +136,22 @@ export async function activate(context: vscode.ExtensionContext) {
 			// 	},
 			// });
 			
-			const uris = path.join(workspaceRoot, project.name);
+			const uris = path.join(workspaceRoot, project);
+			console.log('uri: ' + project);
 
-			if (uris && uris[0]) {
+			if (uris) {
 				
 				const importedProjects = new projects.MyProjects(uris);
 				myProjects.importProjects(importedProjects.getProjects());
 				projectsProvider.refresh();
-				vscode.window.showInformationMessage('Project import successfully!');
+				// vscode.window.showInformationMessage('Project import successfully!');
+
+				const name = importedProjects.getProjects()[0].name;
+				if (!activeProjectsData.activeProjects.includes(name)) {
+					activeProjectsData.activeProjects.push(name);
+					try { fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4)); } catch {}
+					activeProjectsProvider.refresh();
+				}
 
 			} else {
 				vscode.window.showInformationMessage('Project import cancelled.');
@@ -194,9 +202,10 @@ export async function activate(context: vscode.ExtensionContext) {
 					// projectsProvider.refresh();
 				}
 				else {
-					// myProjects.createNewProject(userInput, description, '', '', template);
-
-					fs.writeFileSync(projectFile, '', 'utf-8');	
+					myProjects.createNewProject(userInput, description, '', '', template);
+					projectsProvider.refresh();
+					fs.writeFileSync(projectFile, JSON.stringify(myProjects.getProjects().filter(project => project.name == userInput), null, 4));
+					// fs.writeFileSync(projectFile, '', 'utf-8');	
 				}
 
 				projectsProvider.refresh();
