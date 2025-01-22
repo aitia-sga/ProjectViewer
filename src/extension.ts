@@ -120,33 +120,12 @@ export async function activate(context: vscode.ExtensionContext) {
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.addProjectToActive', (project) => {
-			// if (!activeProjectsData.activeProjects.includes(project.name)) {
-			// 	activeProjectsData.activeProjects.push(project.name);
-			// 	try { fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4)); } catch {}
-			// 	activeProjectsProvider.refresh();
-			// }
-			// const uris = await vscode.window.showOpenDialog({
-			// 	canSelectFiles: true,
-			// 	canSelectFolders: false,
-			// 	canSelectMany: false,
-			// 	openLabel: 'Select Imported file',
-				
-			// 	filters: {
-			// 		'JSON': ['json']
-			// 	},
-			// });
-			
 			const uris = path.join(workspaceRoot, project);
-			console.log('uri: ' + project);
-
 			if (uris) {
 				
 				const importedProjects = new projects.MyProjects(uris);
-				// myProjects.importProjects(importedProjects.getProjects());
-				const proddd = importedProjects.getProjects();
-				myProjects.loadProject(proddd[0]);
+				myProjects.importProjects(importedProjects.getProjects());
 				projectsProvider.refresh();
-				// vscode.window.showInformationMessage('Project import successfully!');
 
 				const name = importedProjects.getProjects()[0].name;
 				if (!activeProjectsData.activeProjects.includes(name)) {

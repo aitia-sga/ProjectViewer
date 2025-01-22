@@ -63,15 +63,6 @@ export class MyProjects {
 		this.writeProjectsToFile()
 	} 
 
-	loadProject(importedProject: Project): void {
-		if(!this.projectExists(importedProject.name))
-			this.jsonData.push(importedProject);
-		else
-			vscode.window.showInformationMessage(`Project ${importedProject.name} already exists!`);
-
-		this.writeProjectsToFile()
-	} 
-
 	projectExists(projectName: string): boolean {
 		return this.jsonData.some(project => project.name === projectName);
 	}
