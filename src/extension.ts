@@ -142,7 +142,9 @@ export async function activate(context: vscode.ExtensionContext) {
 			if (uris) {
 				
 				const importedProjects = new projects.MyProjects(uris);
-				myProjects.importProjects(importedProjects.getProjects());
+				// myProjects.importProjects(importedProjects.getProjects());
+				const proddd = importedProjects.getProjects();
+				myProjects.loadProject(proddd[0]);
 				projectsProvider.refresh();
 				// vscode.window.showInformationMessage('Project import successfully!');
 
@@ -187,28 +189,24 @@ export async function activate(context: vscode.ExtensionContext) {
 
 		vscode.commands.registerCommand('projectViewer.newProjectFromTemplate', async (template) => {
 			const userInput = await vscode.window.showInputBox({
-				prompt: 'Enter thfsdfsdasdfase name of the project',
+				prompt: 'Enter the name of the project',
 				placeHolder: 'Project name'
 			});
 			
 			if (userInput) {
-				console.log('sdfsdfsdf');
 				const description = await descriptionRequest();
 				const projectFile = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, template, 'project', userInput + '.json');
 				
-				if(fs.existsSync(projectFile) && fs.statSync(projectFile).size > 0) {
-					// const importedProjects = new projects.MyProjects(projectFile);
-					// myProjects.importProjects(importedProjects.getProjects(), userInput, description, template);
-					// projectsProvider.refresh();
-				}
+				if(fs.existsSync(projectFile) && fs.statSync(projectFile).size > 0)
+					vscode.window.showInformationMessage('The ' + projectFile + ' is exists!');
 				else {
-					myProjects.createNewProject(userInput, description, '', '', template);
+					// myProjects.createNewProject(userInput, description, '', '', template);
+					myProjects.createNewProjectJson(userInput, description, projectFile, template);
+					savedProjectsProvider.updateProjects(workspaceRoot, false);
 					projectsProvider.refresh();
-					fs.writeFileSync(projectFile, JSON.stringify(myProjects.getProjects().filter(project => project.name == userInput), null, 4));
-					// fs.writeFileSync(projectFile, '', 'utf-8');	
 				}
 
-				projectsProvider.refresh();
+				// projectsProvider.refresh();
 			} else
 				vscode.window.showInformationMessage('No input provided');	
 		}),
@@ -688,8 +686,8 @@ class TemplateProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 		this._onDidChangeTreeData.fire(element);
 	}
 
-	async updateProjects(workspaceRoot: string) {
-		this.templateProjects = await findProjectDirectories(workspaceRoot);
+	async updateProjects(workspaceRoot: string, findProjectFolders: boolean = true) {
+		this.templateProjects = await findProjectDirectories(workspaceRoot, '', 0, findProjectFolders);
 		this.refresh();
 	}
 

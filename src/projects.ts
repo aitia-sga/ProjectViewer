@@ -63,6 +63,15 @@ export class MyProjects {
 		this.writeProjectsToFile()
 	} 
 
+	loadProject(importedProject: Project): void {
+		if(!this.projectExists(importedProject.name))
+			this.jsonData.push(importedProject);
+		else
+			vscode.window.showInformationMessage(`Project ${importedProject.name} already exists!`);
+
+		this.writeProjectsToFile()
+	} 
+
 	projectExists(projectName: string): boolean {
 		return this.jsonData.some(project => project.name === projectName);
 	}
@@ -101,6 +110,23 @@ export class MyProjects {
 			this.jsonData.push(newProject);
 			this.writeProjectsToFile()
 		}
+	}
+
+	createNewProjectJson(projectName: string, description: string, projectFile: string, template: string = 'none'): void {
+		const newProject: Project[] = 
+			[{
+				name: projectName,
+				type: "project",
+				description: description,
+				items: [],
+				ordering: "auto",
+				template: template,
+				debugConfName: '',
+				otherScript: ''
+			}
+		];
+		
+		fs.writeFileSync(projectFile, JSON.stringify(newProject, null, 4));
 	}
 
 	deleteProject(deletedProject: Project): void {
