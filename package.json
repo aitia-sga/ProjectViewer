@@ -95,59 +95,59 @@
 				},
 				{
 					"command": "projectViewer.buildAppDebug",
-					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project && aitiaProject == true",
+					"when": "view == activeProjectsView && viewItem == project && aitiaProject == true",
 					"group": "inline"
 				},
 				{
 					"command": "projectViewer.buildAppRelease",
-					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project && aitiaProject == true",
+					"when": "view == activeProjectsView && viewItem == project && aitiaProject == true",
 					"group": "inline"
 				},
 				{
 					"command": "projectViewer.buildCleanAppDebug",
-					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project && aitiaProject == true",
+					"when": "view == activeProjectsView && viewItem == project && aitiaProject == true",
 					"group": "inline"
 				},
 				{
 					"command": "projectViewer.buildCleanAppRelease",
-					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project && aitiaProject == true",
+					"when": "view == activeProjectsView && viewItem == project && aitiaProject == true",
 					"group": "inline"
 				},
 				{
 					"command": "projectViewer.debug",
-					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project",
+					"when": "view == activeProjectsView && viewItem == project",
 					"group": "inline"
 				},
 				{
 					"command": "projectViewer.showLog",
-					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project && aitiaProject == true",
+					"when": "view == activeProjectsView && viewItem == project && aitiaProject == true",
 					"group": "inline"
 				},
 				{
 					"command": "projectViewer.runOtherScript",
-					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project",
+					"when": "view == activeProjectsView && viewItem == project",
 					"group": "inline"
 				},
 				{
 					"command": "projectViewer.runOtherScriptInNewTerminal",
-					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project",
+					"when": "view == activeProjectsView && viewItem == project",
 					"group": "inline"
 				},
 				{
 					"command": "projectViewer.modifyDebugConf",
-					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project"
+					"when": "view == activeProjectsView && viewItem == project"
 				},
 				{
 					"command": "projectViewer.modifyOtherScript",
-					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project"
+					"when": "view == activeProjectsView && viewItem == project"
 				},
 				{
 					"command": "projectViewer.updateTemplate",
-					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project && aitiaProject == true"
+					"when": "view == activeProjectsView && viewItem == project && aitiaProject == true"
 				},
 				{
 					"command": "projectViewer.reloadTemplate",
-					"when": "(view == projectsView || view == activeProjectsView) && viewItem == project && aitiaProject == true"
+					"when": "view == activeProjectsView && viewItem == project && aitiaProject == true"
 				}
 			],
 			"view/title": [
