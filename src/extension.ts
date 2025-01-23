@@ -209,8 +209,12 @@ export async function activate(context: vscode.ExtensionContext) {
 			
 				if (uri) {
 					try {
-						fs.writeFileSync(uri.fsPath, JSON.stringify(myProjects.getProjects().filter(project => project == exportedProject), null, 4));
-						vscode.window.showInformationMessage('Project exported successfully!');
+						let proj = myProjects.getProjects().filter(project => project == exportedProject);
+						if(proj.length) {
+							proj[0].name = '';
+							fs.writeFileSync(uri.fsPath, JSON.stringify(proj, null, 4));
+							vscode.window.showInformationMessage('Project exported successfully!');
+						}
 					} catch { vscode.window.showInformationMessage('Project export cancelled.'); }
 				} else
 					vscode.window.showInformationMessage('Project export cancelled.');				
