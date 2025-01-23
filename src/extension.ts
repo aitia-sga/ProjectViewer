@@ -459,8 +459,8 @@ async function findProjectDirectories(rootDir: string, relativePath: string = ''
 				else {
 					const files = await fsProm.readdir(path.join(rootDir, relativePath, 'project'), { withFileTypes: true });
 					for (const file of files) {
-						if (file.isFile() && file.name.includes('.json'))
-							projectDirectories.push(path.join(relativePath, 'project', file.name).toString());
+						if (file.isFile() && file.name.length > 5 && file.name.substring(file.name.length-5) === '.json')
+							projectDirectories.push(path.join(relativePath, file.name.substring(0, file.name.length-5)).toString());
 					}
 				}
             } else {

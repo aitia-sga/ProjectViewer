@@ -68,7 +68,7 @@
 				},
 				{
 					"command": "projectViewer.exportProject",
-					"when": "view != templateProjectsView && viewItem == project",
+					"when": "view == activeProjectsView && viewItem == project",
 					"group": "0_project@name"
 				},
 				{
@@ -82,7 +82,7 @@
 				},
 				{
 					"command": "projectViewer.modifyDescription",
-					"when": "view != templateProjectsView && (viewItem == project || viewItem == logicalDirectory || viewItem == file || viewItem == physicalDirectory)"
+					"when": "view == activeProjectsView && (viewItem == project || viewItem == logicalDirectory || viewItem == file || viewItem == physicalDirectory)"
 				},
 				{
 					"command": "projectViewer.removeFromProject",
