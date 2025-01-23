@@ -94,17 +94,22 @@ export async function activate(context: vscode.ExtensionContext) {
 			vscode.commands.executeCommand('workbench.view.extension.projectViewer');
 		}),
 		
-		vscode.commands.registerCommand('projectViewer.addProjectToActive', (project) => {
-			const uris = path.join(workspaceRoot, project);
-			if (uris) {
-				
-				const importedProjects = new projects.MyProjects(uris);
-				myProjects.importProjects(importedProjects.getProjects());
-				projectsProvider.refresh();
+		vscode.commands.registerCommand('projectViewer.addProjectToActive', (project: string) => {
+			const splittedPath = project.split('/');
+			if(splittedPath.length > 1 && splittedPath[1].length) {
+				let uris = workspaceRoot;
+				for(let i = 0; i < splittedPath.length-1; i++)
+					uris = path.join(uris, splittedPath[i]);
 
-			} else {
-				vscode.window.showInformationMessage('Project import cancelled.');
+				uris = path.join(uris, 'project', splittedPath[splittedPath.length-1] + '.json');
+				if (uris) {
+					const importedProjects = new projects.MyProjects(uris);
+					myProjects.importProjects(importedProjects.getProjects(), splittedPath[1]);
+					projectsProvider.refresh();
+					return;
+				}
 			}
+			vscode.window.showInformationMessage('Project import cancelled.');
 		}),
 
 		vscode.commands.registerCommand('projectViewer.removeProjectFromActive', (project: projects.Project) => {
