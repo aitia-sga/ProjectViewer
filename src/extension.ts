@@ -31,26 +31,18 @@ export async function activate(context: vscode.ExtensionContext) {
 	vscode.commands.executeCommand('setContext', 'aitiaProject', isAitiaProject);
 
 	const projectsPath = path.join(vsCodeFolder, 'projects.json');
-	const activeProjectsPath = path.join(vsCodeFolder, 'activeProjects.json');
+	// const activeProjectsPath = path.join(vsCodeFolder, 'activeProjects.json');
 
 	if(!fs.existsSync(projectsPath))
 		fs.writeFileSync(projectsPath, "");
 
-	if(!fs.existsSync(activeProjectsPath))
-		fs.writeFileSync(activeProjectsPath, "");
+	// if(!fs.existsSync(activeProjectsPath))
+	// 	fs.writeFileSync(activeProjectsPath, "");
 
 	const myProjects = new projects.MyProjects(projectsPath);
 	const workspaceRoot = vscode.workspace.workspaceFolders![0].uri.fsPath;
 
 	const directories = await findProjectDirectories(workspaceRoot);
-
-	let activeProjectsData: { activeProjects: string[] };
-	try {
-		const filteredString = fs.readFileSync(activeProjectsPath, 'utf8').split('\n').filter(line => !line.trim().startsWith('//'));
-		activeProjectsData = JSON.parse(filteredString.join('\n'));
-	} catch {
-		activeProjectsData = { activeProjects: [] };
-	}
 
 	const templateProjectsProvider = new TemplateProjectsTreeProvider(directories);
 	if(isAitiaProject) {
@@ -63,7 +55,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	const savedProjectsProvider = new TemplateProjectsTreeProvider(projectFiles);
 	vscode.window.registerTreeDataProvider('projectsView', savedProjectsProvider);
 
-	const activeProjectsProvider = new ActiveProjectsTreeProvider(myProjects.getProjects(), activeProjectsData.activeProjects);
+	const activeProjectsProvider = new ActiveProjectsTreeProvider(myProjects.getProjects());
 	vscode.window.registerTreeDataProvider('activeProjectsView', activeProjectsProvider);
 	
 	const projectsWatcher = fs.watch(projectsPath, (eventType, filename) => {
@@ -77,23 +69,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push({
 		dispose: () => projectsWatcher.close()
-	});
-
-	const activeProjectsWatcher = fs.watch(activeProjectsPath, (eventType, filename) => {
-		if (filename) {
-			try {
-				const filteredString = fs.readFileSync(activeProjectsPath, 'utf8').split('\n').filter(line => !line.trim().startsWith('//'));
-				activeProjectsData = JSON.parse(filteredString.join('\n'));
-			} catch {
-				activeProjectsData = { activeProjects: [] };
-			}
-
-			activeProjectsProvider.updateActiveProjects(activeProjectsData.activeProjects);
-		}
-	});
-
-	context.subscriptions.push({
-		dispose: () => activeProjectsWatcher.close()
 	});
 
 	let statusBarGoToExplorer = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 4);
@@ -127,28 +102,21 @@ export async function activate(context: vscode.ExtensionContext) {
 				myProjects.importProjects(importedProjects.getProjects());
 				projectsProvider.refresh();
 
-				const name = importedProjects.getProjects()[0].name;
-				if (!activeProjectsData.activeProjects.includes(name)) {
-					activeProjectsData.activeProjects.push(name);
-					try { fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4)); } catch {}
-					activeProjectsProvider.refresh();
-				}
-
 			} else {
 				vscode.window.showInformationMessage('Project import cancelled.');
 			}
 		}),
 
 		vscode.commands.registerCommand('projectViewer.removeProjectFromActive', (project: projects.Project) => {
-			if (activeProjectsData.activeProjects.includes(project.name)) {
-				const projectIndex = activeProjectsData.activeProjects.indexOf(project.name);
-				if(projectIndex !== -1)
-				{
-					activeProjectsData.activeProjects.splice(projectIndex, 1);
-					try { fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4)); } catch {}
-					activeProjectsProvider.refresh();
-				}
-			}
+			// if (activeProjectsData.activeProjects.includes(project.name)) {
+			// 	const projectIndex = activeProjectsData.activeProjects.indexOf(project.name);
+			// 	if(projectIndex !== -1)
+			// 	{
+			// 		activeProjectsData.activeProjects.splice(projectIndex, 1);
+			// 		try { fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4)); } catch {}
+			// 		activeProjectsProvider.refresh();
+			// 	}
+			// }
 		}),
 
 		vscode.commands.registerCommand('projectViewer.newProject', async () => {
@@ -198,12 +166,12 @@ export async function activate(context: vscode.ExtensionContext) {
 					myProjects.deleteProject(deletedProject);
 					projectsProvider.refresh();
 					
-					const projectIndex = activeProjectsData.activeProjects.indexOf(deletedProject.name);
-					if(projectIndex !== -1) {
-						activeProjectsData.activeProjects.splice(projectIndex, 1);
-						try { fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4)); } catch {}
-						activeProjectsProvider.refresh();
-					}
+					// const projectIndex = activeProjectsData.activeProjects.indexOf(deletedProject.name);
+					// if(projectIndex !== -1) {
+					// 	activeProjectsData.activeProjects.splice(projectIndex, 1);
+					// 	try { fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4)); } catch {}
+					// 	activeProjectsProvider.refresh();
+					// }
 				}
 			}),
 			
@@ -287,19 +255,19 @@ export async function activate(context: vscode.ExtensionContext) {
 				myProjects.renamedItem(item, newName);
 				
 				if(item.type === 'project') {
-					if(activeProjectsData.activeProjects.includes(item.name)) {
-						const projectIndex = activeProjectsData.activeProjects.indexOf(item.name);
-						if(projectIndex !== -1)
-						{
-							activeProjectsData.activeProjects.splice(projectIndex, 1);
-							try { fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4)); } catch {}
-						}
-					}
+					// if(activeProjectsData.activeProjects.includes(item.name)) {
+					// 	const projectIndex = activeProjectsData.activeProjects.indexOf(item.name);
+					// 	if(projectIndex !== -1)
+					// 	{
+					// 		activeProjectsData.activeProjects.splice(projectIndex, 1);
+					// 		try { fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4)); } catch {}
+					// 	}
+					// }
 
-					if(!activeProjectsData.activeProjects.includes(newName)) {
-						activeProjectsData.activeProjects.push(newName);
-						try { fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4)); } catch {}
-					}
+					// if(!activeProjectsData.activeProjects.includes(newName)) {
+					// 	activeProjectsData.activeProjects.push(newName);
+					// 	try { fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4)); } catch {}
+					// }
 					
 					projectsProvider.refresh();
 				}
@@ -730,7 +698,7 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 
 	private watchers: fs.FSWatcher[] = [];
 
-	constructor(private projectsData: projects.Project[], private activeProjectsNames: string[]) {}
+	constructor(private projectsData: projects.Project[],) {}
 
 	refresh(element?: any): void {
 		this._onDidChangeTreeData.fire(element);
@@ -743,11 +711,6 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 
 	updateProjects(projectsData: projects.Project[]) {
 		this.projectsData = projectsData;
-		this.refresh();
-	}
-
-	updateActiveProjects(activeProjectsNames: string[]) {
-		this.activeProjectsNames = activeProjectsNames;
 		this.refresh();
 	}
 
@@ -808,7 +771,8 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 			// .sort((a, b) => this.elementCompare(a, b)));
 
 			// Don't ordered
-			return Promise.resolve(this.projectsData.filter((project: any) => this.activeProjectsNames.includes(project.name)));
+			// return Promise.resolve(this.projectsData.filter((project: any) => this.activeProjectsNames.includes(project.name)));
+			return Promise.resolve(this.projectsData);
 
 		} else if (element.type === 'project' || element.type === 'logicalDirectory') {
 			if(element.ordering === 'manual')
