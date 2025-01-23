@@ -119,44 +119,37 @@ export async function activate(context: vscode.ExtensionContext) {
 			// }
 		}),
 
-		vscode.commands.registerCommand('projectViewer.newProject', async () => {
-			const userInput = await vscode.window.showInputBox({
-				prompt: 'Enter the name of the project',
-				placeHolder: 'Project name'
-			});
-			
-			if (userInput) {
-				const description = await descriptionRequest();
-
-				myProjects.createNewProject(userInput, description, '', '');
-				projectsProvider.refresh();
-			} else
-				vscode.window.showInformationMessage('No input provided');	
+		vscode.commands.registerCommand('projectViewer.newProject', async (template) => {
+			await createNewProj(myProjects, projectsProvider, template);
 		}),
-
+		
 		vscode.commands.registerCommand('projectViewer.newProjectFromTemplate', async (template) => {
-			const userInput = await vscode.window.showInputBox({
-				prompt: 'Enter the name of the project',
-				placeHolder: 'Project name'
-			});
-			
-			if (userInput) {
-				const description = await descriptionRequest();
-				const projectFile = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, template, 'project', userInput + '.json');
-				
-				if(fs.existsSync(projectFile) && fs.statSync(projectFile).size > 0)
-					vscode.window.showInformationMessage('The ' + projectFile + ' is exists!');
-				else {
-					// myProjects.createNewProject(userInput, description, '', '', template);
-					myProjects.createNewProjectJson(userInput, description, projectFile, template);
-					savedProjectsProvider.updateProjects(workspaceRoot, false);
-					projectsProvider.refresh();
-				}
-
-				// projectsProvider.refresh();
-			} else
-				vscode.window.showInformationMessage('No input provided');	
+			await createNewProj(myProjects, projectsProvider, template);
 		}),
+
+		// vscode.commands.registerCommand('projectViewer.newProjectFromTemplate', async (template) => {
+		// 	const userInput = await vscode.window.showInputBox({
+		// 		prompt: 'Enter the name of the project',
+		// 		placeHolder: 'Project name'
+		// 	});
+			
+		// 	if (userInput) {
+		// 		const description = await descriptionRequest();
+		// 		const projectFile = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, template, 'project', userInput + '.json');
+				
+		// 		if(fs.existsSync(projectFile) && fs.statSync(projectFile).size > 0)
+		// 			vscode.window.showInformationMessage('The ' + projectFile + ' is exists!');
+		// 		else {
+		// 			// myProjects.createNewProject(userInput, description, '', '', template);
+		// 			myProjects.createNewProjectJson(userInput, description, projectFile, template);
+		// 			savedProjectsProvider.updateProjects(workspaceRoot, false);
+		// 			projectsProvider.refresh();
+		// 		}
+
+		// 		// projectsProvider.refresh();
+		// 	} else
+		// 		vscode.window.showInformationMessage('No input provided');	
+		// }),
 
 		vscode.commands.registerCommand('projectViewer.deleteProject', async (deletedProject) => {
 			const result = await vscode.window.showInformationMessage(
@@ -515,6 +508,21 @@ async function otherScriptRequest(): Promise<string> {
 		return userInput;
 
 	return '';
+}
+
+async function createNewProj(myProjects: projects.MyProjects, projectsProvider: ProjectsTreeProvider, template: string): Promise<void> {
+	const userInput = await vscode.window.showInputBox({
+		prompt: 'Enter the name of the project',
+		placeHolder: 'Project name'
+	});
+	
+	if (userInput) {
+		const description = await descriptionRequest();
+
+		myProjects.createNewProject(userInput, description, '', '', template);
+		projectsProvider.refresh();
+	} else
+		vscode.window.showInformationMessage('No input provided');
 }
 
 function showItemPicker(items: projects.Item[], isRoot = true): Promise<projects.Item | undefined> {
