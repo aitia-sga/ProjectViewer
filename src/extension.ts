@@ -160,7 +160,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 		vscode.commands.registerCommand('projectViewer.deleteProject', async (deletedProject) => {
 			const result = await vscode.window.showInformationMessage(
-				'Are you sure you want to delete this project?', { modal: true }, 'Yes');
+				'Are you sure you want to delete this project?', { modal: true }, 'Yes', 'Update origin and delete');
 				
 				if (result === 'Yes') {
 					myProjects.deleteProject(deletedProject);
