@@ -10,6 +10,7 @@ import * as motivations from './motivation';
 interface MyQuickPickItem extends vscode.QuickPickItem { item: projects.Item; }
 
 let sharedTerminal: vscode.Terminal | undefined;
+let workspaceRoot: string;
 
 export async function activate(context: vscode.ExtensionContext) {
 	let vsCodeFolder = "";
@@ -40,7 +41,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	// 	fs.writeFileSync(activeProjectsPath, "");
 
 	const myProjects = new projects.MyProjects(projectsPath);
-	const workspaceRoot = vscode.workspace.workspaceFolders![0].uri.fsPath;
+	workspaceRoot = vscode.workspace.workspaceFolders![0].uri.fsPath;
 
 	const directories = await findProjectDirectories(workspaceRoot);
 
@@ -95,19 +96,12 @@ export async function activate(context: vscode.ExtensionContext) {
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.addProjectToActive', (project: string) => {
-			const splittedPath = project.split('/');
-			if(splittedPath.length > 1 && splittedPath[1].length) {
-				let uris = workspaceRoot;
-				for(let i = 0; i < splittedPath.length-1; i++)
-					uris = path.join(uris, splittedPath[i]);
-
-				uris = path.join(uris, 'project', splittedPath[splittedPath.length-1] + '.json');
-				if (uris) {
-					const importedProjects = new projects.MyProjects(uris);
-					myProjects.importProjects(importedProjects.getProjects(), splittedPath[1]);
-					projectsProvider.refresh();
-					return;
-				}
+			const nameAndPath = createProjectNameAndFullPath(project);	
+			if (nameAndPath && nameAndPath.length) {
+				const importedProjects = new projects.MyProjects(nameAndPath[1]);
+				myProjects.importProjects(importedProjects.getProjects(), nameAndPath[0]);
+				projectsProvider.refresh();
+				return;
 			}
 			vscode.window.showInformationMessage('Project import cancelled.');
 		}),
@@ -276,6 +270,28 @@ export async function activate(context: vscode.ExtensionContext) {
 
 				activeProjectsProvider.refresh();
 			}
+		}),
+
+		vscode.commands.registerCommand('projectViewer.renameOriginProject', async (projName: string) => {
+			const nameAndPath = createProjectNameAndFullPath(projName);	
+			if (!nameAndPath || !nameAndPath.length)
+				return;
+			
+			const options: vscode.InputBoxOptions = {
+				prompt: "Enter the new name",
+				value: nameAndPath[0]
+			};
+			
+			let newName = await vscode.window.showInputBox(options);
+			const newNameAndPath = createProjectNameAndFullPath(projName, newName);
+			if(fs.existsSync(newNameAndPath[1])) {
+				vscode.window.showInformationMessage(`${newName} project is already exists!`);
+				return;
+			}
+			fs.rename(nameAndPath[1], newNameAndPath[1], (err) => {
+				if(err)
+					vscode.window.showErrorMessage('Failed to rename project!');
+			});
 		}),
 
 		vscode.commands.registerCommand('projectViewer.modifyDescription', async (item: projects.Item) => {
@@ -481,6 +497,20 @@ async function findProjectDirectories(rootDir: string, relativePath: string = ''
     }
 
     return projectDirectories;
+}
+
+function createProjectNameAndFullPath(name: string, newProjName: string = ''): string[] {
+	const splittedPath = name.split('/');
+	if(splittedPath.length > 1 && splittedPath[1].length) {
+		let uris = workspaceRoot;
+		for(let i = 0; i < splittedPath.length-1; i++)
+			uris = path.join(uris, splittedPath[i]);
+		if(newProjName.length)
+			return [newProjName, path.join(uris, 'project', newProjName+'.json')];
+		else
+			return [splittedPath[splittedPath.length-1], path.join(uris, 'project', splittedPath[splittedPath.length-1]+'.json')];
+	}
+	return [];
 }
 
 async function descriptionRequest(): Promise<string> {

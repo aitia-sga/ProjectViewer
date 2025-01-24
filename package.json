@@ -78,7 +78,11 @@
 				},
 				{
 					"command": "projectViewer.rename",
-					"when": "view != templateProjectsView && (viewItem == project || viewItem == logicalDirectory)"
+					"when": "view == activeProjectsView && (viewItem == project || viewItem == logicalDirectory)"
+				},
+				{
+					"command": "projectViewer.renameOriginProject",
+					"when": "view != projectView"
 				},
 				{
 					"command": "projectViewer.modifyDescription",
@@ -193,6 +197,10 @@
 			},
 			{
 				"command": "projectViewer.rename",
+				"title": "Rename"
+			},
+			{
+				"command": "projectViewer.renameOriginProject",
 				"title": "Rename"
 			},
 			{
