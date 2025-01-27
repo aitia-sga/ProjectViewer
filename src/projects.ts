@@ -231,10 +231,11 @@ export class MyProjects {
 		} catch {}
 	}
 
-	updateTemplate(exportedProject: Project, template: string): boolean {
+	updateTemplate(exportedProject: Project, template: string, deleteName: boolean = true): boolean {
 		try {
 			const proj: Project[] = [exportedProject];
-			proj[0].name = '';
+			if(deleteName)
+				proj[0].name = '';
 			let jsonString = JSON.stringify(proj, null, 4);
 			jsonString = path.normalize(jsonString);
 			jsonString = jsonString.replace(/\\/g, '/');

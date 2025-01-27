@@ -172,7 +172,7 @@
 				{
 					"command": "projectViewer.importProject",
 					"group": "navigation",
-					"when": "view == projectsView"
+					"when": "view == activeProjectsView"
 				},
 				{
 					"command": "projectViewer.refreshTemplateList",

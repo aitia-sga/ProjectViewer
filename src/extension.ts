@@ -206,7 +206,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			
 			vscode.commands.registerCommand('projectViewer.exportProject', async (exportedProject: projects.Project) => {
 				const uri = await vscode.window.showSaveDialog({
-					defaultUri: vscode.Uri.file(path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, exportedProject.name + '.json')),
+					defaultUri: vscode.Uri.file(path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, 'Export_'+exportedProject.name + '.json')),
 					filters: {
 						'JSON': ['json'],
 						'All Files': ['*']
@@ -215,7 +215,7 @@ export async function activate(context: vscode.ExtensionContext) {
 				});
 			
 				if (uri)
-					myProjects.updateTemplate(exportedProject, uri.fsPath);
+					myProjects.updateTemplate(exportedProject, uri.fsPath, false);
 				else
 					vscode.window.showInformationMessage('Project export cancelled.');				
 			}),
