@@ -440,27 +440,19 @@ export async function activate(context: vscode.ExtensionContext) {
 			if(!reloadedProject || !reloadedProject.template || !isAitiaProject)
 				return;
 
+			const fullPath = createProjectFullPath(reloadedProject, '');
+			if(!fs.existsSync(fullPath)) {
+				vscode.window.showInformationMessage('The saved project does not currently exist.');
+				return;
+			}
+
 			const result = await vscode.window.showInformationMessage(
-				'Are you sure you want to reload template project?', { modal: true }, 'Yes');
+				'Are you sure would you like to reload the saved project? Be careful, this will lose your local changes!', { modal: true }, 'Yes');
 				
 			if (result === 'Yes') {
-				const projectName = reloadedProject.name;
-				const description = reloadedProject.description;
-				const debugConfName = reloadedProject.debugConfName;
-				const otherScript = reloadedProject.otherScript;
-				
-				// Delete project
 				myProjects.deleteProject(reloadedProject);
-				
-				// Reimport project
-				const projectFile = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, reloadedProject.template, 'project', 'logicalView.json');
-				
-				if(fs.existsSync(projectFile) && fs.statSync(projectFile).size > 0) {
-					const importedProjects = new projects.MyProjects(projectFile);
-					myProjects.importProjects(importedProjects.getProjects(), projectName, description, reloadedProject.template);
-				}
-				else
-					myProjects.createNewProject(projectName, description, debugConfName, otherScript, reloadedProject.template);
+				const importedProjects = new projects.MyProjects(fullPath);
+				myProjects.importProjects(importedProjects.getProjects(), reloadedProject.name);
 			
 				projectsProvider.refresh();
 			}		

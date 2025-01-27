@@ -233,7 +233,7 @@ export class MyProjects {
 
 	updateTemplate(exportedProject: Project, template: string, deleteName: boolean = true): boolean {
 		try {
-			const proj: Project[] = [exportedProject];
+			const proj: Project[] = [{...exportedProject}];
 			if(deleteName)
 				proj[0].name = '';
 			let jsonString = JSON.stringify(proj, null, 4);
