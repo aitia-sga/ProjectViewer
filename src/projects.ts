@@ -12,7 +12,7 @@ export type Item = {
 	items: Item[];
 };
 
-export interface Project extends Item { template: string; debugConfName: string; otherScript: string; }
+export interface Project extends Item { template: string; debugConfName: string; otherScript: string; logCmd: string; }
 export interface LogicalDirectory extends Item {}
 export interface File extends Item { absolutPath: string; }
 
@@ -94,31 +94,15 @@ export class MyProjects {
 				ordering: "auto",
 				template: template,
 				debugConfName: debugConfName,
-				otherScript: otherScript
+				otherScript: otherScript,
+				logCmd: template === 'none' ? '' : 'tail -f /var/log/syslog | grep ' + template
 			};
 			
 			this.jsonData.push(newProject);
 			this.writeProjectsToFile()
 		}
 	}
-
-	createNewProjectJson(projectName: string, description: string, projectFile: string, template: string = 'none'): void {
-		const newProject: Project[] = 
-			[{
-				name: projectName,
-				type: "project",
-				description: description,
-				items: [],
-				ordering: "auto",
-				template: template,
-				debugConfName: '',
-				otherScript: ''
-			}
-		];
-		
-		fs.writeFileSync(projectFile, JSON.stringify(newProject, null, 4));
-	}
-
+	
 	deleteProject(deletedProject: Project): void {
 		const projectIndex = this.jsonData.indexOf(deletedProject);
 		if(projectIndex !== -1)
@@ -195,6 +179,11 @@ export class MyProjects {
 
 	modifyOtherScript(modifyedProject: Project, newOtherScript: string): void {
 		modifyedProject.otherScript = newOtherScript;
+		this.writeProjectsToFile()
+	}
+
+	modifyLogCmd(modifyedProject: Project, newLogCmd: string): void {
+		modifyedProject.logCmd = newLogCmd;
 		this.writeProjectsToFile()
 	}
 

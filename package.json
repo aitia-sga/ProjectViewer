@@ -151,6 +151,10 @@
 					"when": "view == activeProjectsView && viewItem == project"
 				},
 				{
+					"command": "projectViewer.modifyLogCmd",
+					"when": "view == activeProjectsView && viewItem == project"
+				},
+				{
 					"command": "projectViewer.saveProject",
 					"when": "view == activeProjectsView && viewItem == project && aitiaProject == true"
 				},
@@ -167,7 +171,7 @@
 				{
 					"command": "projectViewer.newProject",
 					"group": "navigation",
-					"when": "view == projectsView"
+					"when": "view == activeProjectsView"
 				},
 				{
 					"command": "projectViewer.importProject",
@@ -297,6 +301,10 @@
 			{
 				"command": "projectViewer.modifyOtherScript",
 				"title": "Modify other script"
+			},
+			{
+				"command": "projectViewer.modifyLogCmd",
+				"title": "Modify log command"
 			},
 			{
 				"command": "projectViewer.saveProject",

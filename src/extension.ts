@@ -322,9 +322,13 @@ export async function activate(context: vscode.ExtensionContext) {
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.showLog', (project: projects.Project) => {
+			if(!project.logCmd) {
+				vscode.window.showInformationMessage('Don\'t set logging command!')
+				return;
+			}
 			const terminal = vscode.window.createTerminal('Log ' + project.template);
 			terminal.show();
-			terminal.sendText('tail -f /var/log/syslog | grep ' + project.template);
+			terminal.sendText(project.logCmd);
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.runOtherScript', (project: projects.Project) => {
@@ -370,6 +374,22 @@ export async function activate(context: vscode.ExtensionContext) {
 			
 			if(newOtherScript !== project.otherScript) {
 				myProjects.modifyOtherScript(project, newOtherScript);
+				projectsProvider.refresh();	
+			}
+		}),
+		
+		vscode.commands.registerCommand('projectViewer.modifyLogCmd', async (project: projects.Project) => {
+			const options: vscode.InputBoxOptions = {
+				prompt: "Enter the new log command",
+				placeHolder: 'Log command',
+				value: project.logCmd
+			};
+			
+			let newLogCmd = await vscode.window.showInputBox(options);
+			if(!newLogCmd) newLogCmd = '';
+			
+			if(newLogCmd !== project.logCmd) {
+				myProjects.modifyLogCmd(project, newLogCmd);
 				projectsProvider.refresh();	
 			}
 		}),
