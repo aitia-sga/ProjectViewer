@@ -39,8 +39,7 @@
 				},
 				{
 					"id": "templateProjectsView",
-					"name": "Build targets",
-					"when": "aitiaProject == true"
+					"name": "Build targets"
 				}
 			]
 		},
@@ -49,11 +48,6 @@
 				{
 					"command": "projectViewer.addProjectToActive",
 					"when": "view == projectsView && viewItem == project",
-					"group": "0_project@name"
-				},
-				{
-					"command": "projectViewer.removeProjectFromActive",
-					"when": "view == activeProjectsView && viewItem == project",                	
 					"group": "0_project@name"
 				},
 				{
@@ -100,26 +94,26 @@
 				},
 				{
 					"command": "projectViewer.newProjectFromTemplate",
-					"when": "view == templateProjectsView && aitiaProject == true"
+					"when": "view == templateProjectsView"
 				},
 				{
 					"command": "projectViewer.buildAppDebug",
-					"when": "view == activeProjectsView && viewItem == project && aitiaProject == true",
+					"when": "view == activeProjectsView && viewItem == project",
 					"group": "inline"
 				},
 				{
 					"command": "projectViewer.buildAppRelease",
-					"when": "view == activeProjectsView && viewItem == project && aitiaProject == true",
+					"when": "view == activeProjectsView && viewItem == project",
 					"group": "inline"
 				},
 				{
 					"command": "projectViewer.buildCleanAppDebug",
-					"when": "view == activeProjectsView && viewItem == project && aitiaProject == true",
+					"when": "view == activeProjectsView && viewItem == project",
 					"group": "inline"
 				},
 				{
 					"command": "projectViewer.buildCleanAppRelease",
-					"when": "view == activeProjectsView && viewItem == project && aitiaProject == true",
+					"when": "view == activeProjectsView && viewItem == project",
 					"group": "inline"
 				},
 				{
@@ -129,7 +123,7 @@
 				},
 				{
 					"command": "projectViewer.showLog",
-					"when": "view == activeProjectsView && viewItem == project && aitiaProject == true",
+					"when": "view == activeProjectsView && viewItem == project",
 					"group": "inline"
 				},
 				{
@@ -156,15 +150,15 @@
 				},
 				{
 					"command": "projectViewer.saveProject",
-					"when": "view == activeProjectsView && viewItem == project && aitiaProject == true"
+					"when": "view == activeProjectsView && viewItem == project"
 				},
 				{
 					"command": "projectViewer.saveAsProject",
-					"when": "view == activeProjectsView && viewItem == project && aitiaProject == true"
+					"when": "view == activeProjectsView && viewItem == project"
 				},
 				{
 					"command": "projectViewer.reloadTemplate",
-					"when": "view == activeProjectsView && viewItem == project && aitiaProject == true"
+					"when": "view == activeProjectsView && viewItem == project"
 				}
 			],
 			"view/title": [
@@ -181,7 +175,7 @@
 				{
 					"command": "projectViewer.refreshTemplateList",
 					"group": "navigation",
-					"when": "view == templateProjectsView && aitiaProject == true"
+					"when": "view == templateProjectsView"
 				}
 			],
 			"explorer/context": [
@@ -195,10 +189,6 @@
 			{
 				"command": "projectViewer.addProjectToActive",
 				"title": "Add to active projects"
-			},
-			{
-				"command": "projectViewer.removeProjectFromActive",
-				"title": "Remove from active projects"
 			},
 			{
 				"command": "projectViewer.createNewFolder",

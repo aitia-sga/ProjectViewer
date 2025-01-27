@@ -27,12 +27,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 	} catch {}
 
-	// const isAitiaProject = vsCodeFolder.includes('aitia');
-	const isAitiaProject = true;
-	vscode.commands.executeCommand('setContext', 'aitiaProject', isAitiaProject);
-
 	const projectsPath = path.join(vsCodeFolder, 'projects.json');
-	// const activeProjectsPath = path.join(vsCodeFolder, 'activeProjects.json');
 
 	if(!fs.existsSync(projectsPath))
 		fs.writeFileSync(projectsPath, "");
@@ -43,9 +38,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	const directories = await findProjectDirectories(workspaceRoot);
 
 	const templateProjectsProvider = new TemplateProjectsTreeProvider(directories);
-	if(isAitiaProject) {
-		vscode.window.registerTreeDataProvider('templateProjectsView', templateProjectsProvider);
-	}
+	vscode.window.registerTreeDataProvider('templateProjectsView', templateProjectsProvider);
 
 	const projectsProvider = new ProjectsTreeProvider(myProjects.getProjects());
 
@@ -59,7 +52,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	const projectsWatcher = fs.watch(projectsPath, (eventType, filename) => {
 		if (filename) {
 			myProjects.updateProjects();
-			// normalizeActiveProjects(myProjects.getProjects(), activeProjectsData, activeProjectsPath);
 			projectsProvider.updateProjects(myProjects.getProjects());
 			activeProjectsProvider.updateProjects(myProjects.getProjects());
 		}
@@ -167,7 +159,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			
 			vscode.commands.registerCommand('projectViewer.exportProject', async (exportedProject: projects.Project) => {
 				const uri = await vscode.window.showSaveDialog({
-					defaultUri: vscode.Uri.file(path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, 'Export_'+exportedProject.name + '.json')),
+					defaultUri: vscode.Uri.file(path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, 'Export_'+exportedProject.name+'.json')),
 					filters: {
 						'JSON': ['json'],
 						'All Files': ['*']
@@ -342,8 +334,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.refreshTemplateList', () => {
-			if(isAitiaProject)
-				templateProjectsProvider.updateProjects(workspaceRoot);
+			templateProjectsProvider.updateProjects(workspaceRoot);
 		}),
 		
 		vscode.commands.registerCommand('projectViewer.modifyDebugConf', async (project: projects.Project) => {
@@ -403,7 +394,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		}),
 
 		vscode.commands.registerCommand('projectViewer.reloadTemplate', async (reloadedProject: projects.Project) => {
-			if(!reloadedProject || !reloadedProject.template || !isAitiaProject)
+			if(!reloadedProject || !reloadedProject.template)
 				return;
 
 			const fullPath = createProjectFullPath(reloadedProject, '');
@@ -528,30 +519,6 @@ async function saveProject(savedProject: projects.Project, myProjects: projects.
 		vscode.window.showErrorMessage('Project saving error!');
 }
 
-async function debugConfNameRequest(): Promise<string> {
-	const userInput = await vscode.window.showInputBox({
-		prompt: 'Enter the debug configuration name, or press Enter!',
-		placeHolder: 'Debug configuration'
-	});
-	
-	if (userInput)
-		return userInput;
-
-	return '';
-}
-
-async function otherScriptRequest(): Promise<string> {
-	const userInput = await vscode.window.showInputBox({
-		prompt: 'Enter the other script name with relative path, or press Enter!',
-		placeHolder: 'Other script'
-	});
-	
-	if (userInput)
-		return userInput;
-
-	return '';
-}
-
 async function createNewProj(myProjects: projects.MyProjects, projectsProvider: ProjectsTreeProvider, template: string): Promise<void> {
 	const userInput = await vscode.window.showInputBox({
 		prompt: 'Enter the name of the project',
@@ -603,7 +570,6 @@ function showItemPicker(items: projects.Item[], isRoot = true): Promise<projects
 }
 
 function runComand(workspace: string, command: string, mode: string = '', project: string = '', terminalName: string = ''): void {
-
 	if(!command || !command.length)
 		return;
 
@@ -632,7 +598,6 @@ function runComand(workspace: string, command: string, mode: string = '', projec
 }
 
 function runOtherScript(workspace: string, script: string, terminalName: string = ''): void {
-
 	if(!script || !script.length)
 		return;
 
@@ -659,20 +624,6 @@ function startDebugging(debugConfigurationName: string) {
 		vscode.window.showInformationMessage('Debug configuration name is empty');
 }
 
-function normalizeActiveProjects(projects: projects.Project[], actProjData: any, path: fs.PathOrFileDescriptor): void {
-	let needRefreshFile = false;
-
-	for (let i = 0; i < actProjData.activeProjects.length; i++) {
-		if(!projects.some(proj => proj.name === actProjData.activeProjects[i])) {
-			actProjData.activeProjects.splice(i, 1); needRefreshFile = true;
-		}
-	}
-
-	if(needRefreshFile) {
-		try { fs.writeFileSync(path, JSON.stringify(actProjData, null, 4)); } catch {}
-	}
-}
-
 class TemplateProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 	private _onDidChangeTreeData: vscode.EventEmitter<any | undefined> = new vscode.EventEmitter<any | undefined>();
 	readonly onDidChangeTreeData: vscode.Event<any | undefined> = this._onDidChangeTreeData.event;
@@ -689,15 +640,11 @@ class TemplateProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 	}
 
 	getTreeItem(element: any): vscode.TreeItem {
-		const logicalViewJsonFile = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, element, 'project', 'logicalView.json');
-		const jsonFileIsExists = fs.existsSync(logicalViewJsonFile);
-
 		return {
 			label: element,
 			contextValue: 'project',
 			iconPath: new vscode.ThemeIcon('project'),
-			collapsibleState: vscode.TreeItemCollapsibleState.None,
-			description: jsonFileIsExists ? 'exists' : ''
+			collapsibleState: vscode.TreeItemCollapsibleState.None
 		};
 	}
 
@@ -815,20 +762,13 @@ class ActiveProjectsTreeProvider implements vscode.TreeDataProvider<any> {
 	}
 
 	getChildren(element?: any): Thenable<any[]> {
-		if (!element) {
-			// Ordered
-			// return Promise.resolve(this.projectsData.filter((project: any) => this.activeProjectsNames.includes(project.name))
-			// .sort((a, b) => this.elementCompare(a, b)));
-
-			// Don't ordered
-			// return Promise.resolve(this.projectsData.filter((project: any) => this.activeProjectsNames.includes(project.name)));
+		if (!element)
 			return Promise.resolve(this.projectsData);
-
-		} else if (element.type === 'project' || element.type === 'logicalDirectory') {
+		else if (element.type === 'project' || element.type === 'logicalDirectory') {
 			if(element.ordering === 'manual')
 				return Promise.resolve(element.items);
 			else
-			return Promise.resolve(element.items.sort((a: projects.Item, b: projects.Item) => this.elementCompare(a, b)));
+				return Promise.resolve(element.items.sort((a: projects.Item, b: projects.Item) => this.elementCompare(a, b)));
 
 		} else if (element.type === 'physicalDirectory') {
 			return new Promise(resolve => {
