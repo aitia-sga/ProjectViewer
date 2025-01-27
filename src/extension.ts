@@ -168,7 +168,7 @@ export async function activate(context: vscode.ExtensionContext) {
 				});
 			
 				if (uri)
-					myProjects.updateTemplate(exportedProject, uri.fsPath, false);
+					myProjects.saveOrExportProject(exportedProject, uri.fsPath, false);
 				else
 					vscode.window.showInformationMessage('Project export cancelled.');				
 			}),
@@ -511,7 +511,7 @@ async function saveProject(savedProject: projects.Project, myProjects: projects.
 		if (result !== 'Yes')
 			return;
 	}
-	if(myProjects.updateTemplate(savedProject, fullPath)) {
+	if(myProjects.saveOrExportProject(savedProject, fullPath)) {
 		vscode.window.showInformationMessage('Project saving successfully!');
 		savedProjectsProvider.updateProjects(workspaceRoot, false);
 	}

@@ -242,7 +242,7 @@
 			},
 			{
 				"command": "projectViewer.newProjectFromTemplate",
-				"title": "Create new project from template"
+				"title": "Create new project from build target"
 			},
 			{
 				"command": "projectViewer.buildAppDebug",
@@ -306,7 +306,7 @@
 			},
 			{
 				"command": "projectViewer.reloadTemplate",
-				"title": "Reload template"
+				"title": "Reload saved project"
 			},
 			{
 				"command": "projectViewer.refreshTemplateList",

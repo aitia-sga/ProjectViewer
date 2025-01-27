@@ -219,7 +219,7 @@ export class MyProjects {
 		} catch {}
 	}
 
-	updateTemplate(exportedProject: Project, template: string, deleteName: boolean = true): boolean {
+	saveOrExportProject(exportedProject: Project, template: string, deleteName: boolean = true): boolean {
 		try {
 			const proj: Project[] = [{...exportedProject}];
 			if(deleteName)
