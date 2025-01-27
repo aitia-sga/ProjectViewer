@@ -151,7 +151,7 @@
 					"when": "view == activeProjectsView && viewItem == project"
 				},
 				{
-					"command": "projectViewer.updateTemplate",
+					"command": "projectViewer.saveProject",
 					"when": "view == activeProjectsView && viewItem == project && aitiaProject == true"
 				},
 				{
@@ -295,8 +295,8 @@
 				"title": "Modify other script"
 			},
 			{
-				"command": "projectViewer.updateTemplate",
-				"title": "Update template"
+				"command": "projectViewer.saveProject",
+				"title": "Save project"
 			},
 			{
 				"command": "projectViewer.reloadTemplate",

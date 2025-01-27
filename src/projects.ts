@@ -233,7 +233,8 @@ export class MyProjects {
 
 	updateTemplate(exportedProject: Project, template: string): boolean {
 		try {
-			const proj = this.jsonData.filter(project => project == exportedProject);
+			const proj: Project[] = [exportedProject];
+			proj[0].name = '';
 			let jsonString = JSON.stringify(proj, null, 4);
 			jsonString = path.normalize(jsonString);
 			jsonString = jsonString.replace(/\\/g, '/');

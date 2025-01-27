@@ -441,20 +441,28 @@ export async function activate(context: vscode.ExtensionContext) {
 			}
 		}),
 
-		vscode.commands.registerCommand('projectViewer.updateTemplate', async (exportedProject: projects.Project) => {
-			if(!exportedProject || !exportedProject.template || !isAitiaProject)
+		vscode.commands.registerCommand('projectViewer.saveProject', async (savedProject: projects.Project) => {
+			if(!savedProject || !isAitiaProject)
 				return;
+			if(!savedProject.template.length || savedProject.template === 'none') {
+				vscode.window.showInformationMessage('The project dosn\'t contains build target, that\'s why I can\'t save it.!');
+				return;
+			}
 
-			const result = await vscode.window.showInformationMessage(
-				'Are you sure you want to update template project?', { modal: true }, 'Yes');
-				
-			if (result === 'Yes') {
-				const template = path.join(workspaceRoot, exportedProject.template, 'project', 'logicalView.json');				
-				if(myProjects.updateTemplate(exportedProject, template))
-					vscode.window.showInformationMessage('Update template successfully!');
-				else
-					vscode.window.showErrorMessage('Update template error!');
-			}			
+			const fullPath = createProjectFullPath(savedProject);
+			if(fs.existsSync(fullPath)) {
+				const result = await vscode.window.showInformationMessage(
+					'The project is already exists. Are you sure override?', { modal: true }, 'Yes');
+					
+				if (result !== 'Yes')
+					return;
+			}
+			if(myProjects.updateTemplate(savedProject, fullPath)) {
+				vscode.window.showInformationMessage('Project saving successfully!');
+				savedProjectsProvider.updateProjects(workspaceRoot, false);
+			}
+			else
+				vscode.window.showErrorMessage('Project saving error!');
 		}),
 
 		vscode.commands.registerCommand('projectViewer.reloadTemplate', async (reloadedProject: projects.Project) => {
@@ -486,6 +494,7 @@ export async function activate(context: vscode.ExtensionContext) {
 				projectsProvider.refresh();
 			}		
 		}),
+
 		vscode.commands.registerCommand('projectViewer.needMotivation', async (exportedProject: projects.Project) => {
 			vscode.window.showInformationMessage(motivations.Motivation.needMotivation(), { modal: true });
 		})
@@ -533,6 +542,10 @@ function createProjectNameAndFullPath(name: string, newProjName: string = ''): s
 			return [splittedPath[splittedPath.length-1], path.join(uris, 'project', splittedPath[splittedPath.length-1]+'.json')];
 	}
 	return [];
+}
+
+function createProjectFullPath(savedProject: projects.Project): string {
+	return path.join(workspaceRoot, savedProject.template, 'project', savedProject.name+'.json');
 }
 
 async function descriptionRequest(): Promise<string> {
