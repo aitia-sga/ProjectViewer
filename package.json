@@ -87,7 +87,7 @@
 				},
 				{
 					"command": "projectViewer.renameOriginProject",
-					"when": "view != projectView"
+					"when": "view == projectsView"
 				},
 				{
 					"command": "projectViewer.modifyDescription",
