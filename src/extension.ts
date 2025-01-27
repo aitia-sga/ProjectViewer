@@ -37,9 +37,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	if(!fs.existsSync(projectsPath))
 		fs.writeFileSync(projectsPath, "");
 
-	// if(!fs.existsSync(activeProjectsPath))
-	// 	fs.writeFileSync(activeProjectsPath, "");
-
 	const myProjects = new projects.MyProjects(projectsPath);
 	workspaceRoot = vscode.workspace.workspaceFolders![0].uri.fsPath;
 
@@ -106,18 +103,6 @@ export async function activate(context: vscode.ExtensionContext) {
 			vscode.window.showInformationMessage('Project import cancelled.');
 		}),
 
-		vscode.commands.registerCommand('projectViewer.removeProjectFromActive', (project: projects.Project) => {
-			// if (activeProjectsData.activeProjects.includes(project.name)) {
-			// 	const projectIndex = activeProjectsData.activeProjects.indexOf(project.name);
-			// 	if(projectIndex !== -1)
-			// 	{
-			// 		activeProjectsData.activeProjects.splice(projectIndex, 1);
-			// 		try { fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4)); } catch {}
-			// 		activeProjectsProvider.refresh();
-			// 	}
-			// }
-		}),
-
 		vscode.commands.registerCommand('projectViewer.newProject', async (template) => {
 			await createNewProj(myProjects, projectsProvider, template);
 		}),
@@ -125,30 +110,6 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand('projectViewer.newProjectFromTemplate', async (template) => {
 			await createNewProj(myProjects, projectsProvider, template);
 		}),
-
-		// vscode.commands.registerCommand('projectViewer.newProjectFromTemplate', async (template) => {
-		// 	const userInput = await vscode.window.showInputBox({
-		// 		prompt: 'Enter the name of the project',
-		// 		placeHolder: 'Project name'
-		// 	});
-			
-		// 	if (userInput) {
-		// 		const description = await descriptionRequest();
-		// 		const projectFile = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, template, 'project', userInput + '.json');
-				
-		// 		if(fs.existsSync(projectFile) && fs.statSync(projectFile).size > 0)
-		// 			vscode.window.showInformationMessage('The ' + projectFile + ' is exists!');
-		// 		else {
-		// 			// myProjects.createNewProject(userInput, description, '', '', template);
-		// 			myProjects.createNewProjectJson(userInput, description, projectFile, template);
-		// 			savedProjectsProvider.updateProjects(workspaceRoot, false);
-		// 			projectsProvider.refresh();
-		// 		}
-
-		// 		// projectsProvider.refresh();
-		// 	} else
-		// 		vscode.window.showInformationMessage('No input provided');	
-		// }),
 
 		vscode.commands.registerCommand('projectViewer.deleteProject', async (deletedProject) => {
 			const result = await vscode.window.showInformationMessage(
@@ -256,24 +217,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
 				myProjects.renamedItem(item, newName);
 				
-				if(item.type === 'project') {
-					// if(activeProjectsData.activeProjects.includes(item.name)) {
-					// 	const projectIndex = activeProjectsData.activeProjects.indexOf(item.name);
-					// 	if(projectIndex !== -1)
-					// 	{
-					// 		activeProjectsData.activeProjects.splice(projectIndex, 1);
-					// 		try { fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4)); } catch {}
-					// 	}
-					// }
-
-					// if(!activeProjectsData.activeProjects.includes(newName)) {
-					// 	activeProjectsData.activeProjects.push(newName);
-					// 	try { fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4)); } catch {}
-					// }
-					
+				if(item.type === 'project')
 					projectsProvider.refresh();
-				}
-
+				
 				activeProjectsProvider.refresh();
 			}
 		}),

@@ -48,7 +48,6 @@ export class MyProjects {
 
 	importProjects(importedProjects: Project[], name: string = "", description: string = "", template: string = "", otherScript: string = ""): void {
 		importedProjects.forEach(element => {
-			// Change name, description and template if possible
 			if(name.length) element.name = name;
 			if(description.length) element.description = description;
 			if(template.length) element.template = template;
