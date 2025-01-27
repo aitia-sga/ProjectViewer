@@ -442,27 +442,11 @@ export async function activate(context: vscode.ExtensionContext) {
 		}),
 
 		vscode.commands.registerCommand('projectViewer.saveProject', async (savedProject: projects.Project) => {
-			if(!savedProject || !isAitiaProject)
-				return;
-			if(!savedProject.template.length || savedProject.template === 'none') {
-				vscode.window.showInformationMessage('The project dosn\'t contains build target, that\'s why I can\'t save it.!');
-				return;
-			}
+			await saveProject(savedProject, myProjects, savedProjectsProvider, false);
+		}),
 
-			const fullPath = createProjectFullPath(savedProject);
-			if(fs.existsSync(fullPath)) {
-				const result = await vscode.window.showInformationMessage(
-					'The project is already exists. Are you sure override?', { modal: true }, 'Yes');
-					
-				if (result !== 'Yes')
-					return;
-			}
-			if(myProjects.updateTemplate(savedProject, fullPath)) {
-				vscode.window.showInformationMessage('Project saving successfully!');
-				savedProjectsProvider.updateProjects(workspaceRoot, false);
-			}
-			else
-				vscode.window.showErrorMessage('Project saving error!');
+		vscode.commands.registerCommand('projectViewer.saveAsProject', async (savedProject: projects.Project) => {
+			await saveProject(savedProject, myProjects, savedProjectsProvider, true);
 		}),
 
 		vscode.commands.registerCommand('projectViewer.reloadTemplate', async (reloadedProject: projects.Project) => {
@@ -544,7 +528,10 @@ function createProjectNameAndFullPath(name: string, newProjName: string = ''): s
 	return [];
 }
 
-function createProjectFullPath(savedProject: projects.Project): string {
+function createProjectFullPath(savedProject: projects.Project, newName: string | undefined): string {
+	if(newName)
+		return path.join(workspaceRoot, savedProject.template, 'project', newName+'.json');
+
 	return path.join(workspaceRoot, savedProject.template, 'project', savedProject.name+'.json');
 }
 
@@ -558,6 +545,42 @@ async function descriptionRequest(): Promise<string> {
 		return userInput;
 
 	return '';
+}
+
+async function saveProject(savedProject: projects.Project, myProjects: projects.MyProjects,
+	savedProjectsProvider: TemplateProjectsTreeProvider, saveAs: boolean = false): Promise<void> {
+	if(!savedProject)
+		return;
+	if(!savedProject.template.length || savedProject.template === 'none') {
+		vscode.window.showInformationMessage('The project dosn\'t contains build target, that\'s why I can\'t save it.!');
+		return;
+	}
+
+	let newName: string | undefined = '';
+	if(saveAs) {
+		newName = await vscode.window.showInputBox({
+			prompt: 'Enter the name of project (without extension)!',
+			placeHolder: 'sample-project'
+		});
+		
+		if (!newName)
+			return;
+	}
+
+	const fullPath = createProjectFullPath(savedProject, newName);
+	if(fs.existsSync(fullPath)) {
+		const result = await vscode.window.showInformationMessage(
+			'The project is already exists. Are you sure override?', { modal: true }, 'Yes');
+			
+		if (result !== 'Yes')
+			return;
+	}
+	if(myProjects.updateTemplate(savedProject, fullPath)) {
+		vscode.window.showInformationMessage('Project saving successfully!');
+		savedProjectsProvider.updateProjects(workspaceRoot, false);
+	}
+	else
+		vscode.window.showErrorMessage('Project saving error!');
 }
 
 async function debugConfNameRequest(): Promise<string> {

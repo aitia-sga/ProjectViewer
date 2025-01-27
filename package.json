@@ -155,6 +155,10 @@
 					"when": "view == activeProjectsView && viewItem == project && aitiaProject == true"
 				},
 				{
+					"command": "projectViewer.saveAsProject",
+					"when": "view == activeProjectsView && viewItem == project && aitiaProject == true"
+				},
+				{
 					"command": "projectViewer.reloadTemplate",
 					"when": "view == activeProjectsView && viewItem == project && aitiaProject == true"
 				}
@@ -297,6 +301,10 @@
 			{
 				"command": "projectViewer.saveProject",
 				"title": "Save project"
+			},
+			{
+				"command": "projectViewer.saveAsProject",
+				"title": "Save as project"
 			},
 			{
 				"command": "projectViewer.reloadTemplate",
