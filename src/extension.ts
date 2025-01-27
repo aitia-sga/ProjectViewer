@@ -152,18 +152,12 @@ export async function activate(context: vscode.ExtensionContext) {
 
 		vscode.commands.registerCommand('projectViewer.deleteProject', async (deletedProject) => {
 			const result = await vscode.window.showInformationMessage(
-				'Are you sure you want to delete this project?', { modal: true }, 'Yes', 'Update origin and delete');
+				'Are you sure you want to delete this project? If necessary, save or export the project. Unsaved changes will be lost.',
+				{ modal: true }, 'Yes');
 				
 				if (result === 'Yes') {
 					myProjects.deleteProject(deletedProject);
 					projectsProvider.refresh();
-					
-					// const projectIndex = activeProjectsData.activeProjects.indexOf(deletedProject.name);
-					// if(projectIndex !== -1) {
-					// 	activeProjectsData.activeProjects.splice(projectIndex, 1);
-					// 	try { fs.writeFileSync(activeProjectsPath, JSON.stringify(activeProjectsData, null, 4)); } catch {}
-					// 	activeProjectsProvider.refresh();
-					// }
 				}
 			}),
 
@@ -210,7 +204,7 @@ export async function activate(context: vscode.ExtensionContext) {
 				}
 			}),
 			
-			vscode.commands.registerCommand('projectViewer.exportProject', async (exportedProject) => {
+			vscode.commands.registerCommand('projectViewer.exportProject', async (exportedProject: projects.Project) => {
 				const uri = await vscode.window.showSaveDialog({
 					defaultUri: vscode.Uri.file(path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, exportedProject.name + '.json')),
 					filters: {
@@ -220,16 +214,9 @@ export async function activate(context: vscode.ExtensionContext) {
 					saveLabel: 'Export'
 				});
 			
-				if (uri) {
-					try {
-						let proj = myProjects.getProjects().filter(project => project == exportedProject);
-						if(proj.length) {
-							proj[0].name = '';
-							fs.writeFileSync(uri.fsPath, JSON.stringify(proj, null, 4));
-							vscode.window.showInformationMessage('Project exported successfully!');
-						}
-					} catch { vscode.window.showInformationMessage('Project export cancelled.'); }
-				} else
+				if (uri)
+					myProjects.updateTemplate(exportedProject, uri.fsPath);
+				else
 					vscode.window.showInformationMessage('Project export cancelled.');				
 			}),
 			
