@@ -166,6 +166,26 @@ export async function activate(context: vscode.ExtensionContext) {
 					// }
 				}
 			}),
+
+		vscode.commands.registerCommand('projectViewer.deleteOriginProject', async (deletedProject) => {
+			const result = await vscode.window.showInformationMessage(
+				'Are you sure you want to delete this project?', { modal: true }, 'Yes');
+				
+				if (result === 'Yes') {
+					const nameAndPath = createProjectNameAndFullPath(deletedProject);
+					if(!fs.existsSync(nameAndPath[1])) {
+						vscode.window.showInformationMessage(`${deletedProject} project dosn't already exists!`);
+						return;
+					}
+					fs.rm(nameAndPath[1], (err) => {
+						if(err) {
+							vscode.window.showErrorMessage('Failed to delete project!');
+							return;
+						}
+					})
+					savedProjectsProvider.updateProjects(workspaceRoot, false);
+				}
+			}),
 			
 			vscode.commands.registerCommand('projectViewer.importProject', async (exportedProject) => {
 				const uris = await vscode.window.showOpenDialog({
@@ -180,7 +200,6 @@ export async function activate(context: vscode.ExtensionContext) {
 				});
 				
 				if (uris && uris[0]) {
-					
 					const importedProjects = new projects.MyProjects(uris[0].fsPath);
 					myProjects.importProjects(importedProjects.getProjects());
 					projectsProvider.refresh();
@@ -291,10 +310,10 @@ export async function activate(context: vscode.ExtensionContext) {
 			fs.rename(nameAndPath[1], newNameAndPath[1], (err) => {
 				if(err) {
 					vscode.window.showErrorMessage('Failed to rename project!');
-return;
+					return;
 				}
 			});
-savedProjectsProvider.updateProjects(workspaceRoot, false);
+			savedProjectsProvider.updateProjects(workspaceRoot, false);
 		}),
 
 		vscode.commands.registerCommand('projectViewer.modifyDescription', async (item: projects.Item) => {

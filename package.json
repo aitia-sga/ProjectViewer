@@ -63,7 +63,12 @@
 				},
 				{
 					"command": "projectViewer.deleteProject",
-					"when": "view != templateProjectsView && viewItem == project",
+					"when": "view == activeProjectsView && viewItem == project",
+					"group": "0_project@name"
+				},
+				{
+					"command": "projectViewer.deleteOriginProject",
+					"when": "view == projectsView",
 					"group": "0_project@name"
 				},
 				{
@@ -219,6 +224,10 @@
 			},
 			{
 				"command": "projectViewer.deleteProject",
+				"title": "Delete project with contents"
+			},
+			{
+				"command": "projectViewer.deleteOriginProject",
 				"title": "Delete project with contents"
 			},
 			{
