@@ -289,9 +289,12 @@ export async function activate(context: vscode.ExtensionContext) {
 				return;
 			}
 			fs.rename(nameAndPath[1], newNameAndPath[1], (err) => {
-				if(err)
+				if(err) {
 					vscode.window.showErrorMessage('Failed to rename project!');
+return;
+				}
 			});
+savedProjectsProvider.updateProjects(workspaceRoot, false);
 		}),
 
 		vscode.commands.registerCommand('projectViewer.modifyDescription', async (item: projects.Item) => {
